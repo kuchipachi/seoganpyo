@@ -7,18 +7,19 @@ name: Security Scan
 # - dev/main에 push될 때
 # - 매주 월요일 (새로운 CVE가 공개될 수 있으므로)
 
+# [kuchipachi 이전] 원본 org 토큰·시크릿이 없어 1차 동안 자동 트리거 비활성화 — 수동 실행만 허용
 on:
-    push:
-        branches: [dev, main]
-        paths:
-            - "requirements.txt"
-            - "frontend/package.json"
-            - "frontend/pnpm-lock.yaml"
-            - "Dockerfile"
-            - "ocr-service/Dockerfile"
-            - "ocr-service/requirements.txt"
-    schedule:
-        - cron: "0 0 * * 1" # 매주 월요일 09:00 KST
+    # push:
+        # branches: [dev, main]
+        # paths:
+            # - "requirements.txt"
+            # - "frontend/package.json"
+            # - "frontend/pnpm-lock.yaml"
+            # - "Dockerfile"
+            # - "ocr-service/Dockerfile"
+            # - "ocr-service/requirements.txt"
+    # schedule:
+        # - cron: "0 0 * * 1" # 매주 월요일 09:00 KST
     workflow_dispatch: # GitHub UI에서 수동 실행 가능
 
 jobs:

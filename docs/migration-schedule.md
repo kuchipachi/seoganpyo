@@ -39,14 +39,14 @@
 - [x] VPC + 퍼블릭 서브넷 (NAT 금지)
 - [x] IAM Deny 정책 `SeoganpyoDenyCostly` → ⚠️ **D2에 Multi-AZ 조건 보강 필요**
 
-### 🟩 민지 — 레포 분리 ✅ 완료 + loadtest 분리
+### 🟩 민지 — 레포 분리 + loadtest 분리 ✅ 완료
 
 - [x] 새 org `kuchipachi` → 레포 `kuchipachi/seoganpyo` (Public, fork 아님)
 - [x] `clone --bare` → `push --mirror` (main·dev + 태그 5개, 해시 일치 확인)
 - [x] 워크플로 7개 자동 트리거 비활성화 — PR #1 머지
-- [ ] **하연 org Owner 초대** + 👉 새 remote URL 공유 (§13 명령)
-- [ ] Actions 다시 켜기 + `main`/`dev` 브랜치 보호
-- [ ] `chore/loadtest-compose` — JMeter/InfluxDB를 `docker-compose.loadtest.yml`로 분리 (0.25일) ← D2 파일 삭제 **전에**
+- [x] 하연 org Owner 초대 + 새 remote URL 공유
+- [x] Actions 다시 켜기 + `main`/`dev` 브랜치 보호 (PR 필수, 승인 0명)
+- [x] `chore/loadtest-compose` — JMeter/InfluxDB를 `docker-compose.loadtest.yml`로 분리 (`make loadtest-up` / `make jmeter-run`, 결과 조회 Grafana :3002)
 
 ---
 

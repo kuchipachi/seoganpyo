@@ -1,0 +1,66 @@
+# 부하 테스트 스택 — InfluxDB + Grafana(결과 조회) + JMeter
+# 사용처: 부하 생성 PC (팀원 로컬). 측정 대상 서버(EC2)에서 돌리지 말 것 — 같은 RAM 을 나눠 써서 수치가 무의미해짐.
+# 사용법:
+#   make loadtest-up                                  # InfluxDB + Grafana 기동
+#   make jmeter-run BASE_HOST=<EC2 IP> BASE_PORT=443 BASE_SCHEME=https
+#   make loadtest-down
+#
+# 결과 조회: http://localhost:3002 → 대시보드 "Apache JMeter — Load Test"
+# (docker-compose.observability.server.yml 에서 JMeter/InfluxDB 만 분리 — 학교 모니터링 서버 의존 제거)
+
+services:
+    # JMeter 결과 저장소 (v1.8 — JMeter Backend Listener 기본 호환)
+    influxdb:
+        image: influxdb:1.8
+        container_name: seoganpyo-influxdb
+        restart: unless-stopped
+        ports:
+            - "127.0.0.1:8086:8086"  # 외부 비노출
+        environment:
+            - INFLUXDB_DB=jmeter
+            - INFLUXDB_HTTP_AUTH_ENABLED=false
+            - INFLUXDB_REPORTING_DISABLED=true
+        volumes:
+            - influxdb_data:/var/lib/influxdb
+        healthcheck:
+            test: ["CMD-SHELL", "wget -q --spider http://localhost:8086/ping || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    # 결과 조회 전용 Grafana — InfluxDB 데이터소스 + JMeter 대시보드만 프로비저닝
+    # 3001 은 로컬 관측 스택(make up-obs) Grafana 가 쓰므로 3002 사용
+    grafana:
+        image: grafana/grafana:10.4.2
+        container_name: seoganpyo-loadtest-grafana
+        restart: unless-stopped
+        ports:
+            - "127.0.0.1:3002:3000"
+        environment:
+            - GF_AUTH_ANONYMOUS_ENABLED=true
+            - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+            - GF_AUTH_DISABLE_LOGIN_FORM=true
+            - GF_ANALYTICS_REPORTING_ENABLED=false
+        volumes:
+            - ./infra/loadtest/grafana/provisioning:/etc/grafana/provisioning:ro
+            - ./infra/observability/grafana/provisioning/dashboards/json/jmeter-loadtest.json:/var/lib/grafana/dashboards/jmeter-loadtest.json:ro
+        depends_on:
+            influxdb:
+                condition: service_healthy
+
+    # 부하 테스트 러너 (CLI 전용 — make jmeter-run)
+    jmeter:
+        image: justb4/jmeter:5.5
+        container_name: seoganpyo-jmeter
+        # 데몬 아님 — 필요 시 일회성 실행
+        profiles: ["jmeter"]
+        volumes:
+            - ./infra/loadtest/jmeter:/tests
+            - ./infra/loadtest/jmeter/results:/results
+        working_dir: /tests
+        depends_on:
+            influxdb:
+                condition: service_healthy
+
+volumes:
+    influxdb_data:

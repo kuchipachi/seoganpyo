@@ -8,9 +8,11 @@ name: TODO to Issue
 #   // TODO (hayeon): N+1 쿼리 최적화 필요
 #   # FIXME: race condition 가능성 있음
 
+# [kuchipachi 이전] 원본 org 토큰·시크릿이 없어 1차 동안 자동 트리거 비활성화 — 수동 실행만 허용
 on:
-    push:
-        branches: [dev, main]
+    workflow_dispatch:
+    # push:
+        # branches: [dev, main]
 
 jobs:
     todo:

@@ -171,6 +171,23 @@ def process_syllabus(db: Session, file_bytes: bytes) -> tuple:
     return detail, course, False
 
 
+def save_course_detail(db: Session, course_id: int, result: dict, pdf_hash: str) -> CourseDetail:
+    """AI 요약 결과(summarize_with_ollama 반환값)를 course_details 에 upsert. commit 은 호출자가."""
+    detail = db.query(CourseDetail).filter(CourseDetail.course_id == course_id).first()
+    if detail is None:
+        detail = CourseDetail(course_id=course_id)
+        db.add(detail)
+    detail.overview = result.get("overview")
+    detail.required_skills = result.get("goals")
+    detail.evaluation_method = result.get("evaluation_method")
+    detail.teaching_method = result.get("teaching_method")
+    detail.track_id = result.get("track_id")
+    detail.keyword = _strip_keyword_counts(result.get("keyword"))
+    detail.pdf_hash = pdf_hash
+    detail.recommendation = result.get("recommendation")
+    return detail
+
+
 def process_pdf_for_batch(
     db: Session,
     pdf_bytes: bytes,
@@ -353,22 +370,7 @@ def process_pdf_for_batch(
     # course_details upsert — 매칭된 모든 분반에 저장
     saved_ids: list[int] = []
     for course in courses_to_save:
-        detail = (
-            db.query(CourseDetail)
-            .filter(CourseDetail.course_id == course.course_id)
-            .first()
-        )
-        if detail is None:
-            detail = CourseDetail(course_id=course.course_id)
-            db.add(detail)
-        detail.overview = result.get("overview")
-        detail.required_skills = result.get("goals")
-        detail.evaluation_method = result.get("evaluation_method")
-        detail.teaching_method = result.get("teaching_method")
-        detail.track_id = result.get("track_id")
-        detail.keyword = _strip_keyword_counts(result.get("keyword"))
-        detail.pdf_hash = pdf_hash
-        detail.recommendation = result.get("recommendation")
+        save_course_detail(db, course.course_id, result, pdf_hash)
         saved_ids.append(course.course_id)
 
     db.commit()

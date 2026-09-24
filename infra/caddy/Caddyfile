@@ -2,31 +2,28 @@
 # Let's Encrypt 인증서를 기동 시 자동 발급·갱신 (nip.io 도메인 지원).
 #
 # 라우팅:
-#   /api/*, /admin/*, /metrics, /static/*, /docs  → backend:8000
-#   그 외                                          → frontend:3000
+#   /backend/*  → backend:8000 (prefix 제거 후 전달)
+#   /static/*   → backend:8000 (게시글 본문에 저장된 업로드 이미지 절대경로)
+#   그 외        → frontend:3000
+#
+# 백엔드 라우터(/auth, /history, /upload, /admin ...)를 경로별로 나열하면
+# 새 라우터가 추가될 때마다 누락되고, /admin 처럼 프론트 페이지와 겹치는 경로는
+# 경로만으로 구분할 수 없어서 전용 prefix 하나로 묶는다.
+# → 프론트는 NEXT_PUBLIC_API_URL=https://{$DOMAIN}/backend 로 빌드해야 함.
 
 {$DOMAIN} {
 	encode gzip
 
-	# 백엔드 API — 프론트보다 먼저 매칭돼야 함
-	handle /api/* {
-		reverse_proxy backend:8000
+	# 메트릭은 Prometheus 가 컨테이너 네트워크(backend:8000)로 직접 스크랩 — 외부 비공개
+	handle /backend/metrics* {
+		respond 404
 	}
-	handle /admin/* {
+
+	# 백엔드 API — 프론트보다 먼저 매칭돼야 함
+	handle_path /backend/* {
 		reverse_proxy backend:8000
 	}
 	handle /static/* {
-		reverse_proxy backend:8000
-	}
-	handle /docs* {
-		reverse_proxy backend:8000
-	}
-	handle /openapi.json {
-		reverse_proxy backend:8000
-	}
-
-	# 관측 스택 연결 후 사용 — 그 전에는 backend 가 빈 응답
-	handle /metrics {
 		reverse_proxy backend:8000
 	}
 

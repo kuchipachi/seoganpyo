@@ -233,7 +233,7 @@ docker buildx build --platform linux/amd64 -t $REG/seoganpyo-ocr:latest ./ocr-se
 ```
 
 > ⚠️ 프론트엔드는 `NEXT_PUBLIC_API_URL`이 **빌드 타임 변수**입니다 (계획서 §7.3).
-> `--build-arg NEXT_PUBLIC_API_URL=https://54.180.181.46.nip.io` 를 넘겨야 합니다.
+> `--build-arg NEXT_PUBLIC_API_URL=https://54.180.181.46.nip.io/backend` 를 넘겨야 합니다.
 > 도메인이 바뀌면 재빌드가 필요한 이유입니다.
 
 ### EC2 — pull & 실행

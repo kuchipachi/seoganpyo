@@ -572,7 +572,7 @@ git push (dev/main)
 `frontend/Dockerfile`은 `NEXT_PUBLIC_API_URL`을 **빌드 인자**로 받습니다 → 도메인이 바뀌면 **재빌드**해야 합니다.
 
 ```bash
---build-arg NEXT_PUBLIC_API_URL=https://<ec2-ip>.nip.io
+--build-arg NEXT_PUBLIC_API_URL=https://<ec2-ip>.nip.io/backend
 --build-arg NEXT_PUBLIC_GRAFANA_URL=https://<계정>.grafana.net
 ```
 

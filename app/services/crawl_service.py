@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 import httpx
 from bs4 import BeautifulSoup
@@ -10,8 +11,9 @@ logger = logging.getLogger(__name__)
 
 BASE_URL = "https://cs.sogang.ac.kr"
 LIST_URL = f"{BASE_URL}/cs/cs02_1_001.html"
-OLLAMA_URL = "http://host.docker.internal:11434/api/generate"
-OLLAMA_MODEL = "exaone3.5:7.8b"
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "exaone3.5:7.8b")
+OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "300"))
 
 
 DEFAULT_PROMPT = (
@@ -36,7 +38,7 @@ def _summarize_research_area(text: str, prompt_override: str | None = None) -> s
     base_prompt = prompt_override if prompt_override else DEFAULT_PROMPT
     prompt = base_prompt + text
     try:
-        with httpx.Client(timeout=300) as client:
+        with httpx.Client(timeout=OLLAMA_TIMEOUT) as client:
             res = client.post(OLLAMA_URL, json={
                 "model": OLLAMA_MODEL,
                 "prompt": prompt,

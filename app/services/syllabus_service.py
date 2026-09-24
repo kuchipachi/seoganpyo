@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import re
 
 import httpx
@@ -11,8 +12,10 @@ from sqlalchemy.orm import Session
 from app.models.course import Course, CourseDetail
 from app.models.professor import Professor
 
-OLLAMA_URL = "http://host.docker.internal:11434/api/generate"
-OLLAMA_MODEL = "exaone3.5:7.8b"
+# Ollama 는 호스트(팀원 PC)에서 실행 — AWS 에는 없으므로 OLLAMA_TIMEOUT 을 짧게 잡아 빠르게 503 을 돌려준다.
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434/api/generate")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "exaone3.5:7.8b")
+OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "300"))
 
 
 def _strip_keyword_counts(keyword: str | None) -> str | None:
@@ -79,7 +82,8 @@ def _parse_json_response(raw: str) -> dict:
 def summarize_with_ollama(text: str) -> dict:
     """
     Ollama 로컬 LLM(exaone3.5:7.8b)으로 강의계획서 텍스트 요약.
-    호스트의 Ollama 서버(host.docker.internal:11434)가 떠 있어야 함.
+    호스트의 Ollama 서버(OLLAMA_URL)가 떠 있어야 함.
+    연결 실패·시간 초과 → 503(요약 준비 중), Ollama 가 에러 응답 → 502.
     JSON 형식 출력은 Ollama의 format="json" 옵션으로 강제.
 
     중요: Ollama 기본 num_ctx=4096은 SYSTEM_PROMPT(~1000자) + PDF(8000자)에 부족.
@@ -87,7 +91,7 @@ def summarize_with_ollama(text: str) -> dict:
     """
     prompt = f"{SYSTEM_PROMPT}\n\n강의계획서:\n\n{text[:8000]}"
     try:
-        with httpx.Client(timeout=300) as client:
+        with httpx.Client(timeout=OLLAMA_TIMEOUT) as client:
             res = client.post(OLLAMA_URL, json={
                 "model": OLLAMA_MODEL,
                 "prompt": prompt,
@@ -97,6 +101,12 @@ def summarize_with_ollama(text: str) -> dict:
             })
             res.raise_for_status()
             raw = res.json().get("response", "").strip()
+    except (httpx.ConnectError, httpx.TimeoutException) as e:
+        raise HTTPException(status_code=503, detail={
+            "code": "SUMMARY_UNAVAILABLE",
+            "title": "요약 준비 중입니다",
+            "message": "강의계획서 요약 서버에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+        }) from e
     except httpx.HTTPError as e:
         raise HTTPException(status_code=502, detail=f"Ollama 호출 실패: {e}")
     return _parse_json_response(raw)
@@ -198,11 +208,11 @@ def process_pdf_for_batch(
     if not raw_text.strip():
         return {"status": "error", "course_ids": [], "message": "PDF에서 텍스트를 추출할 수 없습니다"}
 
-    # Claude AI 요약
+    # Ollama 요약
     try:
         result = summarize_with_ollama(raw_text)
     except Exception as e:
-        return {"status": "error", "course_ids": [], "message": f"Claude API 오류 - {e}"}
+        return {"status": "error", "course_ids": [], "message": f"Ollama 오류 - {e}"}
 
     professor_name = result.get("professor_name")
     courses_to_save: list[Course] = []

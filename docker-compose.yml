@@ -73,9 +73,9 @@ services:
             - REDIS_URL=redis://redis:6379/0
             - OCR_SERVICE_URL=http://ocr-service:8000
             # Prometheus URL — .env에서 override 가능.
-            # 디폴트: 같은 호스트에 make up-obs로 띄운 prometheus (docker network).
-            # 외부 모니터링 서버 사용 시 .env에 PROMETHEUS_URL=http://<IP>:9090 설정.
-            - PROMETHEUS_URL=${PROMETHEUS_URL:-http://prometheus:9090}
+            # 디폴트 빈 값: 운영 EC2 엔 관측 스택이 없으므로 관리자 챗의 query_prometheus 도구를 숨김.
+            # 로컬 make up-obs 는 docker-compose.dev.yml 이 http://prometheus:9090 으로 덮어씀.
+            - PROMETHEUS_URL=${PROMETHEUS_URL:-}
             # DefectDojo 보안 대시보드 — 관리자 페이지의 보안 모니터링이 호출.
             # 토큰은 .env 또는 Jenkins Credentials에서 주입 (절대 하드코딩 금지).
             - DEFECTDOJO_URL=${DEFECTDOJO_URL:-http://163.239.77.65:8888}
@@ -110,7 +110,7 @@ services:
             context: ./frontend
             args:
                 - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8080}
-                - NEXT_PUBLIC_GRAFANA_URL=${NEXT_PUBLIC_GRAFANA_URL:-http://localhost:3001}
+                - NEXT_PUBLIC_GRAFANA_URL=${NEXT_PUBLIC_GRAFANA_URL:-}
         container_name: seoganpyo-frontend
         restart: unless-stopped
         ports:

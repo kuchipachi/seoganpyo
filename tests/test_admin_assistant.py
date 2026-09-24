@@ -163,18 +163,89 @@ def test_evaluation_stats_excludes_old_rows(db, test_user):
 
 
 # ─── 메타데이터 ────────────────────────────────────────────────
-def test_tool_registry_complete():
+DB_TOOL_NAMES = {
+    "search_courses",
+    "get_popular_courses",
+    "get_user_stats",
+    "get_history_coverage",
+    "get_unused_courses",
+    "get_evaluation_stats",
+}
+INFRA_TOOL_NAMES = {"query_prometheus", "get_container_status"}
+
+
+def test_all_tools_complete():
+    names = {t["name"] for t in admin_assistant.ALL_TOOLS}
+    assert names == DB_TOOL_NAMES | INFRA_TOOL_NAMES
+
+
+def test_tool_registry_always_has_db_tools():
     names = {t["name"] for t in admin_assistant.TOOL_REGISTRY}
-    assert names == {
-        "search_courses",
-        "get_popular_courses",
-        "get_user_stats",
-        "get_history_coverage",
-        "get_unused_courses",
-        "get_evaluation_stats",
-        "query_prometheus",
-        "get_container_status",
-    }
+    assert DB_TOOL_NAMES <= names
+    assert names <= DB_TOOL_NAMES | INFRA_TOOL_NAMES
+
+
+# ─── 인프라 도구 조건부 노출 ───────────────────────────────────
+def _reload_assistant(monkeypatch, prometheus_url, socket_exists):
+    import importlib
+    import os
+
+    if prometheus_url is None:
+        monkeypatch.delenv("PROMETHEUS_URL", raising=False)
+    else:
+        monkeypatch.setenv("PROMETHEUS_URL", prometheus_url)
+    real_exists = os.path.exists
+    monkeypatch.setattr(
+        os.path, "exists",
+        lambda p: socket_exists if p == "/var/run/docker.sock" else real_exists(p),
+    )
+    return importlib.reload(admin_assistant)
+
+
+@pytest.fixture
+def restore_assistant():
+    yield
+    import importlib
+    importlib.reload(admin_assistant)
+
+
+def test_infra_tools_hidden_when_unavailable(monkeypatch, restore_assistant):
+    mod = _reload_assistant(monkeypatch, prometheus_url="", socket_exists=False)
+    names = {t["name"] for t in mod.TOOL_REGISTRY}
+    assert names == DB_TOOL_NAMES
+    assert "query_prometheus" not in mod.TOOLS_BY_NAME
+
+
+def test_infra_tools_shown_when_available(monkeypatch, restore_assistant):
+    mod = _reload_assistant(monkeypatch, prometheus_url="http://prometheus:9090", socket_exists=True)
+    names = {t["name"] for t in mod.TOOL_REGISTRY}
+    assert names == DB_TOOL_NAMES | INFRA_TOOL_NAMES
+
+
+def test_prometheus_default_when_env_absent(monkeypatch, restore_assistant):
+    # 호스트 실행(MCP 서버 등) — 환경변수 자체가 없으면 localhost 기본값으로 도구 유지
+    mod = _reload_assistant(monkeypatch, prometheus_url=None, socket_exists=False)
+    assert mod.PROMETHEUS_URL == "http://localhost:9090"
+    assert "query_prometheus" in mod.TOOLS_BY_NAME
+
+
+def test_query_prometheus_without_url_returns_error(monkeypatch):
+    monkeypatch.setattr(admin_assistant, "PROMETHEUS_URL", "")
+    result = admin_assistant.query_prometheus("up")
+    assert "error" in result
+
+
+def test_container_status_docker_failure_is_error_not_empty(monkeypatch):
+    # docker.sock 미마운트 → docker ps 가 비정상 종료. 빈 목록([])이 아니라 에러로 알려야 함
+    import subprocess
+
+    def fake_run(*args, **kwargs):
+        return subprocess.CompletedProcess(args[0], 1, stdout="", stderr="Cannot connect to the Docker daemon")
+
+    monkeypatch.setattr(admin_assistant.subprocess, "run", fake_run)
+    result = admin_assistant.get_container_status()
+    assert len(result) == 1 and "error" in result[0]
+    assert "Docker daemon" in result[0]["error"]
 
 
 def test_db_tools_set_matches_registry():

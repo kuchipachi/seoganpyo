@@ -99,9 +99,6 @@ yarn-error.log*
 pnpm-debug.log*
 .pnpm-store/
 
-### Docker ###
-.dockerignore
-
 ### Jenkins ###
 .jenkins/
 

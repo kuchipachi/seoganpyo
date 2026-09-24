@@ -1,6 +1,8 @@
 # 마이그레이션 실행 일정
 
 > 상세 근거는 [cloud-migration-plan.md](./cloud-migration-plan.md) (§ 번호는 그 문서 기준).
+> 실제 인프라 구성값·설계 근거는 [aws-infra-design.md](./aws-infra-design.md),
+> ECR·IAM 권한 설계는 [aws-ecr-iam-design.md](./aws-ecr-iam-design.md).
 > 이 파일은 **매일 열어 보는 체크리스트**입니다.
 >
 > **D는 실작업일**이지 달력 날짜가 아닙니다. 하루에 못 끝내면 그 D가 이틀이 됩니다.
@@ -54,14 +56,18 @@
 
 ### 🟦 하연 — RDS (0.5일)
 
-- [ ] 👉 민지에게서 받은 URL로 로컬 remote 교체 (§13)
+- [x] 👉 로컬 remote 교체 — `origin`=`kuchipachi/seoganpyo`, 기존 포크는 `old-origin`
 - [ ] **Deny 정책 보강** — `rds:MultiAz`, `rds:DatabaseClass`, `ec2:InstanceType` 조건 (§2.1) → Multi-AZ 생성 시도로 거부 확인
 - [ ] AZ가 다른 퍼블릭 서브넷 2개 → **RDS 서브넷 그룹**
-- [ ] 보안그룹 `sg-web`(80/443 + 팀원 IP만 22), `sg-rds`(sg-web에서만 5432)
-- [ ] 태깅 `Project=seoganpyo / Env=prod / Owner=hayeon`
-- [ ] **RDS 생성** — 체크리스트 §2.5 (개발/테스트 템플릿, `db.t4g.micro`, Multi-AZ·자동 조정·퍼블릭 액세스·Performance Insights 전부 끄기)
-- [ ] 👉 **민지에게 엔드포인트 전달**
-- [ ] 도메인 결정 (기본 `nip.io`) → 👉 민지에게 전달
+- [x] 보안그룹 **`SG-web`** `sg-095b42d816c449f1b` (80/443 → 0.0.0.0/0, 22 → 본인 IP)
+- [x] 보안그룹 **`SG-rds`** `sg-0523ae10013431731` (5432 ← SG-web **그룹 참조**)
+      ⚠️ 최초 **시드니 리전**에 만들어 재생성 — 포스트모템 1호 후보 (§8.4)
+- [x] 태깅 `Project=seoganpyo / Env=prod / Owner=hayeon` (SG 2개) — RDS는 생성 시 적용
+- [x] **RDS 생성** — `seoganpyo-db.czuy88iog7v8.ap-northeast-2.rds.amazonaws.com:5432` VPC `vpc-009480d192b44ba23`, SG `SG-rds`, 퍼블릭 액세스 아니요
+      ⚠️ **무료 플랜 제약 2건**: 템플릿이 **프리 티어 고정**(Multi-AZ 선택 불가 — 오히려 안전),
+      **백업 보존 최대 1일** → §2.5 백업 훈련은 **수동 스냅샷** 방식으로 변경
+- [x] 👉 **민지에게 엔드포인트 전달** — DB 접속 정보 + SSH 키
+- [x] 도메인 확정 — **`54.180.181.46.nip.io`** (Route 53 미사용, 비용 0)
 
 > 💡 RDS 생성에 10~15분 걸립니다. 그동안 §12 아키텍처 결정 기록을 시작하세요.
 > 💡 RDS를 만들면 온보딩 크레딧 +$20.
@@ -78,11 +84,12 @@
 
 ### 🟦 하연 — EC2 + Caddy (1.0일)
 
-- [ ] EC2 `t3.micro` 기동 + Elastic IP + 태그
-- [ ] **swap 2GB** (`/etc/fstab` 등록까지) (§2.2)
-- [ ] Docker + Compose 설치
+- [x] EC2 `t3.micro` `i-0cf5fbf562ec4017b` + EIP `54.180.181.46` + 태그
+- [x] **swap** — AL2023 기본 1.5Gi 사용 (RAM 913Mi + swap 1.5Gi)
+- [x] Docker + Compose v5.5.1 설치 (`docker ps` sudo 없이 동작)
+- [x] **RDS 연결 검증** — EC2 → RDS `psql` 성공, TLSv1.3 ✅ (§aws-infra-design 검증 결과)
 - [ ] Caddy 리버스 프록시 — `<ip>.nip.io` 자동 HTTPS 확인
-- [ ] 👉 **민지에게 SSH 접속 정보 전달** (터널용)
+- [x] 👉 **민지에게 SSH 접속 정보 전달** (터널용)
 
 > 💡 EC2를 만들면 온보딩 크레딧 +$20.
 
@@ -98,10 +105,10 @@
 
 ### 🟦 하연 — ECR + 인스턴스 역할 (0.5일)
 
-- [ ] ECR 리포지토리 3개 (`seoganpyo-api` / `-frontend` / `-ocr`) + 수명주기 정책(최근 3개)
-- [ ] EC2 인스턴스 역할 — `AmazonEC2ContainerRegistryReadOnly`
-- [ ] 민지 IAM 사용자 — 3개 리포지토리 push 권한만
-- [ ] 👉 민지에게 ECR URI 전달
+- [x] ECR 리포 3개 + 수명주기(최근 3개) + `scanOnPush` — [설계](./aws-ecr-iam-design.md)
+- [x] EC2 역할 `SeoganpyoEC2Role` — ECR ReadOnly + SSM Core, `docker login` 성공 ✅
+- [x] 민지 `SeoganpyoECRPush` — 리포 3개 한정 push 권한
+- [x] 👉 민지에게 ECR URI 전달
 - [ ] 남는 시간: 아키텍처 결정 기록
 
 ### 🟩 민지 — 이미지 마무리 + 데이터 적재 시작 (1.0일)

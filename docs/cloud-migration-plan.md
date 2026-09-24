@@ -6,6 +6,9 @@
 >
 > 📅 매일 보는 체크리스트: [migration-schedule.md](./migration-schedule.md)
 
+> 🏗️ 실제 구축한 네트워크·보안그룹·EC2·RDS 구성과 근거: [aws-infra-design.md](./aws-infra-design.md)
+> 📦 ECR·IAM 권한 설계: [aws-ecr-iam-design.md](./aws-ecr-iam-design.md)
+
 ## 담당자
 
 | | 이름 | 맡는 레이어 | 배경 |

@@ -1,10 +1,10 @@
 """관리자 보안 모니터링 — DefectDojo API를 호출해 취약점 요약·리스트를 제공.
 
 흐름:
-    [관리자 브라우저] → [팀서버 backend] ──HTTP──> [DefectDojo (163.239.77.65:8888)]
+    [관리자 브라우저] → [backend] ──HTTP──> [DefectDojo]
 
 환경변수:
-    DEFECTDOJO_URL         예) http://163.239.77.65:8888
+    DEFECTDOJO_URL         예) http://<defectdojo-host>:8888 — 미설정 시 기능 비활성(503)
     DEFECTDOJO_TOKEN       DefectDojo API token
     DEFECTDOJO_ENGAGEMENT  Engagement ID (예: 1)
 """
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/admin/security", tags=["Admin - Security"])
 
-DD_URL = os.getenv("DEFECTDOJO_URL", "http://163.239.77.65:8888").rstrip("/")
+DD_URL = os.getenv("DEFECTDOJO_URL", "").rstrip("/")
 DD_TOKEN = os.getenv("DEFECTDOJO_TOKEN", "")
 DD_ENGAGEMENT = int(os.getenv("DEFECTDOJO_ENGAGEMENT", "1"))
 
@@ -31,6 +31,8 @@ SEVERITY_ORDER = ["Critical", "High", "Medium", "Low", "Info"]
 
 def _dd_get(path: str, params: Optional[dict] = None) -> dict:
     """DefectDojo API GET. 토큰 미설정·통신 실패 시 명시적 에러."""
+    if not DD_URL:
+        raise HTTPException(503, "DefectDojo 서버 주소(DEFECTDOJO_URL)가 설정되지 않았습니다.")
     if not DD_TOKEN:
         raise HTTPException(503, "DefectDojo 토큰이 설정되지 않았습니다.")
     try:

@@ -10,8 +10,7 @@
 - **백엔드 스택**: FastAPI + SQLAlchemy + PostgreSQL + Redis
 - **프론트엔드 스택**: Next.js + React + TypeScript
 - **AI**:
-  - Ollama (`exaone3.5:7.8b`) — 교수 연구 요약
-  - Groq (`llama-3.3-70b`) — 강의계획서 PDF 분석
+  - Ollama (`exaone3.5:7.8b`) — 교수 연구 요약 · 강의계획서 PDF 요약 (Groq 는 2026-04 제거)
   - Gemini (`gemini-2.5-flash`) — 관리자 챗 / 보안 분석
 - **OCR**: Mistral Pixtral (`pixtral-12b-2409`) — 시간표 이미지 OCR (외부 API)
 - **모니터링 스택**: Prometheus + Grafana + Loki + Promtail
@@ -200,7 +199,7 @@ cp .env.example .env
 ```bash
 make dev      # 로컬 개발 (--reload + HMR)
 make down     # 컨테이너 종료
-make prod     # VDI 배포 (pre-check → build → post-check)
+make prod     # 배포 (pre-check → build → post-check)
 make logs     # 전체 로그 스트리밍
 make ps       # 컨테이너 상태 확인
 make up-obs   # 관측 스택 추가 기동 (Loki + Promtail + Prometheus + Grafana)
@@ -239,8 +238,7 @@ make down-obs # 관측 스택 종료
 ### AI / OCR / 크롤링
 
 - **OCR**: `ocr-service/`는 Mistral Pixtral API(`pixtral-12b-2409`)를 호출하는 얇은 래퍼 — `MISTRAL_API_KEY` 환경변수 필요.
-- **Ollama** AI 요약(교수 연구 분야)은 `host.docker.internal:11434`로 호스트 Ollama에 접근 — 로컬에서 별도로 `ollama serve` 실행 필요. 현재 모델: `exaone3.5:7.8b`.
-- **Groq** API(`llama-3.3-70b`)는 강의계획서 PDF 분석에 사용 — `GROQ_API_KEY` 필요.
+- **Ollama** AI 요약(교수 연구 분야·강의계획서)은 `host.docker.internal:11434`로 호스트 Ollama에 접근 — 로컬에서 별도로 `ollama serve` 실행 필요. 현재 모델: `exaone3.5:7.8b`.
 - **Gemini** API(`gemini-2.5-flash`)는 관리자 챗·보안 분석에 사용 — `GEMINI_API_KEY` 필요.
 
 ### SonarCloud (코드 품질)

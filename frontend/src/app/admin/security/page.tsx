@@ -152,7 +152,7 @@ export default function AdminSecurityPage() {
                     <p className="font-semibold mb-1">데이터를 불러올 수 없습니다.</p>
                     <p className="text-xs">{error}</p>
                     <p className="text-xs mt-2 text-red-600/70">
-                        DefectDojo 서버(163.239.77.65:8888)가 켜져있는지, 토큰이 .env에 있는지 확인하세요.
+                        DefectDojo 서버가 켜져있는지, DEFECTDOJO_URL·토큰이 .env에 있는지 확인하세요.
                     </p>
                 </div>
             )}

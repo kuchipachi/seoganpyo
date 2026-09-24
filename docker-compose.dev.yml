@@ -5,7 +5,7 @@
 #   - backend: 코드 볼륨 마운트 + --reload (핫리로드)
 #   - frontend: pnpm dev (HMR), NEXT_PUBLIC_API_URL=localhost
 #
-# DB: 팀 공용 서버(163.239.77.77) — 로컬 postgres 없음
+# DB: AWS RDS — 로컬 postgres 없음. SSH 터널(localhost:5432)을 먼저 열고 .env 의 DB_HOST=host.docker.internal
 # Ollama: 호스트에서 별도 실행 (ollama serve), host.docker.internal:11434 자동 연결
 
 services:

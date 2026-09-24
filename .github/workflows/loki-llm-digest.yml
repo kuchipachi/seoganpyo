@@ -4,7 +4,7 @@ name: Loki LLM Digest
 #
 # 사전 준비:
 # 1. GitHub Repository Secrets 등록:
-#    - LOKI_URL       (예: http://163.239.77.66)
+#    - LOKI_URL       (예: https://logs-prod-<region>.grafana.net)
 #    - LOKI_USER      (예: loki-bot)
 #    - LOKI_PASS      (htpasswd 비밀번호)
 #    - GEMINI_API_KEY (.env 파일의 GEMINI_API_KEY 값)

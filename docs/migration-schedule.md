@@ -74,9 +74,10 @@
 
 ### 🟩 민지 — 코드 정리 + Ollama (1.0일)
 
-- [ ] `chore/remove-school-server-refs` — `163.239.x` 제거, 레거시 삭제, `observability.server.yml` 삭제, CLAUDE.md "Groq" → Ollama 정정 (§6)
-- [ ] `refactor/ollama-url-env` — `OLLAMA_URL`/`OLLAMA_TIMEOUT` 환경변수화(2개 파일), 실패 시 503 "요약 준비 중입니다" (§4.3 B)
-- [ ] 👉 `.env` 필요 키 목록 정리 (§2.4) — 하연 2차 SSM 등록용
+- [x] `chore/remove-school-server-refs` — `163.239.x` 제거, 레거시 삭제, `observability.server.yml` 삭제, CLAUDE.md "Groq" → Ollama 정정 (§6) — #5
+- [x] `refactor/ollama-url-env` — `OLLAMA_URL`/`OLLAMA_MODEL`/`OLLAMA_TIMEOUT` 환경변수화, 연결 실패 시 503 "요약 준비 중입니다" (§4.3 B) — #7
+- [x] (추가) `fix/syllabus-summarize-auth` — 인증 없던 `POST /syllabus/summarize` 로그인 필수 — #8
+- [x] 👉 `.env` 필요 키 목록 정리 (§2.4) — [env-reference.md](./env-reference.md), #9
 
 ---
 
@@ -95,9 +96,9 @@
 
 ### 🟩 민지 — Grafana 부재 대응 + Docker 최적화 시작 (1.0일)
 
-- [ ] `fix/monitoring-page-no-grafana` — iframe 조건부 숨김 + `query_prometheus` 조건부 등록 (§8.1)
-- [ ] **before 측정** — `docker images` 3개 크기 + 빌드 시간 기록
-- [ ] `chore/slim-docker-images` — docker-cli 스테이지 제거, 멀티스테이지·레이어 캐싱 점검
+- [x] `fix/monitoring-page-no-grafana` — iframe 조건부 숨김 + `query_prometheus`·`get_container_status` 조건부 등록, docker ps 오답 버그 수정 (§8.1) — #10
+- [x] **before 측정** — `docker images` 3개 크기 + 빌드 시간 기록
+- [x] `chore/slim-docker-images` — docker-cli 스테이지 제거, `.dockerignore` 정식 커밋(없으면 frontend 빌드 실패) — #11
 
 ---
 
@@ -113,11 +114,14 @@
 
 ### 🟩 민지 — 이미지 마무리 + 데이터 적재 시작 (1.0일)
 
-- [ ] **after 측정** → `docs/performance.md` (📊 수치 1호: "3개 합계 X MB → Y MB")
-- [ ] 메모리 예약 하향 (backend 256M / frontend 256M / ocr 192M) + `NODE_OPTIONS=--max-old-space-size=256`
-- [ ] **`docker buildx build --platform linux/amd64 ... --push`** 로 ECR에 3개 push ← Apple Silicon 주의
-- [ ] **SSH 터널로 RDS 접속** — `ssh -L 5432:<rds>:5432 ec2-user@<ec2>`
-- [ ] 스키마 생성 확인, `scripts/migrations/` 6개 검토 (§3.1)
+- [x] **after 측정** → [performance.md](./performance.md) 📊 수치 1호: api 121.5 → 102.3 MB (−15.8%), 빌드 52 → 36s
+- [ ] 메모리 예약 하향 (backend 256M / frontend 256M / ocr 192M) + `NODE_OPTIONS=--max-old-space-size=256` ← **D5 첫 배포 전 필수** (미완)
+- [x] **`docker buildx build --platform linux/amd64 ... --push`** 로 ECR에 3개 push — 태그 `baeac8c`(dev) + `latest`
+  - ECR 크기: api 91.9 MB / ocr 67.4 MB / frontend 64.5 MB · frontend 빌드 인자 `NEXT_PUBLIC_API_URL=https://54.180.181.46.nip.io`, Grafana 비움
+  - ⚠️ scanOnPush: CRITICAL api·ocr 4건(Debian perl·openssl), frontend 3건(Alpine openssl) — 전부 **베이스 이미지 OS 패키지**, 별도 작업으로 갱신
+- [x] **SSH 터널로 RDS 접속** — `ssh -L 5432:<rds>:5432 ec2-user@<ec2>` ⚠️ 로컬 PostgreSQL 이 5432 를 쓰면 터널 대신 로컬 DB 에 붙음 → 로컬 PG 중지
+- [x] 스키마 생성 (테이블 20개)
+- [ ] `scripts/migrations/` 6개 검토 (§3.1)
 
 > 🔴 **강의 엑셀이 있는지 여기서 판명납니다.** 없으면 더미 시드 스크립트로 전환 (+2~3일).
 
@@ -134,11 +138,11 @@
 
 ### 🟩 민지 — 데이터 적재 마무리 (1.0일)
 
-- [ ] 교수 크롤링 (`crawl_and_upsert`)
-- [ ] 강의 데이터 적재 (`import_courses.py` 또는 더미 시드)
-- [ ] `e2e_seed_user.py` 테스트 계정
-- [ ] **RDS 연결 풀** — `pool_pre_ping`, `max_connections`(~80) 확인 후 `pool_size` 설정
-- [ ] (시간 되면) 강의계획서 배치 사전 요약 (§4.3 A)
+- [x] 교수 크롤링 (`crawl_and_upsert`) — 전임 25명 상세·AI 연구요약 ⚠️ DB 에 있는 교수만 갱신하므로 시드가 먼저
+- [x] 강의 데이터 적재 — 엑셀 없음 → **강의계획서 PDF 시드** (tracks 14 / 교수 28 / 강의 37, 2026-1 전공 27과목) — #12
+- [x] ~~`e2e_seed_user.py` 테스트 계정~~ → **운영 DB 에는 넣지 않음** (공개 레포에 비밀번호가 있는 계정 + 가짜 강의). 시연 계정은 정상 가입·승인으로
+- [ ] **RDS 연결 풀** — `pool_pre_ping` ✅, `max_connections` = 79 확인 ✅, `pool_size` 설정 (미완)
+- [x] 강의계획서 사전 요약 (§4.3 A) — 37/37, PDF별 정확한 강의에 저장 (`--summarize`) ⚠️ 트랙 분류가 AI 로 편향(26/35)
 
 ---
 

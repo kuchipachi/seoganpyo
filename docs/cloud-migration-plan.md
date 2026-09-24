@@ -269,7 +269,7 @@ sg-rds : sg-web 에서만 → 5432          (퍼블릭 액세스 OFF)
   aws ssm put-parameter --name /seoganpyo/prod/SECRET_KEY --type SecureString --value '...'
   ```
 
-**이관 대상 키 (🟩 민지가 확정 → 🟦 하연 등록)**: `SECRET_KEY`, `ADMIN_SECRET_KEY`, `DB_*`, `SENDER_EMAIL`/`SENDER_PASSWORD`, `GEMINI_API_KEY`, `MISTRAL_API_KEY`, `DISCORD_SIGNUP_WEBHOOK`, `OLLAMA_URL`, `OLLAMA_TIMEOUT`
+**이관 대상 키 (🟩 민지가 확정 → 🟦 하연 등록)**: ✅ 확정 — **[env-reference.md](./env-reference.md)** (필수 11개 · URL 3개 · 선택, SecureString/String 구분, EC2 `.env` 최소 구성 포함)
 
 ### 2.5 RDS 운영
 

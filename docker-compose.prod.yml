@@ -1,0 +1,103 @@
+# EC2 운영 override — ECR 이미지로 실행 + Caddy HTTPS
+#
+# 사용법 (EC2):
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# base(docker-compose.yml) 대비 달라지는 것:
+#   - build: → image: (ECR)  ── EC2 1GiB 에서 빌드하면 OOM (특히 pnpm build)
+#   - 메모리 예약 하향        ── base 합계 1GB > EC2 가용 913Mi
+#   - Caddy 추가             ── ALB($16/월) 대신 리버스 프록시 + 자동 HTTPS
+#   - backend/frontend 포트 비공개 ── Caddy 만 80/443 노출 (SG-web 과 일치)
+#
+# 필요한 .env 값 (docs/env-reference.md):
+#   ECR_REGISTRY=<계정ID>.dkr.ecr.ap-northeast-2.amazonaws.com
+#   IMAGE_TAG=latest
+#   DOMAIN=54.180.181.46.nip.io
+
+services:
+    redis:
+        # 외부 노출 불필요 — 같은 compose 네트워크에서만 접근
+        ports: !reset []
+        deploy:
+            resources:
+                limits:
+                    memory: 128M
+                reservations:
+                    memory: 64M
+
+    ocr-service:
+        build: !reset null
+        image: ${ECR_REGISTRY}/seoganpyo-ocr:${IMAGE_TAG:-latest}
+        ports: !reset []
+        deploy:
+            resources:
+                limits:
+                    memory: 384M
+                reservations:
+                    memory: 192M
+
+    backend:
+        build: !reset null
+        image: ${ECR_REGISTRY}/seoganpyo-api:${IMAGE_TAG:-latest}
+        # Caddy 가 앞단이므로 호스트 포트 비공개
+        ports: !reset []
+        volumes:
+            - app_data:/app/data
+            - app_static:/app/static
+        deploy:
+            resources:
+                limits:
+                    memory: 512M
+                reservations:
+                    memory: 256M
+
+    frontend:
+        build: !reset null
+        image: ${ECR_REGISTRY}/seoganpyo-frontend:${IMAGE_TAG:-latest}
+        ports: !reset []
+        environment:
+            # Next.js 서버 힙 제한 — 1GiB 인스턴스 보호
+            - NODE_OPTIONS=--max-old-space-size=256
+        deploy:
+            resources:
+                limits:
+                    memory: 384M
+                reservations:
+                    memory: 256M
+
+    # 리버스 프록시 + Let's Encrypt 자동 HTTPS
+    caddy:
+        image: caddy:2-alpine
+        container_name: seoganpyo-caddy
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+            - caddy_data:/data
+            - caddy_config:/config
+        environment:
+            - DOMAIN=${DOMAIN}
+        logging:
+            driver: json-file
+            options:
+                max-size: "10m"
+                max-file: "3"
+        deploy:
+            resources:
+                limits:
+                    memory: 128M
+                reservations:
+                    memory: 64M
+        depends_on:
+            frontend:
+                condition: service_healthy
+
+volumes:
+    # 업로드 이미지·강의계획서 PDF — 1차는 EC2 로컬 볼륨(재생성 시 휘발, 2차 S3 이전)
+    app_data:
+    app_static:
+    caddy_data:
+    caddy_config:

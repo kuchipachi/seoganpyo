@@ -50,6 +50,19 @@
 | `SYLLABI_DIR` | 📄 | `data/syllabi` | 기본값 | — |
 | `DEFECTDOJO_URL` / `DEFECTDOJO_TOKEN` / `DEFECTDOJO_ENGAGEMENT` | 🔒(토큰) | 비움 | **비움** (DefectDojo 범위 제외) | 관리자 보안 페이지가 503 |
 
+## 3.5 운영 전용 — `docker-compose.prod.yml` 이 읽음
+
+EC2 에서 ECR 이미지로 띄울 때만 필요합니다. 로컬 개발에는 불필요.
+
+| 키 | SSM | 예시 | 비고 |
+| --- | --- | --- | --- |
+| `ECR_REGISTRY` | 📄 | `<계정ID>.dkr.ecr.ap-northeast-2.amazonaws.com` | 이미지 3개의 공통 접두사 |
+| `IMAGE_TAG` | 📄 | `latest` | 2차에 git SHA 로 전환 → 롤백 지점 |
+| `DOMAIN` | 📄 | `54.180.181.46.nip.io` | Caddy 가 이 이름으로 인증서 발급 |
+
+> `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d` 로 실행합니다.
+> base 의 `build:` 를 `image:` 로 덮어써 EC2 에서 빌드하지 않습니다 (1GiB 에서 OOM).
+
 ## 4. 설정하지 않는 것
 
 | 키 | 이유 |

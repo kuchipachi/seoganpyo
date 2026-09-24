@@ -1,0 +1,42 @@
+# 서간표 리버스 프록시 — ALB($16/월) 대신 EC2 내부에서 처리.
+# Let's Encrypt 인증서를 기동 시 자동 발급·갱신 (nip.io 도메인 지원).
+#
+# 라우팅:
+#   /api/*, /admin/*, /metrics, /static/*, /docs  → backend:8000
+#   그 외                                          → frontend:3000
+
+{$DOMAIN} {
+	encode gzip
+
+	# 백엔드 API — 프론트보다 먼저 매칭돼야 함
+	handle /api/* {
+		reverse_proxy backend:8000
+	}
+	handle /admin/* {
+		reverse_proxy backend:8000
+	}
+	handle /static/* {
+		reverse_proxy backend:8000
+	}
+	handle /docs* {
+		reverse_proxy backend:8000
+	}
+	handle /openapi.json {
+		reverse_proxy backend:8000
+	}
+
+	# 관측 스택 연결 후 사용 — 그 전에는 backend 가 빈 응답
+	handle /metrics {
+		reverse_proxy backend:8000
+	}
+
+	# 나머지는 Next.js
+	handle {
+		reverse_proxy frontend:3000
+	}
+
+	log {
+		output stdout
+		format json
+	}
+}

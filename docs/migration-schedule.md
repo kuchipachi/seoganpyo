@@ -110,7 +110,7 @@
 - [x] EC2 역할 `SeoganpyoEC2Role` — ECR ReadOnly + SSM Core, `docker login` 성공 ✅
 - [x] 민지 `SeoganpyoECRPush` — 리포 3개 한정 push 권한
 - [x] 👉 민지에게 ECR URI 전달
-- [ ] 남는 시간: 아키텍처 결정 기록
+- [x] 남는 시간: 아키텍처 결정 기록
 
 ### 🟩 민지 — 이미지 마무리 + 데이터 적재 시작 (1.0일)
 

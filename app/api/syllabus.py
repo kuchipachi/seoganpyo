@@ -7,6 +7,7 @@ from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.dependencies import get_current_student_id
 from app.models.course import Course, CourseDetail
 from app.schemas.syllabus import SyllabusSummaryResponse
 from app.services import syllabus_service
@@ -39,6 +40,7 @@ def _build_response(detail: CourseDetail, course: Course, cached: bool) -> Sylla
 async def summarize_syllabus(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    student_id: int = Depends(get_current_student_id),  # 로그인 사용자만 — 비인증 LLM 호출 남용 방지
 ):
     if file.content_type != "application/pdf":
         raise HTTPException(status_code=400, detail="PDF 파일만 업로드 가능합니다")

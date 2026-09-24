@@ -1,0 +1,14 @@
+apiVersion: 1
+
+# 부하 테스트 전용 Grafana 데이터소스 — uid 는 관측 스택 datasources.yml 과 동일하게 유지
+datasources:
+    - name: InfluxDB-JMeter
+      uid: influxdb-jmeter
+      type: influxdb
+      access: proxy
+      url: http://influxdb:8086
+      database: jmeter
+      isDefault: true
+      editable: false
+      jsonData:
+          httpMode: GET

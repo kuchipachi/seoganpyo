@@ -670,7 +670,7 @@ git push (dev/main)
 - [ ] **강의 개설과목 엑셀이 하연·민지 로컬에 있는지 확인** ← 최우선 (§3.2) — 🟪
 - [x] AWS 계정 생성 · Budgets 알람 — 🟦
 - [x] 레포 분리 `kuchipachi/seoganpyo` — 🟩
-- [ ] **하연을 `kuchipachi` org Owner로 초대** — 🟩
+- [x] 하연을 `kuchipachi` org Owner로 초대 — 🟩
 - [ ] Deny 정책 Multi-AZ 조건 보강 (§2.1) — 🟦
 - [ ] 도메인 결정 (기본: `nip.io`) — 🟦
 - [ ] 강의계획서 배치 사전 요약 계획 확정 (§4.3 A) — 🟩
@@ -701,7 +701,7 @@ git push (dev/main)
 | `refactor/ollama-url-env` | §4.3 B — 환경변수화 + 503 | 🟩 민지 | 독립 |
 | `fix/monitoring-page-no-grafana` | §8.1 — iframe 조건부 + `query_prometheus` | 🟩 민지 | 독립 |
 | `chore/slim-docker-images` | §2.2, §6 — docker-cli 스테이지 제거·이미지 축소 | 🟩 민지 | `remove-...` 이후 |
-| `chore/loadtest-compose` | §2.8 — JMeter/InfluxDB 분리 | 🟩 민지 | `remove-...` **이전** (파일 삭제 전에 분리) |
+| `chore/loadtest-compose` | §2.8 — JMeter/InfluxDB 분리 | 🟩 민지 | ✅ `remove-...` 이전에 완료 |
 | `refactor/professor-summary-cli` | §4.3 D — 관리자 요약 엔드포인트 503 | 🟩 민지 | `remove-...` 이후 |
 | `feat/aws-deploy` | Compose prod 설정·Caddyfile·메모리 제한 | 🟪 페어 | 위 항목 이후 |
 | `feat/grafana-cloud-alloy` | §8.2 — Alloy + 대시보드 | 🟩 민지 | `feat/aws-deploy` 이후 |
@@ -867,14 +867,11 @@ git fetch origin && git remote -v
 | `loki-llm-digest.yml` | 학교 Loki IP | Grafana Cloud 전환 후 또는 폐기 |
 | `todo-to-issue.yml` | 권한 | 필요 시 |
 
-### 남은 세팅 — 🟩 민지
+### 레포 세팅 — 🟩 민지
 
-- [ ] **하연(`noeyish`) org Owner 초대** + 새 remote URL 공유
-- [ ] **Actions 다시 켜기** — 현재 레포 설정에서 꺼져 있음 (트리거가 비활성화됐으니 켜도 자동 실행 없음)
-  ```bash
-  gh api -X PUT repos/kuchipachi/seoganpyo/actions/permissions -F enabled=true
-  ```
-- [ ] **브랜치 보호** — `main`/`dev` 직접 push 금지, PR 필수(승인 0명 — 2인 팀)
+- [x] 하연(`noeyish`) org Owner 초대 + 새 remote URL 공유
+- [x] Actions 다시 켜기 (트리거가 비활성화돼 있어 자동 실행 없음)
+- [x] 브랜치 보호 — `main`/`dev` 직접 push 금지, PR 필수(승인 0명 — 2인 팀)
 - [ ] (선택) 병합 끝난 기능 브랜치 정리 — 커밋 이력은 지우지 않음
 
 ### 13.2 이후 영향

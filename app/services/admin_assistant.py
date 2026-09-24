@@ -28,7 +28,10 @@ from app.models.portfolio import PortfolioEvaluation
 from app.models.user import User
 
 # ─── 인프라 엔드포인트 ─────────────────────────────────────────────
-PROMETHEUS_URL = os.getenv("PROMETHEUS_URL", "http://localhost:9090")
+# PROMETHEUS_URL 을 빈 값으로 두면(운영 EC2 — 관측 스택 없음) query_prometheus 도구를 챗에 노출하지 않는다.
+# 환경변수 자체가 없으면 호스트 실행(MCP 서버 등)을 위해 localhost 기본값 유지.
+PROMETHEUS_URL = os.getenv("PROMETHEUS_URL", "http://localhost:9090").strip()
+DOCKER_SOCKET = "/var/run/docker.sock"
 
 
 # ─── 1. 강의 검색 (시나리오 2: 사용 통계) ──────────────────────────
@@ -332,6 +335,9 @@ def query_prometheus(
     """
     # POSIX epoch — datetime.utcnow().timestamp()는 컨테이너 TZ=Asia/Seoul과
     # 충돌해 9시간 미래로 해석되는 함정이 있어 time.time() 사용.
+    if not PROMETHEUS_URL:
+        return {"error": "PROMETHEUS_URL 이 설정되지 않아 메트릭을 조회할 수 없습니다.", "promql": promql}
+
     end = int(time.time())
     start = end - minutes * 60
 
@@ -397,6 +403,9 @@ def get_container_status() -> list[dict]:
         )
     except (subprocess.TimeoutExpired, FileNotFoundError) as e:
         return [{"error": f"docker ps 실행 실패: {e}"}]
+    # docker.sock 미마운트 등으로 실패하면 stdout 이 비어 "컨테이너 없음"으로 오인되므로 에러로 반환
+    if ps_result.returncode != 0:
+        return [{"error": f"docker ps 실행 실패: {ps_result.stderr.strip() or f'exit {ps_result.returncode}'}"}]
 
     rows: list[dict] = []
     name_state: dict[str, dict] = {}
@@ -442,7 +451,7 @@ def get_container_status() -> list[dict]:
 
 
 # ─── 도구 메타데이터 (Gemini tool use용 — 어댑터에서 사용) ─────────
-TOOL_REGISTRY = [
+ALL_TOOLS = [
     {
         "name": "search_courses",
         "description": "강의명으로 강의를 검색합니다 (부분 일치). 학기 필터 가능.",
@@ -519,6 +528,20 @@ TOOL_REGISTRY = [
     },
 ]
 
+
+
+
+def _tool_available(name: str) -> bool:
+    """인프라 도구는 실제로 쓸 수 있는 환경에서만 노출 — 못 쓰는 도구를 LLM 이 호출해 헛답하는 것 방지."""
+    if name == "query_prometheus":
+        return bool(PROMETHEUS_URL)
+    if name == "get_container_status":
+        return os.path.exists(DOCKER_SOCKET)
+    return True
+
+
+# 현재 환경에서 챗에 노출할 도구
+TOOL_REGISTRY = [t for t in ALL_TOOLS if _tool_available(t["name"])]
 
 # 함수명 → 함수 매핑 (어댑터에서 빠른 lookup용)
 TOOLS_BY_NAME = {t["name"]: t for t in TOOL_REGISTRY}

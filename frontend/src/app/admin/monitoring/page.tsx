@@ -6,7 +6,8 @@ import { Loader2, CheckCircle, XCircle, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
-const GRAFANA_URL = process.env.NEXT_PUBLIC_GRAFANA_URL || "http://localhost:3001"
+// 빌드 시 NEXT_PUBLIC_GRAFANA_URL 이 비어 있으면(관측 스택 미연결) Grafana 섹션을 숨긴다.
+const GRAFANA_URL = process.env.NEXT_PUBLIC_GRAFANA_URL || ""
 
 const DASHBOARDS = [
   { id: "seoganpyo-overview", label: "로그" },
@@ -128,7 +129,12 @@ export default function AdminMonitoringPage() {
 
       </div>
 
-      {/* Grafana 대시보드 탭 */}
+      {/* Grafana 대시보드 탭 — 관측 스택 미연결 시 안내만 표시 */}
+      {!GRAFANA_URL ? (
+        <p className="mt-8 text-xs text-muted-foreground">
+          상세 모니터링(Grafana)이 연결되지 않았습니다. 빌드 시 NEXT_PUBLIC_GRAFANA_URL 을 설정하면 대시보드가 표시됩니다.
+        </p>
+      ) : (
       <div className="mt-8">
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs font-medium text-muted-foreground">상세 모니터링 (Grafana)</p>
@@ -169,6 +175,7 @@ export default function AdminMonitoringPage() {
           </a>
         </p>
       </div>
+      )}
     </div>
   )
 }

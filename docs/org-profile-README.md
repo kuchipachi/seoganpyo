@@ -33,7 +33,7 @@
 |------|-----------|
 | 🖼️ **시간표 OCR** | 이미지 업로드 → Mistral Pixtral 비전 LLM → 과목·연도·학기 자동 추출 + DB fuzzy 매칭 |
 | 🎓 **졸업 요건 자동 계산** | 수강이력 + 학과 로드맵 비교 → 이수 학점·필수 과목 충족 여부 시각화 |
-| 📄 **강의계획서 AI 요약** | PDF → Groq llama-3.3-70b → 강의 목표·평가 비중·주차별 학습 내용 구조화 |
+| 📄 **강의계획서 AI 요약** | PDF → 로컬 Ollama exaone3.5 → 강의 목표·평가 비중·주차별 학습 내용 구조화 |
 | 🔬 **교수 연구분야 요약** | 학교 페이지 크롤링 → 로컬 Ollama exaone3.5 → 한국어 학술 요약 |
 | 🛒 **강의 찜·장바구니** | JWT 기반 본인 데이터 격리 |
 | 💬 **커뮤니티 / 관리자 챗봇** | 익명 게시판 + Gemini MCP tool use 기반 자연어 운영 |
@@ -44,7 +44,7 @@
 
 **Backend** &nbsp;`FastAPI` · `SQLAlchemy 2.0` · `Pydantic 2` · `PostgreSQL 15` · `Redis 7`
 **Frontend** &nbsp;`Next.js 16 (App Router)` · `React 19` · `TypeScript` · `Tailwind CSS 4` · `shadcn/ui` · `TanStack Query`
-**AI / LLM** &nbsp;`Mistral Pixtral (OCR)` · `Groq llama-3.3-70b` · `Ollama exaone3.5` · `Gemini 2.5-flash`
+**AI / LLM** &nbsp;`Mistral Pixtral (OCR)` · `Ollama exaone3.5` · `Gemini 2.5-flash`
 **Infra / DevOps** &nbsp;`Docker Compose` · `Jenkins` · `SonarQube` · `Trivy` · `Snyk` · `DefectDojo` · `ZAP`
 **Observability** &nbsp;`Prometheus` · `Grafana` · `Loki` · `Promtail`
 **Agent** &nbsp;`Model Context Protocol (MCP)` 5종 — postgres · seoganpyo · grafana · docker · github

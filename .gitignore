@@ -144,3 +144,6 @@ package-lock.json
 
 # JMeter 결과 (.jtl)
 infra/loadtest/jmeter/results/
+
+# SSH 키 (EC2 접속용) — 절대 커밋 금지
+*.pem

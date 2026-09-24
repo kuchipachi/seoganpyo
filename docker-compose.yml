@@ -78,7 +78,7 @@ services:
             - PROMETHEUS_URL=${PROMETHEUS_URL:-http://prometheus:9090}
             # DefectDojo 보안 대시보드 — 관리자 페이지의 보안 모니터링이 호출.
             # 토큰은 .env 또는 Jenkins Credentials에서 주입 (절대 하드코딩 금지).
-            - DEFECTDOJO_URL=${DEFECTDOJO_URL:-http://163.239.77.65:8888}
+            - DEFECTDOJO_URL=${DEFECTDOJO_URL:-}
             - DEFECTDOJO_TOKEN=${DEFECTDOJO_TOKEN:-}
             - DEFECTDOJO_ENGAGEMENT=${DEFECTDOJO_ENGAGEMENT:-1}
         command:

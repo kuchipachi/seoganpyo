@@ -1,0 +1,11 @@
+# backend 빌드 컨텍스트 (Dockerfile / Dockerfile.dev — context: .)
+# 허용 목록 방식: 이미지에 필요한 것만 보낸다. .env·키·frontend/node_modules 등이 컨텍스트에 섞이지 않게.
+*
+!requirements.txt
+!app/
+!static/
+!data/
+
+**/__pycache__
+**/*.pyc
+**/.DS_Store

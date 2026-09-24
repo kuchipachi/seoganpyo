@@ -1,0 +1,16 @@
+# frontend 빌드 컨텍스트 (Dockerfile / Dockerfile.dev — context: ./frontend)
+# ⚠️ node_modules 필수 제외 — 호스트(macOS) node_modules 가 COPY . . 로 들어가면
+#    deps 단계의 Linux node_modules 를 덮어써 빌드가 깨짐 ("cannot copy to non-directory")
+node_modules
+.next
+.git
+.DS_Store
+*.md
+
+# 비밀값·테스트 산출물
+.env*
+*.pem
+e2e
+playwright-report
+test-results
+tsconfig.tsbuildinfo

@@ -273,6 +273,51 @@ python3 scripts/analyze_logs.py \
   --containers seoganpyo-api seoganpyo-frontend seoganpyo-ocr
 ```
 
+### 6.1 EC2 운영 환경 (AWS)
+
+EC2 는 override 파일을 함께 지정해야 합니다. 별칭을 등록해 두면 편합니다.
+
+```bash
+# ~/.bashrc 에 등록 (1회)
+alias dcp='docker compose -f ~/seoganpyo/docker-compose.yml -f ~/seoganpyo/docker-compose.prod.yml'
+
+dcp ps                  # 컨테이너 상태
+dcp logs -f             # 전체 로그
+dcp logs caddy --tail 50    # HTTPS·인증서 문제
+dcp restart backend     # 개별 재시작
+```
+
+### 6.2 메모리 점검 — `scripts/ec2-monitor.sh`
+
+t3.micro(913MiB + swap 1.5GiB)에서 OOM 을 추적하는 스크립트입니다.
+
+```bash
+./scripts/ec2-monitor.sh        # 한 번 출력
+./scripts/ec2-monitor.sh -w     # 5초 간격 반복
+./scripts/ec2-monitor.sh -l     # 로그 파일에 append
+```
+
+출력 항목:
+
+| 항목 | 보는 이유 |
+| --- | --- |
+| `free -h` | 전체 여유 메모리·swap 사용량 |
+| swap 상위 5 프로세스 | **누가** swap 을 쓰는지 (`free` 로는 알 수 없음) |
+| `docker stats` | 컨테이너별 사용량·제한 대비 비율 |
+| **재시작 횟수** | 늘어나면 OOM Killer 에 당했을 가능성 |
+| `dmesg` OOM 로그 | 확정 증거 — 나오면 포스트모템 대상 |
+
+> 💡 부하 테스트(§2.8)를 민지 PC 에서 돌리는 동안 EC2 에서 `-w` 로 띄워 두면
+> OOM 임계점을 실시간으로 관찰할 수 있습니다.
+
+**수동 확인:**
+```bash
+free -h
+docker stats --no-stream
+sudo dmesg | grep -i 'killed process\|out of memory' | tail
+docker inspect -f '{{.RestartCount}}' seoganpyo-api
+```
+
 ---
 
 ## 7. 배포 체크리스트

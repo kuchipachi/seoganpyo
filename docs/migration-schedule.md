@@ -131,10 +131,16 @@
 
 ### 🟪 첫 배포 (페어)
 
-- [ ] 🟦 EC2에 `.env` 배치 (`chmod 600`) — 1차는 평문, 2차 SSM
-- [ ] 🟦 ECR 로그인 → `docker compose pull && up -d`
-- [ ] 🟪 HTTPS 접속·헬스체크 확인
-- [ ] OOM 등이 터지면 → 겪은 사람이 **포스트모템** (§8.4)
+- [x] 🟦 EC2에 `.env` 배치 (`chmod 600`) — 1차는 평문, 2차 SSM
+- [x] 🟦 **운영 compose·Caddy 추가** — base 가 `build:` 전제라 `pull` 실패 → `docker-compose.prod.yml` + `Caddyfile` 신규 (#14)
+- [x] 🟦 ECR 로그인 → `pull && up -d` — 컨테이너 5개 전부 healthy
+- [x] 🟪 **HTTPS 접속 확인** — https://54.180.181.46.nip.io ✅ Let's Encrypt 자동 발급, TLS 1.3
+- [x] OOM 없음 — 예약 832MiB / 가용 913MiB 로 하향한 덕분 (포스트모템 없음)
+
+> 📌 **1차 배포 완료 (2026-09-24)** — 기동 시간 redis 12s → ocr 12s → api 43s → frontend 74s → caddy
+>
+> ⚠️ 배포 직후부터 **자동 취약점 스캐너 트래픽** 유입 (`/bundle.js`, `/app.bundle.js` 등 404).
+> 공개 IP 서비스의 정상적인 현상이나, §8.3 알람 룰에 **4xx 급증**을 넣어 탐지할 것.
 
 ### 🟩 민지 — 데이터 적재 마무리 (1.0일)
 
@@ -159,7 +165,7 @@
 
 ### 🟦 하연 — D7 준비
 
-- [ ] 모니터링 명령 준비 (`docker stats`, `free -h`, `dmesg | grep -i oom`)
+- [x] 모니터링 명령 준비 — `scripts/ec2-monitor.sh` (런북 §6.2)
 - [ ] `docs/postmortems/` 디렉터리 생성
 - [ ] Discord 알림용 **별도 채널** + 웹훅 생성
 - [ ] 아키텍처 결정 기록 계속

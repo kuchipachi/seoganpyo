@@ -622,7 +622,7 @@ git push (dev/main)
 | --- | --- | --- |
 | Grafana Alerting 룰 | 🟩 민지 | 5xx 급증, p95 응답시간, 컨테이너 재시작 |
 | CloudWatch 알람 | 🟦 하연 | EC2 상태 검사 실패, CPU, RDS 연결 수·여유 스토리지 |
-| **Discord 연동** | 🟦 하연 | 기존 `DISCORD_SIGNUP_WEBHOOK`과 **별도 채널** |
+| **Discord 연동** | 🟦 하연 | 운영 알람 전용 채널 (`DISCORD_ALERT_WEBHOOK`) |
 
 > 💡 Prometheus 라벨은 `status="2xx"/"4xx"/"5xx"`(숫자 아님) — 쿼리 시 주의.
 > 💡 EC2 **메모리** 지표는 CloudWatch 기본 지표에 없습니다(Agent 필요). 메모리는 Alloy → Grafana 쪽에서 봅니다.
@@ -682,8 +682,8 @@ git push (dev/main)
 - [ ] `admin_assistant`의 docker 기능이 prod에 필요한지 확인 (§6 Dockerfile) — 🟩
 - [ ] 1차/2차 분할과 §12 역할 분담 합의 — 🟪
 - [ ] Grafana Cloud 계정 — 🟩
-- [ ] Discord 알림용 **별도 채널** + 웹훅 — 🟦
-- [ ] `docs/postmortems/` 디렉터리 생성 — 🟦
+- [ ] Discord 운영 알람 채널 + 웹훅 — 🟦 **D9 관측 구축 시** (1차엔 쓸 곳 없음)
+- [x] `docs/postmortems/` 디렉터리 생성 — 🟦
 - [ ] 태깅 정책 합의 `Project/Env/Owner` — 🟪
 - [ ] JMeter 실행 환경 확인 (민지 PC Docker) — 🟩
 - [ ] `docs/performance.md` 템플릿 생성 — 🟩

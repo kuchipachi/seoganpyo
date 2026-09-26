@@ -30,7 +30,7 @@
 | --- | --- | --- | --- | --- |
 | `NEXT_PUBLIC_API_URL` | 📄 | `http://localhost:8080` | `https://54.180.181.46.nip.io/backend` | ⚠️ **프론트 빌드 인자** — 런타임 `.env`가 아니라 `docker buildx build --build-arg`로 넘김. 바뀌면 재빌드 |
 | `BACKEND_URL` | 📄 | `http://localhost:8080` | `https://54.180.181.46.nip.io/backend` | 회원가입 승인 링크 |
-| `ADMIN_USERS_URL` | 📄 | `http://localhost:3000/admin/users` | `https://54.180.181.46.nip.io/admin/users` | Discord 알림의 승인 링크 |
+| `ADMIN_USERS_URL` | 📄 | `http://localhost:3000/admin/users` | `https://54.180.181.46.nip.io/admin/users` | 회원가입 승인 페이지 링크 |
 
 ## 3. 선택 — 없어도 앱은 뜸 (해당 기능만 비활성)
 
@@ -39,7 +39,7 @@
 | `OLLAMA_URL` | 📄 | `http://host.docker.internal:11434/api/generate` | 기본값 그대로 | — |
 | `OLLAMA_MODEL` | 📄 | `exaone3.5:7.8b` | 기본값 그대로 | — |
 | `OLLAMA_TIMEOUT` | 📄 | `300` | **`20`** | EC2엔 Ollama가 없음 → 짧게 잡아 빠르게 503 |
-| `DISCORD_SIGNUP_WEBHOOK` | 🔒 | (없음) | 가입 알림 채널 웹훅 | 가입 알림만 안 감 |
+| `DISCORD_ALERT_WEBHOOK` | 🔒 | (없음) | 운영 알람 채널 웹훅 (D9 관측 구축 시) | 알람만 안 감 |
 | `NEXT_PUBLIC_GRAFANA_URL` | 📄 | `http://localhost:3001` | Grafana Cloud Public dashboard URL | 관리자 모니터링 iframe — **프론트 빌드 인자** |
 | `PROMETHEUS_URL` | 📄 | `http://prometheus:9090` | 1차엔 비움 → 관측 구성 후 Cloud URL | 관리자 챗 메트릭 도구 실패 (§8.1) |
 | `LOG_LEVEL` | 📄 | `INFO` | `INFO` | — |
@@ -91,7 +91,7 @@ GEMINI_API_KEY=...
 BACKEND_URL=https://54.180.181.46.nip.io/backend
 ADMIN_USERS_URL=https://54.180.181.46.nip.io/admin/users
 OLLAMA_TIMEOUT=20
-DISCORD_SIGNUP_WEBHOOK=...   # 선택
+# DISCORD_ALERT_WEBHOOK=...   # D9 관측 구축 시 추가
 ```
 
 `NEXT_PUBLIC_*` 두 개는 여기가 아니라 **민지가 프론트 이미지를 빌드할 때** `--build-arg`로 넣습니다.

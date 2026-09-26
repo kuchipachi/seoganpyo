@@ -166,8 +166,9 @@
 ### 🟦 하연 — D7 준비
 
 - [x] 모니터링 명령 준비 — `scripts/ec2-monitor.sh` (런북 §6.2)
-- [ ] `docs/postmortems/` 디렉터리 생성
-- [ ] Discord 알림용 **별도 채널** + 웹훅 생성
+- [x] `docs/postmortems/` 디렉터리 생성 — 1호: [Caddy 백엔드 라우팅 누락](./postmortems/2026-09-26-caddy-backend-routing.md)
+- [~] Discord 알림 → **D9 로 이동**. 1차엔 알람 발신원이 없어 쓸 곳이 없음.
+      가입 알림(`DISCORD_SIGNUP_WEBHOOK`)은 **제거** — 관리자 본인이 `/admin/users` 를 직접 확인 (포폴 용도)
 - [ ] 아키텍처 결정 기록 계속
 
 ---
@@ -207,7 +208,7 @@
 ### 🟦 하연 — CloudWatch + Discord (0.5일)
 
 - [ ] **D9** CloudWatch 알람 — EC2 상태 검사, CPU, RDS 연결 수·여유 스토리지
-- [ ] **D9** SNS → **Discord 별도 채널** 연동, 테스트 알람 1회 발화
+- [ ] **D9** Discord 운영 알람 채널 + 웹훅 생성 → SNS 연동, 테스트 알람 1회 발화
 - [ ] **D10** 아키텍처 결정 기록 완성, 1차 완료 기준 점검
 
 ---

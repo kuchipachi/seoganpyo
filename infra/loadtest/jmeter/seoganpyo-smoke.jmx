@@ -107,7 +107,7 @@
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.path">/api/v1/courses</stringProp>
+          <stringProp name="HTTPSampler.path">${__P(API_PREFIX,)}/api/v1/courses</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>

@@ -43,6 +43,8 @@
 | `NEXT_PUBLIC_GRAFANA_URL` | 📄 | `http://localhost:3001` | Grafana Cloud Public dashboard URL | 관리자 모니터링 iframe — **프론트 빌드 인자** |
 | `PROMETHEUS_URL` | 📄 | `http://prometheus:9090` | 1차엔 비움 → 관측 구성 후 Cloud URL | 관리자 챗 메트릭 도구 실패 (§8.1) |
 | `LOG_LEVEL` | 📄 | `INFO` | `INFO` | — |
+| `DB_POOL_SIZE` / `DB_MAX_OVERFLOW` | 📄 | `5` / `10` | 부하 측정 후 결정 (RDS `max_connections` = 79) | SQLAlchemy 기본값과 동일 |
+| `DB_POOL_TIMEOUT` / `DB_POOL_RECYCLE` | 📄 | `30` / `1800` (초) | 기본값 | — |
 | `GEMINI_MODEL` | 📄 | `gemini-2.5-flash` | 기본값 | — |
 | `GEMINI_FALLBACK_MODEL` | 📄 | `gemini-2.5-flash-lite` | 기본값 | — |
 | `ADMIN_CHAT_MODEL` / `ADMIN_CHAT_FALLBACK_MODEL` | 📄 | 코드 기본값 | 기본값 | — |

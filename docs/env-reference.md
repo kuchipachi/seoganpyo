@@ -28,8 +28,8 @@
 
 | 키 | SSM | 로컬 개발 | EC2 운영 | 비고 |
 | --- | --- | --- | --- | --- |
-| `NEXT_PUBLIC_API_URL` | 📄 | `http://localhost:8080` | `https://54.180.181.46.nip.io` | ⚠️ **프론트 빌드 인자** — 런타임 `.env`가 아니라 `docker buildx build --build-arg`로 넘김. 바뀌면 재빌드 |
-| `BACKEND_URL` | 📄 | `http://localhost:8080` | `https://54.180.181.46.nip.io` | 회원가입 승인 링크 |
+| `NEXT_PUBLIC_API_URL` | 📄 | `http://localhost:8080` | `https://54.180.181.46.nip.io/backend` | ⚠️ **프론트 빌드 인자** — 런타임 `.env`가 아니라 `docker buildx build --build-arg`로 넘김. 바뀌면 재빌드 |
+| `BACKEND_URL` | 📄 | `http://localhost:8080` | `https://54.180.181.46.nip.io/backend` | 회원가입 승인 링크 |
 | `ADMIN_USERS_URL` | 📄 | `http://localhost:3000/admin/users` | `https://54.180.181.46.nip.io/admin/users` | Discord 알림의 승인 링크 |
 
 ## 3. 선택 — 없어도 앱은 뜸 (해당 기능만 비활성)
@@ -86,7 +86,7 @@ SENDER_EMAIL=...
 SENDER_PASSWORD=...
 MISTRAL_API_KEY=...
 GEMINI_API_KEY=...
-BACKEND_URL=https://54.180.181.46.nip.io
+BACKEND_URL=https://54.180.181.46.nip.io/backend
 ADMIN_USERS_URL=https://54.180.181.46.nip.io/admin/users
 OLLAMA_TIMEOUT=20
 DISCORD_SIGNUP_WEBHOOK=...   # 선택

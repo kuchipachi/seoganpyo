@@ -1,0 +1,32 @@
+rate=60/s dur=240s limit=? image=seoganpyo-api:t1app cmd=uvicorn app.main:app --host 0.0.0.0 --port 8000
++0s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++5s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++21s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++46s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++61s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++87s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++97s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++102s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++107s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++117s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++142s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++147s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++152s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++168s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++183s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++188s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++208s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++213s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++218s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++229s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++239s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++244s idle docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
+--- k6
+    http_req_duration..............: avg=221.66ms min=658µs    med=258.18ms max=531.33ms p(90)=293.42ms p(95)=303.7ms 
+    http_req_failed................: 17.44% 2512 out of 14401
+    http_reqs......................: 14401  59.974336/s
+--- autoheal 재시작 (이 실험 구간)
+restarts_logged=0
+--- api 응답 코드 분포
+12009 " 200
+2537 " 503

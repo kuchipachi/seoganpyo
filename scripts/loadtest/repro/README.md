@@ -28,3 +28,24 @@ docker compose -p repro down
 
 `run-overload.sh` 는 강의 목록 API 에 60초 과부하를 건 뒤, 10초마다 API 응답과 `pg_stat_activity` 를 기록하며
 회복까지 걸린 시간과 분당 `QueuePool` 타임아웃 수를 `result-<라벨>.txt` 에 남깁니다.
+
+## T1 — 동시 처리 한도 비교 (운영과 같은 헬스체크·autoheal 포함)
+
+```bash
+# A. uvicorn --limit-concurrency 15  → 긴 과부하 중 헬스체크 503 → autoheal 재시작 2회
+API_IMAGE=seoganpyo-api:repro LIMIT=15 docker compose -p repro -f compose.yml -f compose.t1.yml up -d
+RATE=60 DUR=240s AFTER=90 ./run-sustained.sh t1-uvicorn-sustained
+
+# B. 앱 미들웨어 MAX_CONCURRENT_REQUESTS=14 (헬스체크 제외) → 재시작 0회, 성공 처리량 약 50 RPS
+API_IMAGE=seoganpyo-api:repro docker compose -p repro -f compose.yml -f compose.t1.yml -f compose.t1app.yml up -d
+RATE=60 DUR=240s AFTER=90 ./run-sustained.sh t1-app-sustained
+```
+
+`run-sustained.sh` 는 과부하 동안·이후 5초마다 Docker 헬스 상태·`/healthz`·API 응답을 기록하고, autoheal 재시작 횟수와 응답 코드 분포를 남깁니다.
+
+## T2 — N+1 제거 전후 지연 비교
+
+```bash
+# 이미지 두 개(수정 전·후)를 같은 도착률로 번갈아 측정
+RATE=20 DUR=60s ./run-latency.sh <라벨>     # 지연 분포 + api CPU 평균
+```

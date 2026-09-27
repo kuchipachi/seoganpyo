@@ -1,0 +1,24 @@
+# T1 검증용 오버레이 — 운영(docker-compose.prod.yml)과 같은 헬스체크·autoheal 설정 + 동시 처리 한도
+#   docker compose -p repro -f compose.yml -f compose.t1.yml up -d
+services:
+  api:
+    image: ${API_IMAGE:-seoganpyo-api:repro}
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000",
+              "--limit-concurrency", "${LIMIT:-15}"]
+    healthcheck:   # docker-compose.yml backend 와 동일
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    labels:
+      - autoheal=true
+  autoheal:        # docker-compose.prod.yml autoheal 과 동일
+    image: willfarrell/autoheal:1.2.0
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=autoheal
+      - AUTOHEAL_INTERVAL=15
+      - AUTOHEAL_START_PERIOD=60
+      - AUTOHEAL_DEFAULT_STOP_TIMEOUT=20
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

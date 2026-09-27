@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from sqlalchemy import text
 from app.api import auth, upload, courses, cart, history, users, admin, admin_chat, admin_security, admin_security_chat, syllabus, posts, contact, professors, portfolio, timetables
-from app.database import engine, Base, SessionLocal, health_engine
+from app.database import engine, Base, SessionLocal
 from app.models import user, course, professor, activity, post, report, notice, portfolio as portfolio_models, contact as contact_model, admin_message  # noqa: F401 — Base 테이블 등록용
 from app.services import portfolio_migration
 from app.services.special_courses_service import seed_special_courses
@@ -130,22 +130,37 @@ app.include_router(professors.router)
 app.include_router(portfolio.router)
 
 @app.get("/healthz", include_in_schema=False)
-async def healthz():
-    """컨테이너 헬스체크 — DB 까지 확인한다.
+def healthz():
+    """컨테이너 헬스체크 — **실제 요청과 같은 경로**로 DB 를 확인한다.
 
     `/` 는 앱 프로세스가 살아있는지만 본다. 2026-09-27 교착 장애에서
     DB 가 21분간 응답하지 않는데도 컨테이너는 healthy 였다
     (docs/postmortems/2026-09-27-db-pool-deadlock.md).
 
-    운영 풀이 아니라 health_engine(NullPool, 짧은 timeout)을 쓴다 —
-    풀이 고갈된 상태에서도 대기 없이 즉시 판정하기 위해.
+    ⚠️ 처음에는 NullPool 별도 엔진 + async def 로 만들었으나 **교착을 못 잡았다**
+    (재현 검증: 60 req/s × 60s 과부하 시 교착 중에도 200·0.02초 응답).
+
+      - 별도 엔진  → 막힌 **운영 풀**을 우회해 "DB 는 살아있다" 고 답함
+      - async def → **스레드풀**도 거치지 않음
+
+    교착은 DB 가 죽은 게 아니라 앱 안쪽(스레드풀 + 운영 풀)이 막힌 상태다.
+    그래서 헬스체크도 그 둘을 똑같이 거쳐야 한다:
+
+      - `def` (async 아님) → 스레드풀을 거친다
+      - `SessionLocal()`   → 운영 풀에서 연결을 받는다
+
+    교착 중에는 스레드도 연결도 못 받아 헬스체크 타임아웃(5초)에 걸려 unhealthy 가 된다.
+    DB 다운도 운영 풀의 연결 실패로 잡힌다 — 판정이 pool_timeout(30초)만큼 늦어질 수
+    있지만 헬스체크 타임아웃 5초가 먼저 끊으므로 결과는 같다.
     """
+    db = SessionLocal()
     try:
-        with health_engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
+        db.execute(text("SELECT 1"))
     except Exception as exc:
         logging.getLogger(__name__).error("헬스체크 실패 — DB 응답 없음: %s", exc)
         return JSONResponse(status_code=503, content={"status": "unhealthy", "db": "down"})
+    finally:
+        db.close()
     return JSONResponse(content={"status": "ok", "db": "up"})
 
 

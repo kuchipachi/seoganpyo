@@ -144,3 +144,6 @@ infra/loadtest/jmeter/results/
 
 # SSH 키 (EC2 접속용) — 절대 커밋 금지
 *.pem
+
+# k6 부하 테스트 raw 결과 (용량 큼 — 요약만 docs/performance.md 에 기록)
+infra/loadtest/k6/results/

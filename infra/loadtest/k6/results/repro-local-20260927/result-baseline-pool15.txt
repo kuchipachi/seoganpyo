@@ -1,0 +1,88 @@
+k6 종료 +90s
+    http_req_duration..............: avg=18.82s min=21.23ms med=1.26s max=1m0s   p(90)=1m0s  p(95)=1m0s 
+    http_req_failed................: 30.24% 434 out of 1435
+    http_reqs......................: 1435   15.941099/s
+    dropped_iterations.............: 1237   13.741561/s
++5s api=000 db[idle in transaction=15]
++20s api=000 db[idle in transaction=15]
++36s api=000 db[idle in transaction=15]
++51s api=000 db[idle in transaction=15]
++66s api=000 db[idle in transaction=15]
++81s api=000 db[idle in transaction=15]
++96s api=000 db[idle in transaction=15]
++111s api=000 db[idle in transaction=15]
++126s api=000 db[idle in transaction=15]
++141s api=000 db[idle in transaction=15]
++157s api=000 db[idle in transaction=15]
++172s api=000 db[idle in transaction=15]
++187s api=000 db[idle in transaction=15]
++202s api=000 db[idle in transaction=15]
++217s api=000 db[idle in transaction=15]
++232s api=000 db[idle in transaction=15]
++247s api=000 db[idle in transaction=15]
++263s api=000 db[idle in transaction=15]
++278s api=000 db[idle in transaction=15]
++293s api=000 db[idle in transaction=15]
++308s api=000 db[idle in transaction=15]
++323s api=000 db[idle in transaction=15]
++338s api=000 db[idle in transaction=15]
++353s api=000 db[idle in transaction=15]
++368s api=000 db[idle in transaction=15]
++384s api=000 db[idle in transaction=15]
++399s api=000 db[idle in transaction=15]
++414s api=000 db[idle in transaction=15]
++429s api=000 db[idle in transaction=15]
++444s api=000 db[idle in transaction=15]
++459s api=000 db[idle in transaction=15]
++474s api=000 db[idle in transaction=15]
++489s api=000 db[idle in transaction=15]
++505s api=000 db[idle in transaction=15]
++520s api=000 db[idle in transaction=15]
++535s api=000 db[idle in transaction=15]
++550s api=000 db[idle in transaction=15]
++565s api=000 db[idle in transaction=15]
++580s api=000 db[idle in transaction=15]
++595s api=000 db[idle in transaction=15]
++610s api=000 db[idle in transaction=15]
++626s api=000 db[idle in transaction=15]
++641s api=000 db[idle in transaction=15]
++656s api=000 db[idle in transaction=15]
++671s api=000 db[idle in transaction=15]
++686s api=000 db[idle in transaction=15]
++701s api=000 db[idle in transaction=15]
++716s api=000 db[idle in transaction=15]
++732s api=000 db[idle in transaction=15]
++747s api=000 db[idle in transaction=15]
++762s api=000 db[idle in transaction=15]
++777s api=000 db[idle in transaction=15]
++792s api=000 db[idle in transaction=15]
++807s api=000 db[idle in transaction=15]
++822s api=000 db[idle in transaction=15]
++837s api=000 db[idle in transaction=15]
++852s api=000 db[idle in transaction=15]
++868s api=000 db[idle in transaction=15]
++883s api=000 db[idle in transaction=15]
++898s api=000 db[idle in transaction=15]
++913s api=000 db[idle in transaction=15]
++928s api=000 db[idle in transaction=15]
++943s api=000 db[idle in transaction=15]
++953s api=200 db[idle=5]
+회복: 부하 종료 후 953s
+--- QueuePool 타임아웃 분당:
+  65 10:00
+  80 10:01
+  80 10:02
+  80 10:03
+  80 10:04
+  80 10:05
+  80 10:06
+  80 10:07
+  80 10:08
+  80 10:09
+  80 10:10
+  65 10:11
+  77 10:12
+  78 10:13
+  80 10:14
+  80 10:15
+  79 10:16

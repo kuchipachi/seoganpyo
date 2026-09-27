@@ -1,0 +1,24 @@
+# 로컬 재현 환경 — 운영(EC2)과 같게: api CPU 1코어·메모리 512MB, 단일 uvicorn, DB 풀 5+10
+services:
+  db:
+    image: postgres:16-alpine
+    environment: { POSTGRES_PASSWORD: repro, POSTGRES_DB: seoganpyo }
+    ports: ["55432:5432"]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U postgres"], interval: 2s, retries: 30 }
+  api:
+    image: seoganpyo-api:repro
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: postgres
+      DB_PASSWORD: repro
+      DB_NAME: seoganpyo
+      SECRET_KEY: repro-secret
+      ADMIN_SECRET_KEY: repro-admin
+      DB_POOL_SIZE: ${DB_POOL_SIZE:-5}
+      DB_MAX_OVERFLOW: ${DB_MAX_OVERFLOW:-10}
+      DB_POOL_TIMEOUT: ${DB_POOL_TIMEOUT:-30}
+    cpus: 1.0
+    mem_limit: 512m
+    ports: ["18000:8000"]
+    depends_on: { db: { condition: service_healthy } }

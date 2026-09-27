@@ -1,0 +1,15 @@
+run_id=20260927-154443-load-baseline profile=load label=baseline base=https://54.180.181.46.nip.io
+local_time=2026-09-27T15:44:43+09:00
+git=f511763
+k6=k6 v2.3.0 (commit/devel, go1.27.1, darwin/arm64)
+--- RTT (Mac → EC2, TCP connect 10회, ms)
+min=12.4 avg=29.3 max=123.3
+--- CPU 크레딧 (최근 10분)
+288.0	288.0
+--- Mac 부하 (생성기가 병목이 아닌지)
+15:44  up 23 days, 21:09, 1 user, load averages: 1.08 1.40 1.65
+collector_started=2026-09-27T15:44:46+09:00
+k6_started=2026-09-27T15:44:46+09:00
+k6_exit=0
+--- Mac 부하 (종료 시)
+15:55  up 23 days, 21:20, 1 user, load averages: 1.24 1.72 1.72

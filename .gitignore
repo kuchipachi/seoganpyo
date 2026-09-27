@@ -144,3 +144,6 @@ infra/loadtest/jmeter/results/
 
 # SSH 키 (EC2 접속용) — 절대 커밋 금지
 *.pem
+
+# k6 부하 테스트 결과는 근거 데이터로 커밋 — 커널 부팅 로그 전체(dmesg_raw)만 제외 (OOM 은 oom.log 에 따로 추림)
+infra/loadtest/k6/results/**/dmesg_raw.log

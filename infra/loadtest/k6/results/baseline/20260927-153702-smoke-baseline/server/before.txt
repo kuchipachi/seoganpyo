@@ -1,0 +1,11 @@
+2026-09-27T06:37:05+00:00
+ 06:37:05 up 3 days, 23:59,  0 users,  load average: 0.09, 0.14, 0.13
+               total        used        free      shared  buff/cache   available
+Mem:             913         434          89           0         388         329
+Swap:           1567          70        1497
+60
+/seoganpyo-api image=833823555621.dkr.ecr.ap-northeast-2.amazonaws.com/seoganpyo-api:latest id=sha256:85215bbd658ba57da3983e2574fb13c2430029265e6fec5c1dd91439a09bec9f mem=536870912 swap=1073741824 reserve=268435456 restarts=0
+/seoganpyo-caddy image=caddy:2-alpine id=sha256:2d8b1708bf8008935c0e2a9b6564f7f080cf9a73af3b27718f286230449b7101 mem=134217728 swap=268435456 reserve=67108864 restarts=0
+/seoganpyo-frontend image=833823555621.dkr.ecr.ap-northeast-2.amazonaws.com/seoganpyo-frontend:latest id=sha256:6aa8bd45144a829df469097b1c3d5ae38b16a81b45d83f753c06f872c3831567 mem=402653184 swap=805306368 reserve=268435456 restarts=0
+/seoganpyo-redis image=redis:alpine id=sha256:15f5a4aad4c3ba34b9874ddbc7f755b469dbd7b8a9e88c12690c52ef6c72465c mem=134217728 swap=268435456 reserve=67108864 restarts=0
+/seoganpyo-ocr image=833823555621.dkr.ecr.ap-northeast-2.amazonaws.com/seoganpyo-ocr:latest id=sha256:50d9f293d53a50b72d546eeae457ac82c9d9d04f63b7a36037432c1ffed5be95 mem=402653184 swap=805306368 reserve=201326592 restarts=0

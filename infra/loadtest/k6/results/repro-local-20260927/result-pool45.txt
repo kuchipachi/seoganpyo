@@ -1,0 +1,59 @@
+k6 종료 +90s
+    http_req_duration..............: avg=4.04s min=37.7ms  med=2.69s max=32.67s p(90)=3.04s p(95)=31.47s
+    http_req_failed................: 1.25%  22 out of 1750
+    http_reqs......................: 1750   19.43992/s
+    dropped_iterations.............: 927    10.297603/s
++5s api=000 db[idle in transaction=45]
++21s api=000 db[idle in transaction=45]
++36s api=000 db[idle in transaction=45]
++51s api=000 db[idle in transaction=45]
++66s api=000 db[idle in transaction=45]
++81s api=000 db[idle in transaction=45]
++96s api=000 db[idle in transaction=45]
++111s api=000 db[idle in transaction=45]
++126s api=000 db[idle in transaction=45]
++142s api=000 db[idle in transaction=45]
++157s api=000 db[idle in transaction=45]
++172s api=000 db[idle in transaction=45]
++187s api=000 db[idle in transaction=45]
++202s api=000 db[idle in transaction=45]
++217s api=000 db[idle in transaction=45]
++232s api=000 db[idle in transaction=45]
++248s api=000 db[idle in transaction=45]
++263s api=000 db[idle in transaction=45]
++278s api=000 db[idle in transaction=45]
++293s api=000 db[idle in transaction=45]
++308s api=000 db[idle in transaction=45]
++323s api=000 db[idle in transaction=45]
++338s api=000 db[idle in transaction=45]
++354s api=000 db[idle in transaction=45]
++369s api=000 db[idle in transaction=45]
++384s api=000 db[idle in transaction=45]
++399s api=000 db[idle in transaction=45]
++414s api=000 db[idle in transaction=45]
++429s api=000 db[idle in transaction=45]
++444s api=000 db[idle in transaction=45]
++459s api=000 db[idle in transaction=45]
++475s api=000 db[idle in transaction=45]
++490s api=000 db[idle in transaction=45]
++505s api=000 db[idle in transaction=45]
++520s api=000 db[idle in transaction=45]
++535s api=000 db[idle in transaction=45]
++550s api=000 db[idle in transaction=45]
++565s api=000 db[idle in transaction=45]
++580s api=000 db[idle in transaction=45]
++595s api=000 db[idle in transaction=45]
++606s api=200 db[idle=45]
+회복: 부하 종료 후 606s
+--- QueuePool 타임아웃 분당:
+  62 10:18
+  79 10:19
+  79 10:20
+  78 10:21
+  79 10:22
+  80 10:23
+  80 10:24
+  79 10:25
+  80 10:26
+  80 10:27
+  80 10:28

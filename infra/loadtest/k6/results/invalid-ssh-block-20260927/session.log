@@ -1,0 +1,7 @@
+[14:58:47] 세션 시작 label=baseline plan="smoke:1 load:5 stress:3 breakpoint:3" cooldown=300s
+[14:58:47] 서버 정상 확인 중...
+[14:59:49] ▶ smoke (1/1)
+[15:02:28]   ✔ 20260927-145949-smoke-baseline  k6_exit=0  수신 3.6MB (누적 3.6MB)  OOM로그 0줄
+[15:02:28] 쿨다운 300s
+[15:07:28] 서버 정상 확인 중...
+[15:08:31] ▶ load (1/5)

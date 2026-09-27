@@ -156,10 +156,11 @@
 
 ### 🟩 민지 — 베이스라인 측정 (0.5일) ★
 
-- [ ] **민지 PC에서** `make jmeter-run BASE_HOST=<EC2 IP>` ← EC2에서 돌리지 말 것
-- [ ] **같은 조건 3회 반복** → 중앙값 + 편차 폭 기록
-- [ ] RPS / p95 / 에러율 → `docs/performance.md`
-- [ ] 부하 중 `SELECT count(*) FROM pg_stat_activity;` 주기적으로 기록
+- [x] **민지 PC에서** 부하 생성 — 도구를 **JMeter → k6**(open model, M1 네이티브)로 교체 (#20)
+- [x] **반복 측정** — load 5 · stress 3 · breakpoint 1회 → 중앙값 [최소–최대], 노이즈 범위 17ms
+- [x] RPS / p95 / 에러율 → [performance.md §3](./performance.md) — load API p95 **283ms [279–296]**, 기준 만족 최대 **33 RPS**
+- [x] 부하와 같은 시간대에 서버 지표 수집 (vmstat·docker stats·pg_stat_activity·OOM) — 병목 **CPU 1코어 포화**, 메모리 아님
+- [x] breakpoint 후 **21분 무응답 교착** 발견 → 로컬 재현·원인 규명 → [포스트모템](./postmortems/2026-09-27-db-pool-deadlock.md)
 
 > 📊 **개선 수치의 기준점입니다.** 튜닝 전에 반드시 재 두세요. 편차 폭을 모르면 "p95 4.2 → 3.9초"가 개선인지 노이즈인지 판단할 수 없습니다.
 
@@ -173,25 +174,32 @@
 
 ---
 
-## D7~D8 — 🟪 RAM 튜닝 (페어, 각 1.25일) ★
+## D7~D8 — 튜닝 (측정 기반 재계획) ★
 
-**가장 어렵고 가장 배울 게 많은 구간입니다.** 둘이 같이 하세요.
+> 원래 "RAM 튜닝(swap·커널·메모리 한도)"이었으나 **베이스라인 결과 병목은 메모리가 아니었다** —
+> CPU 1코어 포화 · 요청당 SQL 64개 · 스레드풀·DB 풀 교착. 분담과 근거는 [계획서 §12 튜닝](./cloud-migration-plan.md).
+> 규칙: **한 번에 하나씩 배포** · 측정 중 EC2 변경 금지 · 배포 뒤 `scripts/smoke-test.sh`
 
-### 🟦 하연 — 인스턴스 레벨
+### 🟩 민지 — T1 · T2 (코드 + 측정)
 
-- [ ] swap 동작 확인, `vm.swappiness` 등 커널 파라미터
-- [ ] `dmesg`로 OOM Killer 로그 추적
+- [ ] **T1 동시 처리 한도** — `--limit-concurrency` ≤ 연결 풀. 로컬 재현 검증 ✅(회복 953초 → 0초) → PR → 운영 측정 (load 3 + breakpoint 1)
+- [ ] **T2 N+1 제거** — `selectinload(Course.details)`, `selectinload(Professor.details)`. 쿼리 수 테스트(64 → 3) → PR → 운영 측정
+- [x] **포스트모템 1호** — [스레드풀·DB 풀 교착](./postmortems/2026-09-27-db-pool-deadlock.md) (가설 반증 → 수정 → 검증)
+- [ ] 포스트모템 2호
+
+### 🟦 하연 — T3 · 배포 · 인스턴스 검증
+
+- [x] **T3 DB 헬스체크 + autoheal** — #22 배포, 장애 주입 훈련(DB 네트워크 차단 → 97초 unhealthy → autoheal 17초 개입)
+- [ ] ⚠️ **T3 후속 수정** — 앱 교착은 감지 못 함 (로컬 재현: 교착 중 `/healthz` 200·healthy). 별도 NullPool 로 DB 만 확인해 **앱 안쪽(스레드풀·운영 풀)이 막힌 상태를 우회**한다. 실제 요청과 같은 경로(sync `def` + 운영 풀)로 바꾸면 교착 중 6초 타임아웃 → unhealthy 확인됨
+- [ ] T1·T2 운영 배포 + 스모크 테스트
 - [x] **포스트모템 2건 완료** — [Caddy 라우팅 누락](./postmortems/2026-09-26-caddy-backend-routing.md), [헬스체크·자동복구 검증](./postmortems/2026-09-27-healthcheck-failover-drill.md)
 
-### 🟩 민지 — 컨테이너·앱 레벨
+### 🟪 페어 — T4 · 최종 측정
 
-- [ ] 부하를 올리며 OOM 임계점 찾기
-- [ ] 메모리 예약·제한 재조정, Node/Python 메모리 튜닝
-- [ ] **부하 재측정 3회** → before/after 비교 (노이즈 범위 초과인지 판정)
-- [ ] **포스트모템** — 자기가 겪은 것 2건+
+- [ ] **T4 uvicorn 워커 2개** — 🟩 부하 측정 / 🟦 메모리(913MB)·swap·CPU 크레딧 검증 → 처리량 vs 자원 트레이드오프 기록
+- [ ] **최종 측정** — 베이스라인과 같은 조건 (load 5 · stress 3 · breakpoint 3) → Mann-Whitney U + 부트스트랩 CI 로 전후 비교
 
-> 📊 **수치 2호**: "동시 N명에서 5xx·OOM 재시작 → 튜닝 후 M명까지 5xx 0건, p95 X→Y초"
-> ⚠️ OOM은 배포 몇 시간 뒤에 터지기도 합니다. 여유를 두세요.
+> 📊 **수치 2호**: "기준 만족 최대 처리량 33 → N RPS, 과부하 후 복구 21분 → 0초, 강의 목록 p95 X → Y ms"
 
 ---
 
@@ -264,7 +272,7 @@
 | **D2 → D4** | 🟦 도메인 결정 → 🟩 프론트 빌드 (빌드 타임 환경변수) |
 | **D3 → D4** | 🟦 EC2 SSH 정보 → 🟩 SSH 터널 (**직렬**) |
 | **D4** | 🟦 ECR·push 권한 → 🟩 이미지 push |
-| **D6 → D7** | 🟩 베이스라인 → 🟪 RAM 튜닝 (측정 없이 튜닝 금지) |
+| **D6 → D7** | 🟩 베이스라인 → 튜닝 T1~T4 (측정 없이 튜닝 금지) ✅ 베이스라인 완료 |
 | **D2 → D11** | 🟩 `.env` 키 목록 → 🟦 SSM 등록 |
 | **D12** | 🟩 S3 IAM 정책 초안 → 🟦 검토·적용 |
 

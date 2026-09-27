@@ -207,8 +207,12 @@
 
 ### 🟦 하연 — CloudWatch + Discord (0.5일)
 
-- [ ] **D9** CloudWatch 알람 — EC2 상태 검사, CPU, RDS 연결 수·여유 스토리지
-- [ ] **D9** Discord 운영 알람 채널 + 웹훅 생성 → SNS 연동, 테스트 알람 1회 발화
+- [x] **D9** Discord 운영 알람 채널 + 웹훅 → SNS → Lambda 파이프라인, 테스트 발송 확인 ✅
+- [x] **D9** CloudWatch 알람 4개 — EC2 상태검사 / **CPU 크레딧** / RDS 연결 수 / RDS 여유 메모리
+      `infra/lambda/alarm-to-discord/` (멱등 배포 스크립트)
+      ⚠️ urllib 은 User-Agent 가 없으면 Discord 앞단 Cloudflare 가 403 차단 (error code 1010)
+- [ ] **D9** 실제 알람 검증 — 장애를 다시 일으켜 **알림이 오는지** 확인 (T3 재현)
+- [ ] **D9** autoheal 재시작 루프 방지 — 원인 미해결 시 무한 재시작
 - [ ] **D10** 아키텍처 결정 기록 완성, 1차 완료 기준 점검
 
 ---

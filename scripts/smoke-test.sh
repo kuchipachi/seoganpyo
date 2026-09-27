@@ -40,6 +40,7 @@ check "로그인 페이지" "/login" 200
 echo
 echo "[백엔드 — /backend prefix 라우팅]"
 # 포스트모템 1호의 핵심: 이 경로들이 프론트로 새면 인증이 전부 깨진다
+check "헬스체크 (DB 포함)" "/backend/healthz" 200
 check "OpenAPI 문서" "/backend/docs" 200
 check "OpenAPI 스펙" "/backend/openapi.json" 200
 check "과목 목록" "/backend/api/v1/courses?year=2026&semester=1&limit=1" 200

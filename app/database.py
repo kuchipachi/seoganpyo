@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
+from sqlalchemy.pool import NullPool
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -32,6 +33,28 @@ else:
         pool_recycle=int(os.getenv("DB_POOL_RECYCLE", "1800")),  # 유휴 연결이 끊기기 전에 교체
     )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# 헬스체크 전용 엔진 — 운영 풀과 분리한다.
+#
+# 2026-09-27 교착 장애(docs/postmortems/2026-09-27-db-pool-deadlock.md)에서
+# 풀이 전부 `idle in transaction` 으로 점유돼 DB 응답이 21분간 멈췄는데도
+# 컨테이너는 healthy 였다. 헬스체크가 `/` 만 찔렀기 때문.
+#
+# 운영 풀(get_db)로 헬스체크를 하면 풀 고갈 시 pool_timeout(30초)만큼 대기해
+# 판정이 늦다. NullPool + 짧은 timeout 으로 "DB 가 지금 응답하는가" 만 본다.
+# 연결 1개를 추가로 쓰지만 헬스체크 주기(30초)라 부담이 없다.
+if _test_url:
+    health_engine = engine
+else:
+    health_engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        poolclass=NullPool,
+        connect_args={
+            "connect_timeout": int(os.getenv("DB_HEALTH_CONNECT_TIMEOUT", "3")),
+            # 서버 쪽에서도 끊기게 — 네트워크가 죽으면 connect_timeout 이 안 먹는 경우 대비
+            "options": "-c statement_timeout=2000",
+        },
+    )
 
 Base = declarative_base()
 

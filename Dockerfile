@@ -42,7 +42,7 @@ USER appuser
 # HEALTHCHECK — Trivy DS-026. docker-compose 의 healthcheck 가 빌드된 이미지엔 안 들어가서
 # Dockerfile 에 별도 선언. docker run 단독 시도 헬스 추적되고 Trivy 룰도 만족.
 HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
-    CMD python -c "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/', timeout=5).status < 500 else 1)" || exit 1
+    CMD python -c "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/healthz', timeout=5).status < 500 else 1)" || exit 1
 
 EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

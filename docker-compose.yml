@@ -98,7 +98,10 @@ services:
             ocr-service:
                 condition: service_healthy
         healthcheck:
-            test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
+            # /healthz 는 DB 까지 확인한다 (/ 는 프로세스 생존만 봄).
+            # 2026-09-27 교착 장애에서 DB 가 21분간 멈췄는데도 healthy 였다.
+            # urlopen 은 503 에 HTTPError 를 던지므로 그대로 실패로 판정된다.
+            test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz', timeout=5)"]
             interval: 30s
             timeout: 10s
             retries: 3

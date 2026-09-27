@@ -181,7 +181,7 @@
 
 - [ ] swap 동작 확인, `vm.swappiness` 등 커널 파라미터
 - [ ] `dmesg`로 OOM Killer 로그 추적
-- [ ] **포스트모템** — 자기가 겪은 것 2건+
+- [x] **포스트모템 2건 완료** — [Caddy 라우팅 누락](./postmortems/2026-09-26-caddy-backend-routing.md), [헬스체크·자동복구 검증](./postmortems/2026-09-27-healthcheck-failover-drill.md)
 
 ### 🟩 민지 — 컨테이너·앱 레벨
 

@@ -64,6 +64,9 @@ services:
         volumes:
             - app_data:/app/data
             - app_static:/app/static
+        labels:
+            # autoheal 이 이 라벨이 붙은 컨테이너만 재시작한다
+            - autoheal=true
         deploy:
             resources:
                 limits:
@@ -113,6 +116,35 @@ services:
         depends_on:
             frontend:
                 condition: service_healthy
+
+    # 자동 복구 — unhealthy 컨테이너를 재시작한다.
+    #
+    # Docker 의 restart 정책은 "프로세스가 죽었을 때"만 동작한다.
+    # 2026-09-27 교착처럼 **프로세스는 살아있는데 일을 못 하는** 상태는
+    # healthcheck 가 unhealthy 로 잡아도 Docker 가 아무것도 하지 않는다.
+    # autoheal 이 그 간극을 메운다 (label 이 붙은 컨테이너만 대상).
+    autoheal:
+        image: willfarrell/autoheal:1.2.0
+        container_name: seoganpyo-autoheal
+        restart: unless-stopped
+        environment:
+            - AUTOHEAL_CONTAINER_LABEL=autoheal
+            - AUTOHEAL_INTERVAL=15          # 15초마다 검사
+            - AUTOHEAL_START_PERIOD=60      # 기동 후 60초는 건너뜀
+            - AUTOHEAL_DEFAULT_STOP_TIMEOUT=20
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        logging:
+            driver: json-file
+            options:
+                max-size: "10m"
+                max-file: "3"
+        deploy:
+            resources:
+                limits:
+                    memory: 32M
+                reservations:
+                    memory: 16M
 
 volumes:
     # 업로드 이미지·강의계획서 PDF — 1차는 EC2 로컬 볼륨(재생성 시 휘발, 2차 S3 이전)

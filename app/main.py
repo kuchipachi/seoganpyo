@@ -7,8 +7,9 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
+from sqlalchemy import text
 from app.api import auth, upload, courses, cart, history, users, admin, admin_chat, admin_security, admin_security_chat, syllabus, posts, contact, professors, portfolio, timetables
-from app.database import engine, Base, SessionLocal
+from app.database import engine, Base, SessionLocal, health_engine
 from app.models import user, course, professor, activity, post, report, notice, portfolio as portfolio_models, contact as contact_model, admin_message  # noqa: F401 — Base 테이블 등록용
 from app.services import portfolio_migration
 from app.services.special_courses_service import seed_special_courses
@@ -127,6 +128,26 @@ app.include_router(posts.router)
 app.include_router(contact.router)
 app.include_router(professors.router)
 app.include_router(portfolio.router)
+
+@app.get("/healthz", include_in_schema=False)
+async def healthz():
+    """컨테이너 헬스체크 — DB 까지 확인한다.
+
+    `/` 는 앱 프로세스가 살아있는지만 본다. 2026-09-27 교착 장애에서
+    DB 가 21분간 응답하지 않는데도 컨테이너는 healthy 였다
+    (docs/postmortems/2026-09-27-db-pool-deadlock.md).
+
+    운영 풀이 아니라 health_engine(NullPool, 짧은 timeout)을 쓴다 —
+    풀이 고갈된 상태에서도 대기 없이 즉시 판정하기 위해.
+    """
+    try:
+        with health_engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+    except Exception as exc:
+        logging.getLogger(__name__).error("헬스체크 실패 — DB 응답 없음: %s", exc)
+        return JSONResponse(status_code=503, content={"status": "unhealthy", "db": "down"})
+    return JSONResponse(content={"status": "ok", "db": "up"})
+
 
 @app.get("/")
 async def root():

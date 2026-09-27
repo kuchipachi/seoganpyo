@@ -215,20 +215,29 @@
 
 ### 🟦 하연 — CloudWatch + Discord (0.5일)
 
-- [ ] **D9** CloudWatch 알람 — EC2 상태 검사, CPU, RDS 연결 수·여유 스토리지
-- [ ] **D9** Discord 운영 알람 채널 + 웹훅 생성 → SNS 연동, 테스트 알람 1회 발화
-- [ ] **D10** 아키텍처 결정 기록 완성, 1차 완료 기준 점검
+- [x] **D9** Discord 운영 알람 채널 + 웹훅 → SNS → Lambda 파이프라인, 테스트 발송 확인 ✅
+- [x] **D9** CloudWatch 알람 4개 — EC2 상태검사 / **CPU 크레딧** / RDS 연결 수 / RDS 여유 메모리
+      `infra/lambda/alarm-to-discord/` (멱등 배포 스크립트)
+      ⚠️ urllib 은 User-Agent 가 없으면 Discord 앞단 Cloudflare 가 403 차단 (error code 1010)
+- [x] **D9** 알림 경로 검증 — `set-alarm-state` 로 강제 ALARM/OK → Discord 🔴/🟢 수신 확인
+- [x] **D9** autoheal 재시작 루프 방지 — `scripts/autoheal-guard.sh` (cron 5분)
+      검증: 임계를 낮춰 실제 발동 → 감지·스냅샷·autoheal 중지·Discord 알림 4단계 확인
+- [ ] **D9 (선택)** 실제 지표로 알람 발동 검증 — EC2 잠시 중지 → `StatusCheckFailed`
+      ⚠️ **T3 재현(DB 차단)으로는 검증 불가.** DB 를 끊어도 EC2 는 정상이고 RDS 연결 수는
+      오히려 줄어 CloudWatch 알람 4개 중 아무것도 울리지 않는다.
+      컨테이너 헬스체크 장애는 CloudWatch 관할이 아니다 → Grafana 5xx 룰(🟩 D10)·guard 담당
+- [ ] **D10** 아키텍처 결정 기록 커밋 (`docs/adr.md`), 1차 완료 기준 점검
 
 ---
 
 ## ✅ 1차 완료 기준
 
-- [ ] HTTPS로 서비스 접속됨
-- [ ] Grafana 대시보드에 로그·메트릭이 보임
-- [ ] 알람이 Discord로 옴 (Grafana·CloudWatch 각 1회 이상)
-- [ ] `docs/performance.md`에 이미지 크기 + 튜닝 전후 수치
-- [ ] `docs/postmortems/`에 4건+ (🟦 2건+, 🟩 2건+)
-- [ ] 아키텍처 결정 기록 초안
+- [x] HTTPS로 서비스 접속됨 — https://54.180.181.46.nip.io
+- [ ] Grafana 대시보드에 로그·메트릭이 보임 (🟩 D9~D10)
+- [~] 알람이 Discord로 옴 — **CloudWatch ✅** / Grafana 🟩 미구축
+- [~] `docs/performance.md` — 이미지 크기 ✅ · 베이스라인 ✅ / **튜닝 후 수치는 T1~T4 이후**
+- [x] `docs/postmortems/`에 4건+ — 🟦 2건(Caddy 라우팅·헬스체크 훈련) / 🟩 2건(교착·측정)
+- [ ] 아키텍처 결정 기록 (`docs/adr.md`)
 
 ---
 

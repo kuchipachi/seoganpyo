@@ -36,7 +36,7 @@ docker compose -p repro down
 API_IMAGE=seoganpyo-api:repro LIMIT=15 docker compose -p repro -f compose.yml -f compose.t1.yml up -d
 RATE=60 DUR=240s AFTER=90 ./run-sustained.sh t1-uvicorn-sustained
 
-# B. 앱 미들웨어 MAX_CONCURRENT_REQUESTS=14 (헬스체크 제외) → 재시작 0회, 성공 처리량 약 50 RPS
+# B. 앱 미들웨어 MAX_CONCURRENT_REQUESTS=14 (헬스체크 제외) → 재시작 0회, 성공 처리량 약 50 RPS (details 없는 가벼운 응답 기준)
 API_IMAGE=seoganpyo-api:repro docker compose -p repro -f compose.yml -f compose.t1.yml -f compose.t1app.yml up -d
 RATE=60 DUR=240s AFTER=90 ./run-sustained.sh t1-app-sustained
 ```

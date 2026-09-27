@@ -115,13 +115,13 @@
 ### 🟩 민지 — 이미지 마무리 + 데이터 적재 시작 (1.0일)
 
 - [x] **after 측정** → [performance.md](./performance.md) 📊 수치 1호: api 121.5 → 102.3 MB (−15.8%), 빌드 52 → 36s
-- [ ] 메모리 예약 하향 (backend 256M / frontend 256M / ocr 192M) + `NODE_OPTIONS=--max-old-space-size=256` ← **D5 첫 배포 전 필수** (미완)
+- [x] 메모리 예약 하향 (backend 256M / frontend 256M / ocr 192M) + `NODE_OPTIONS=--max-old-space-size=256` — #14 `docker-compose.prod.yml` 에 반영 (🟦 하연)
 - [x] **`docker buildx build --platform linux/amd64 ... --push`** 로 ECR에 3개 push — 태그 `baeac8c`(dev) + `latest`
   - ECR 크기: api 91.9 MB / ocr 67.4 MB / frontend 64.5 MB · frontend 빌드 인자 `NEXT_PUBLIC_API_URL=https://54.180.181.46.nip.io`, Grafana 비움
   - ⚠️ scanOnPush: CRITICAL api·ocr 4건(Debian perl·openssl), frontend 3건(Alpine openssl) — 전부 **베이스 이미지 OS 패키지**, 별도 작업으로 갱신
 - [x] **SSH 터널로 RDS 접속** — `ssh -L 5432:<rds>:5432 ec2-user@<ec2>` ⚠️ 로컬 PostgreSQL 이 5432 를 쓰면 터널 대신 로컬 DB 에 붙음 → 로컬 PG 중지
 - [x] 스키마 생성 (테이블 20개)
-- [ ] `scripts/migrations/` 6개 검토 (§3.1)
+- [x] `scripts/migrations/` 6개 검토 (§3.1) — RDS 스키마와 대조, 적용할 SQL 없음 (#17, `scripts/migrations/README.md`)
 
 > 🔴 **강의 엑셀이 있는지 여기서 판명납니다.** 없으면 더미 시드 스크립트로 전환 (+2~3일).
 
@@ -147,7 +147,7 @@
 - [x] 교수 크롤링 (`crawl_and_upsert`) — 전임 25명 상세·AI 연구요약 ⚠️ DB 에 있는 교수만 갱신하므로 시드가 먼저
 - [x] 강의 데이터 적재 — 엑셀 없음 → **강의계획서 PDF 시드** (tracks 14 / 교수 28 / 강의 37, 2026-1 전공 27과목) — #12
 - [x] ~~`e2e_seed_user.py` 테스트 계정~~ → **운영 DB 에는 넣지 않음** (공개 레포에 비밀번호가 있는 계정 + 가짜 강의). 시연 계정은 정상 가입·승인으로
-- [ ] **RDS 연결 풀** — `pool_pre_ping` ✅, `max_connections` = 79 확인 ✅, `pool_size` 설정 (미완)
+- [x] **RDS 연결 풀** — `pool_pre_ping` ✅, `max_connections` = 79 ✅, `DB_POOL_SIZE`/`DB_MAX_OVERFLOW`/`DB_POOL_TIMEOUT` 환경변수화 (#17)
 - [x] 강의계획서 사전 요약 (§4.3 A) — 37/37, PDF별 정확한 강의에 저장 (`--summarize`) ⚠️ 트랙 분류가 AI 로 편향(26/35)
 
 ---
@@ -182,7 +182,7 @@
 
 ### 🟩 민지 — T1 · T2 (코드 + 측정)
 
-- [ ] **T1 동시 처리 한도** — `--limit-concurrency` ≤ 연결 풀. 로컬 재현 검증 ✅(회복 953초 → 0초) → PR → 운영 측정 (load 3 + breakpoint 1)
+- [~] **T1 동시 처리 한도** — ~~`--limit-concurrency`~~ → **앱 미들웨어** `MAX_CONCURRENT_REQUESTS=14` (uvicorn 플래그는 연결 수를 세고 헬스체크까지 503 → autoheal 재시작 유발). 로컬 검증 ✅(회복 953초 → 0초, 과부하 중 재시작 0회) → PR #27 ✅ → 운영 측정 (load 3 + breakpoint 1)
 - [ ] **T2 N+1 제거** — `selectinload(Course.details)`, `selectinload(Professor.details)`. 쿼리 수 테스트(64 → 3) → PR → 운영 측정
 - [x] **포스트모템 1호** — [스레드풀·DB 풀 교착](./postmortems/2026-09-27-db-pool-deadlock.md) (가설 반증 → 수정 → 검증)
 - [ ] 포스트모템 2호
@@ -236,7 +236,8 @@
 - [ ] Grafana 대시보드에 로그·메트릭이 보임 (🟩 D9~D10)
 - [~] 알람이 Discord로 옴 — **CloudWatch ✅** / Grafana 🟩 미구축
 - [~] `docs/performance.md` — 이미지 크기 ✅ · 베이스라인 ✅ / **튜닝 후 수치는 T1~T4 이후**
-- [x] `docs/postmortems/`에 4건+ — 🟦 2건(Caddy 라우팅·헬스체크 훈련) / 🟩 2건(교착·측정)
+- [ ] `docs/postmortems/`에 4건+ — 현재 **3건**: 🟦 2건(Caddy 라우팅·헬스체크 훈련) / 🟩 **1건**(교착).
+      "측정" 포스트모템 파일은 없음 — 측정 스크립트 버그는 `performance.md` §3.6 에 기록만 있음. 🟩 2호 후보: 측정 스크립트 버그(서버 지표가 부하 구간과 어긋남) 또는 T1~T4 중 트러블
 - [ ] 아키텍처 결정 기록 (`docs/adr.md`)
 
 ---

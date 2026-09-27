@@ -183,7 +183,7 @@
 ### 🟩 민지 — T1 · T2 (코드 + 측정)
 
 - [x] **T1 동시 처리 한도** — 앱 미들웨어 `MAX_CONCURRENT_REQUESTS=14` (#27). 운영 측정 ✅ — 과부하 후 중단 21분 → 0분, 한계 이후 처리량 붕괴(51 → 12 RPS) → 약 54 RPS 유지, 평상시 성능 변화 없음
-- [ ] **T2 N+1 제거** — `selectinload(Course.details)`, `selectinload(Professor.details)`. 쿼리 수 테스트(64 → 3) → PR → 운영 측정
+- [~] **T2 N+1 제거** — `selectinload(Course.details)`, `selectinload(Professor.details)`. 쿼리 수 테스트(64 → 3) ✅ → 로컬 처리 능력 약 44 → 158 RPS ✅ → PR #29 → 운영 측정
 - [x] **포스트모템 1호** — [스레드풀·DB 풀 교착](./postmortems/2026-09-27-db-pool-deadlock.md) (가설 반증 → 수정 → 검증)
 - [ ] 포스트모템 2호
 

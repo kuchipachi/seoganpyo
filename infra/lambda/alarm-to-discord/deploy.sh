@@ -106,8 +106,15 @@ mk_alarm seoganpyo-ec2-cpu-credit-low "CPU 크레딧 부족 — 스로틀링 임
     AWS/EC2 CPUCreditBalance Average LessThanThreshold 50 300 2 \
     Name=InstanceId,Value="$INSTANCE_ID"
 
-# RDS 연결 수 — 2026-09-27 교착 때 풀이 전부 점유됐다
-mk_alarm seoganpyo-rds-connections-high "RDS 연결 수 과다" \
+# RDS 연결 수 — **연결 누수 · 예상 밖 클라이언트 감지**용.
+#
+# ⚠️ 교착(2026-09-27)은 이 알람으로 못 잡는다. 그때 앱 연결은 풀 크기인 15개
+#    (5 + overflow 10)가 전부였고, 헬스체크를 더해도 20 안팎이라 40 을 넘지 않는다.
+#    교착 감지는 /healthz(운영 풀 경유)와 Grafana 5xx 룰이 담당한다 — 역할 분리.
+#
+# 40 은 "정상 운영에서는 절대 안 나오는 값"으로 잡았다. 최대 79(db.t4g.micro)의 절반.
+# 여기에 닿았다면 연결이 새고 있거나 우리가 모르는 클라이언트가 붙은 것이다.
+mk_alarm seoganpyo-rds-connections-high "RDS 연결 수 과다 — 누수 의심" \
     AWS/RDS DatabaseConnections Average GreaterThanThreshold 40 300 2 \
     Name=DBInstanceIdentifier,Value="$DB_INSTANCE"
 

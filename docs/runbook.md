@@ -318,6 +318,40 @@ sudo dmesg | grep -i 'killed process\|out of memory' | tail
 docker inspect -f '{{.RestartCount}}' seoganpyo-api
 ```
 
+### 6.3 autoheal 재시작 루프 — `scripts/autoheal-guard.sh`
+
+autoheal 은 unhealthy 컨테이너를 재시작하지만 **근본 원인은 못 고친다.**
+DB 가 계속 죽어 있으면 재시작 → unhealthy → 재시작을 무한 반복한다
+(2026-09-27 장애 주입 검증에서 확인).
+
+`willfarrell/autoheal` 에 횟수 제한 옵션이 없어 밖에서 센다.
+
+```bash
+# cron 등록 (EC2, 1회)
+crontab -e
+*/5 * * * * /home/ec2-user/seoganpyo/scripts/autoheal-guard.sh >> /home/ec2-user/seoganpyo/guard.log 2>&1
+```
+
+동작: 최근 30분간 재시작이 **5회를 넘으면**
+
+1. 조사용 스냅샷 저장 (`loop-<날짜>.log` — 컨테이너 상태·backend 로그·메모리)
+2. **autoheal 중지** — 무한 재시작보다 멈춘 채로 사람을 기다리는 편이 낫다
+3. Discord 알림 (SNS → Lambda 경유)
+
+**알림을 받으면:**
+
+```bash
+cat ~/seoganpyo/loop-*.log        # 스냅샷 확인
+dcp logs backend --tail 100       # 원인 파악
+
+# 원인 해결 후 재개
+docker start seoganpyo-autoheal
+rm ~/seoganpyo/.autoheal-guard.state
+```
+
+> 상태 파일(`.autoheal-guard.state`)이 남아 있으면 중복 대응을 건너뛴다.
+> 복구할 때 **반드시 지워야** 다음 루프를 다시 감지한다.
+
 ---
 
 ## 7. 배포 체크리스트

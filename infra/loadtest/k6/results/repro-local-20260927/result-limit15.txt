@@ -1,0 +1,7 @@
+k6 종료 +61s
+    http_req_duration..............: avg=8.22ms  min=575µs   med=4.16ms  max=343.7ms  p(90)=18.69ms p(95)=36.88ms
+    http_req_failed................: 86.00% 3097 out of 3601
+    http_reqs......................: 3601   60.01488/s
++0s api=200 db[idle=5]
+회복: 부하 종료 후 0s
+--- QueuePool 타임아웃 분당:

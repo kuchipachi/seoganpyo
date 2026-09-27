@@ -1,0 +1,15 @@
+run_id=20260927-171538-stress-baseline profile=stress label=baseline base=https://54.180.181.46.nip.io
+local_time=2026-09-27T17:15:38+09:00
+git=f511763
+k6=k6 v2.3.0 (commit/devel, go1.27.1, darwin/arm64)
+--- RTT (Mac → EC2, TCP connect 10회, ms)
+min=7.7 avg=35.9 max=258.0
+--- CPU 크레딧 (최근 10분)
+287.8253025833333	287.77850563333334
+--- Mac 부하 (생성기가 병목이 아닌지)
+17:15  up 23 days, 22:40, 1 user, load averages: 1.00 1.37 1.48
+collector_started=2026-09-27T17:15:42+09:00
+k6_started=2026-09-27T17:15:42+09:00
+k6_exit=99
+--- Mac 부하 (종료 시)
+17:31  up 23 days, 22:56, 1 user, load averages: 1.77 1.96 1.78

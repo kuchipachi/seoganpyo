@@ -1,0 +1,44 @@
+=== 2026-09-27T09:55:56Z pg_stat_activity
+  pid  | state | tx_age |    state_age    |  query   
+-------+-------+--------+-----------------+----------
+ 28078 | idle  |        | 00:04:51.339117 | ROLLBACK
+ 28089 | idle  |        | 00:04:51.34782  | ROLLBACK
+ 28083 | idle  |        | 00:04:51.34788  | ROLLBACK
+ 28087 | idle  |        | 00:04:51.347751 | ROLLBACK
+ 28081 | idle  |        | 00:04:51.348014 | ROLLBACK
+(5 rows)
+
+=== api threads
+threads=45
+VmRSS:	  196660 kB
+Threads:	45
+=== docker health
+healthy last=0
+=== QueuePool errors per minute (last 25m)
+      9 09:35
+     80 09:36
+     80 09:37
+     80 09:38
+     80 09:39
+     79 09:40
+     80 09:41
+     80 09:42
+     80 09:43
+     80 09:44
+     80 09:45
+     80 09:46
+     80 09:47
+     80 09:48
+     80 09:49
+     57 09:50
+     25 09:51
+=== last access lines
+INFO:     127.0.0.1:33554 - "GET /backend/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34140 - "GET /backend/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52050 - "GET /backend/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44920 - "GET /backend/ HTTP/1.1" 200 OK
+2026-09-27T09:56:10.500988518Z INFO:     <민지 IP>:0 - "GET /backend/api/v1/courses?limit=1 HTTP/1.1" 200 OK
+2026-09-27T09:56:10.696821041Z INFO:     <민지 IP>:0 - "GET /backend/api/v1/courses?limit=1 HTTP/1.1" 200 OK
+---
+      3 09:56 
+--- 500s

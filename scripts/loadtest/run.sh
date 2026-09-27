@@ -8,7 +8,7 @@
 #   PROFILE: smoke | load | stress | breakpoint
 #   CONFIG_LABEL: 튜닝 설정 이름 (before/after 비교 단위)
 #
-# 결과: infra/loadtest/k6/results/<CONFIG_LABEL>/<RUN_ID>/  (raw 는 커밋하지 않음)
+# 결과: infra/loadtest/k6/results/<CONFIG_LABEL>/<RUN_ID>/  (근거 데이터로 커밋 — results/README.md)
 set -uo pipefail
 
 PROFILE=${1:?PROFILE 필요 (smoke|load|stress|breakpoint)}

@@ -1,0 +1,309 @@
+09:20:45|active|1 09:20:45|idle|5 
+09:20:50|active|1 09:20:50|idle|5 
+09:20:55|active|1 09:20:55|idle|5 
+09:21:00|active|1 09:21:00|idle|5 
+09:21:05|active|1 09:21:05|idle|5 
+09:21:10|active|1 09:21:10|idle|5 
+09:21:15|active|1 09:21:15|idle|4 09:21:15|idle in transaction|1 
+09:21:20|active|1 09:21:20|idle|4 09:21:20|idle in transaction|1 
+09:21:25|active|1 09:21:25|idle|4 09:21:25|idle in transaction|1 
+09:21:30|active|1 09:21:30|idle|5 
+09:21:35|active|1 09:21:35|idle|4 09:21:35|idle in transaction|1 
+09:21:40|active|1 09:21:40|idle|4 09:21:40|idle in transaction|1 
+09:21:45|active|1 09:21:45|idle|4 09:21:45|idle in transaction|1 
+09:21:50|active|1 09:21:50|idle|5 
+09:21:55|active|1 09:21:55|idle|5 
+09:22:00|active|1 09:22:00|idle|4 09:22:00|idle in transaction|1 
+09:22:05|active|1 09:22:05|idle|5 
+09:22:10|active|1 09:22:10|idle|4 09:22:10|idle in transaction|1 
+09:22:16|active|1 09:22:16|idle|5 
+09:22:21|active|1 09:22:21|idle|4 09:22:21|idle in transaction|1 
+09:22:26|active|1 09:22:26|idle|5 
+09:22:31|active|1 09:22:31|idle|5 
+09:22:36|active|1 09:22:36|idle|5 
+09:22:41|active|1 09:22:41|idle|5 
+09:22:46|active|1 09:22:46|idle|3 09:22:46|idle in transaction|2 
+09:22:51|active|1 09:22:51|idle|3 09:22:51|idle in transaction|2 
+09:22:56|active|1 09:22:56|idle|4 09:22:56|idle in transaction|1 
+09:23:01|active|1 09:23:01|idle|2 09:23:01|idle in transaction|3 
+09:23:06|active|1 09:23:06|idle|3 09:23:06|idle in transaction|2 
+09:23:11|active|1 09:23:11|idle|4 09:23:11|idle in transaction|1 
+09:23:16|active|1 09:23:16|idle|4 09:23:16|idle in transaction|1 
+09:23:21|active|1 09:23:21|idle|3 09:23:21|idle in transaction|2 
+09:23:26|active|1 09:23:26|idle|1 09:23:26|idle in transaction|4 
+09:23:31|active|1 09:23:31|idle|3 09:23:31|idle in transaction|2 
+09:23:36|active|1 09:23:36|idle|3 09:23:36|idle in transaction|2 
+09:23:42|active|1 09:23:42|idle|5 
+09:23:47|active|1 09:23:47|idle|3 09:23:47|idle in transaction|2 
+09:23:52|active|1 09:23:52|idle|3 09:23:52|idle in transaction|2 
+09:23:57|active|1 09:23:57|idle|3 09:23:57|idle in transaction|2 
+09:24:02|active|1 09:24:02|idle|1 09:24:02|idle in transaction|6 
+09:24:07|active|1 09:24:07|idle|4 09:24:07|idle in transaction|1 
+09:24:12|active|1 09:24:12|idle|3 09:24:12|idle in transaction|2 
+09:24:17|active|1 09:24:17|idle|5 
+09:24:22|active|1 09:24:22|idle|3 09:24:22|idle in transaction|2 
+09:24:27|active|1 09:24:27|idle|4 09:24:27|idle in transaction|1 
+09:24:32|active|1 09:24:32|idle|2 09:24:32|idle in transaction|3 
+09:24:38|active|2 09:24:38|idle|3 09:24:38|idle in transaction|1 
+09:24:43|active|1 09:24:43|idle|3 09:24:43|idle in transaction|2 
+09:24:48|active|1 09:24:48|idle|3 09:24:48|idle in transaction|2 
+09:24:53|active|1 09:24:53|idle|2 09:24:53|idle in transaction|3 
+09:24:58|active|1 09:24:58|idle|3 09:24:58|idle in transaction|2 
+09:25:03|active|1 09:25:03|idle in transaction|15 
+09:25:08|active|1 09:25:08|idle|5 
+09:25:13|active|1 09:25:13|idle|3 09:25:13|idle in transaction|2 
+09:25:18|active|1 09:25:18|idle|2 09:25:18|idle in transaction|13 
+09:25:23|active|1 09:25:23|idle|4 09:25:23|idle in transaction|1 
+09:25:28|active|1 09:25:28|idle|3 09:25:28|idle in transaction|7 
+09:25:33|active|1 09:25:33|idle|3 09:25:33|idle in transaction|2 
+09:25:38|active|1 09:25:38|idle|5 09:25:38|idle in transaction|1 
+09:25:43|active|1 09:25:43|idle|1 09:25:43|idle in transaction|6 
+09:25:48|active|1 09:25:48|idle|3 09:25:48|idle in transaction|2 
+09:25:53|active|1 09:25:53|idle|4 09:25:53|idle in transaction|2 
+09:25:59|active|1 09:25:59|idle|3 09:25:59|idle in transaction|4 
+09:26:04|active|1 09:26:04|idle in transaction|15 
+09:26:09|active|1 09:26:09|idle|2 09:26:09|idle in transaction|5 
+09:26:14|active|1 09:26:14|idle|1 09:26:14|idle in transaction|13 
+09:26:19|active|1 09:26:19|idle|2 09:26:19|idle in transaction|7 
+09:26:24|active|1 09:26:24|idle|5 09:26:24|idle in transaction|1 
+09:26:29|active|1 09:26:29|idle in transaction|6 
+09:26:34|active|1 09:26:34|idle|2 09:26:34|idle in transaction|5 
+09:26:39|active|1 09:26:39|idle|3 09:26:39|idle in transaction|3 
+09:26:44|active|1 09:26:44|idle|2 09:26:44|idle in transaction|4 
+09:26:49|active|1 09:26:49|idle in transaction|13 
+09:26:54|active|1 09:26:54|idle|5 09:26:54|idle in transaction|3 
+09:26:59|active|1 09:26:59|idle|5 09:26:59|idle in transaction|10 
+09:27:04|active|1 09:27:04|idle in transaction|15 
+09:27:09|active|1 09:27:09|idle in transaction|15 
+09:27:14|active|1 09:27:14|idle in transaction|15 
+09:27:19|active|1 09:27:19|idle in transaction|15 
+09:27:25|active|1 09:27:25|idle in transaction|15 
+09:27:30|active|1 09:27:30|idle in transaction|15 
+09:27:35|active|1 09:27:35|idle in transaction|15 
+09:27:40|active|1 09:27:40|idle in transaction|15 
+09:27:45|active|1 09:27:45|idle in transaction|15 
+09:27:50|active|1 09:27:50|idle in transaction|15 
+09:27:55|active|1 09:27:55|idle in transaction|15 
+09:28:00|active|1 09:28:00|idle in transaction|15 
+09:28:05|active|1 09:28:05|idle in transaction|15 
+09:28:10|active|1 09:28:10|idle in transaction|15 
+09:28:15|active|1 09:28:15|idle in transaction|15 
+09:28:20|active|1 09:28:20|idle in transaction|15 
+09:28:25|active|1 09:28:25|idle in transaction|15 
+09:28:30|active|1 09:28:30|idle in transaction|15 
+09:28:35|active|1 09:28:35|idle in transaction|15 
+09:28:40|active|1 09:28:40|idle in transaction|15 
+09:28:45|active|1 09:28:45|idle in transaction|15 
+09:28:50|active|1 09:28:50|idle in transaction|15 
+09:28:55|active|1 09:28:55|idle in transaction|15 
+09:29:01|active|1 09:29:01|idle in transaction|15 
+09:29:06|active|1 09:29:06|idle in transaction|15 
+09:29:11|active|1 09:29:11|idle in transaction|15 
+09:29:16|active|1 09:29:16|idle in transaction|15 
+09:29:21|active|1 09:29:21|idle in transaction|15 
+09:29:26|active|1 09:29:26|idle in transaction|15 
+09:29:31|active|1 09:29:31|idle in transaction|15 
+09:29:36|active|1 09:29:36|idle in transaction|15 
+09:29:41|active|1 09:29:41|idle in transaction|15 
+09:29:46|active|1 09:29:46|idle in transaction|15 
+09:29:51|active|1 09:29:51|idle in transaction|15 
+09:29:56|active|1 09:29:56|idle in transaction|15 
+09:30:01|active|1 09:30:01|idle in transaction|15 
+09:30:06|active|1 09:30:06|idle in transaction|15 
+09:30:11|active|1 09:30:11|idle in transaction|15 
+09:30:16|active|1 09:30:16|idle in transaction|15 
+09:30:21|active|1 09:30:21|idle in transaction|15 
+09:30:26|active|1 09:30:26|idle in transaction|15 
+09:30:31|active|1 09:30:31|idle in transaction|15 
+09:30:37|active|1 09:30:37|idle in transaction|15 
+09:30:42|active|1 09:30:42|idle in transaction|15 
+09:30:47|active|1 09:30:47|idle in transaction|15 
+09:30:52|active|1 09:30:52|idle in transaction|15 
+09:30:57|active|1 09:30:57|idle in transaction|15 
+09:31:02|active|1 09:31:02|idle in transaction|15 
+09:31:07|active|1 09:31:07|idle in transaction|15 
+09:31:12|active|1 09:31:12|idle in transaction|15 
+09:31:17|active|1 09:31:17|idle in transaction|15 
+09:31:22|active|1 09:31:22|idle in transaction|15 
+09:31:27|active|1 09:31:27|idle in transaction|15 
+09:31:32|active|1 09:31:32|idle in transaction|15 
+09:31:37|active|1 09:31:37|idle in transaction|15 
+09:31:42|active|1 09:31:42|idle in transaction|15 
+09:31:47|active|1 09:31:47|idle in transaction|15 
+09:31:52|active|1 09:31:52|idle in transaction|15 
+09:31:57|active|1 09:31:57|idle in transaction|15 
+09:32:02|active|1 09:32:02|idle in transaction|15 
+09:32:07|active|1 09:32:07|idle in transaction|15 
+09:32:13|active|1 09:32:13|idle in transaction|15 
+09:32:18|active|1 09:32:18|idle in transaction|15 
+09:32:23|active|1 09:32:23|idle in transaction|15 
+09:32:28|active|1 09:32:28|idle in transaction|15 
+09:32:33|active|1 09:32:33|idle in transaction|15 
+09:32:38|active|1 09:32:38|idle in transaction|15 
+09:32:43|active|1 09:32:43|idle in transaction|15 
+09:32:48|active|1 09:32:48|idle in transaction|15 
+09:32:53|active|1 09:32:53|idle in transaction|15 
+09:32:58|active|1 09:32:58|idle in transaction|15 
+09:33:03|active|1 09:33:03|idle in transaction|15 
+09:33:08|active|1 09:33:08|idle in transaction|15 
+09:33:13|active|1 09:33:13|idle in transaction|15 
+09:33:18|active|1 09:33:18|idle in transaction|15 
+09:33:23|active|1 09:33:23|idle in transaction|15 
+09:33:28|active|1 09:33:28|idle in transaction|15 
+09:33:33|active|1 09:33:33|idle in transaction|15 
+09:33:38|active|1 09:33:38|idle in transaction|15 
+09:33:43|active|1 09:33:43|idle in transaction|15 
+09:33:48|active|1 09:33:48|idle in transaction|15 
+09:33:53|active|1 09:33:53|idle in transaction|15 
+09:33:59|active|1 09:33:59|idle in transaction|15 
+09:34:04|active|1 09:34:04|idle in transaction|15 
+09:34:09|active|1 09:34:09|idle in transaction|15 
+09:34:14|active|1 09:34:14|idle in transaction|15 
+09:34:19|active|1 09:34:19|idle in transaction|15 
+09:34:24|active|1 09:34:24|idle in transaction|15 
+09:34:29|active|1 09:34:29|idle in transaction|15 
+09:34:34|active|1 09:34:34|idle in transaction|15 
+09:34:39|active|1 09:34:39|idle in transaction|15 
+09:34:44|active|1 09:34:44|idle in transaction|15 
+09:34:49|active|1 09:34:49|idle in transaction|15 
+09:34:54|active|1 09:34:54|idle in transaction|15 
+09:34:59|active|1 09:34:59|idle in transaction|15 
+09:35:04|active|1 09:35:04|idle in transaction|15 
+09:35:09|active|1 09:35:09|idle in transaction|15 
+09:35:14|active|1 09:35:14|idle in transaction|15 
+09:35:19|active|1 09:35:19|idle in transaction|15 
+09:35:24|active|1 09:35:24|idle in transaction|15 
+09:35:29|active|1 09:35:29|idle in transaction|15 
+09:35:34|active|1 09:35:34|idle in transaction|15 
+09:35:39|active|1 09:35:39|idle in transaction|15 
+09:35:45|active|1 09:35:45|idle in transaction|15 
+09:35:50|active|1 09:35:50|idle in transaction|15 
+09:35:55|active|1 09:35:55|idle in transaction|15 
+09:36:00|active|1 09:36:00|idle in transaction|15 
+09:36:05|active|1 09:36:05|idle in transaction|15 
+09:36:10|active|1 09:36:10|idle in transaction|15 
+09:36:15|active|1 09:36:15|idle in transaction|15 
+09:36:20|active|1 09:36:20|idle in transaction|15 
+09:36:25|active|1 09:36:25|idle in transaction|15 
+09:36:30|active|1 09:36:30|idle in transaction|15 
+09:36:35|active|1 09:36:35|idle in transaction|15 
+09:36:40|active|1 09:36:40|idle in transaction|15 
+09:36:45|active|1 09:36:45|idle in transaction|15 
+09:36:50|active|1 09:36:50|idle in transaction|15 
+09:36:55|active|1 09:36:55|idle in transaction|15 
+09:37:00|active|1 09:37:00|idle in transaction|15 
+09:37:05|active|1 09:37:05|idle in transaction|15 
+09:37:10|active|1 09:37:10|idle in transaction|15 
+09:37:15|active|1 09:37:15|idle in transaction|15 
+09:37:21|active|1 09:37:21|idle in transaction|15 
+09:37:26|active|1 09:37:26|idle in transaction|15 
+09:37:31|active|1 09:37:31|idle in transaction|15 
+09:37:36|active|1 09:37:36|idle in transaction|15 
+09:37:41|active|1 09:37:41|idle in transaction|15 
+09:37:46|active|1 09:37:46|idle in transaction|15 
+09:37:51|active|1 09:37:51|idle in transaction|15 
+09:37:56|active|1 09:37:56|idle in transaction|15 
+09:38:01|active|1 09:38:01|idle in transaction|15 
+09:38:06|active|1 09:38:06|idle in transaction|15 
+09:38:11|active|1 09:38:11|idle in transaction|15 
+09:38:16|active|1 09:38:16|idle in transaction|15 
+09:38:21|active|1 09:38:21|idle in transaction|15 
+09:38:26|active|1 09:38:26|idle in transaction|15 
+09:38:31|active|1 09:38:31|idle in transaction|15 
+09:38:36|active|1 09:38:36|idle in transaction|15 
+09:38:41|active|1 09:38:41|idle in transaction|15 
+09:38:46|active|1 09:38:46|idle in transaction|15 
+09:38:51|active|1 09:38:51|idle in transaction|15 
+09:38:56|active|1 09:38:56|idle in transaction|15 
+09:39:02|active|1 09:39:02|idle in transaction|15 
+09:39:07|active|1 09:39:07|idle in transaction|15 
+09:39:12|active|1 09:39:12|idle in transaction|15 
+09:39:17|active|1 09:39:17|idle in transaction|15 
+09:39:22|active|1 09:39:22|idle in transaction|15 
+09:39:27|active|1 09:39:27|idle in transaction|15 
+09:39:32|active|1 09:39:32|idle in transaction|15 
+09:39:37|active|1 09:39:37|idle in transaction|15 
+09:39:42|active|1 09:39:42|idle in transaction|15 
+09:39:47|active|1 09:39:47|idle in transaction|15 
+09:39:52|active|1 09:39:52|idle in transaction|15 
+09:39:57|active|1 09:39:57|idle in transaction|15 
+09:40:02|active|1 09:40:02|idle in transaction|15 
+09:40:07|active|1 09:40:07|idle in transaction|15 
+09:40:12|active|1 09:40:12|idle in transaction|15 
+09:40:17|active|1 09:40:17|idle in transaction|15 
+09:40:22|active|1 09:40:22|idle in transaction|15 
+09:40:27|active|1 09:40:27|idle in transaction|15 
+09:40:32|active|1 09:40:32|idle in transaction|15 
+09:40:37|active|1 09:40:37|idle in transaction|15 
+09:40:43|active|1 09:40:43|idle in transaction|15 
+09:40:48|active|1 09:40:48|idle in transaction|15 
+09:40:53|active|1 09:40:53|idle in transaction|15 
+09:40:58|active|1 09:40:58|idle in transaction|15 
+09:41:03|active|1 09:41:03|idle in transaction|15 
+09:41:08|active|1 09:41:08|idle in transaction|15 
+09:41:13|active|1 09:41:13|idle in transaction|15 
+09:41:18|active|1 09:41:18|idle in transaction|15 
+09:41:23|active|1 09:41:23|idle in transaction|15 
+09:41:28|active|1 09:41:28|idle in transaction|15 
+09:41:33|active|1 09:41:33|idle in transaction|15 
+09:41:38|active|1 09:41:38|idle in transaction|15 
+09:41:43|active|1 09:41:43|idle in transaction|15 
+09:41:48|active|1 09:41:48|idle in transaction|15 
+09:41:53|active|1 09:41:53|idle in transaction|15 
+09:41:58|active|1 09:41:58|idle in transaction|15 
+09:42:03|active|1 09:42:03|idle in transaction|15 
+09:42:08|active|1 09:42:08|idle in transaction|15 
+09:42:13|active|1 09:42:13|idle in transaction|15 
+09:42:18|active|1 09:42:18|idle in transaction|15 
+09:42:23|active|1 09:42:23|idle in transaction|15 
+09:42:29|active|1 09:42:29|idle in transaction|15 
+09:42:34|active|1 09:42:34|idle in transaction|15 
+09:42:39|active|1 09:42:39|idle in transaction|15 
+09:42:44|active|1 09:42:44|idle in transaction|15 
+09:42:49|active|1 09:42:49|idle in transaction|15 
+09:42:54|active|1 09:42:54|idle in transaction|15 
+09:42:59|active|1 09:42:59|idle in transaction|15 
+09:43:04|active|1 09:43:04|idle in transaction|15 
+09:43:09|active|1 09:43:09|idle in transaction|15 
+09:43:14|active|1 09:43:14|idle in transaction|15 
+09:43:19|active|1 09:43:19|idle in transaction|15 
+09:43:24|active|1 09:43:24|idle in transaction|15 
+09:43:29|active|1 09:43:29|idle in transaction|15 
+09:43:34|active|1 09:43:34|idle in transaction|15 
+09:43:39|active|1 09:43:39|idle in transaction|15 
+09:43:44|active|1 09:43:44|idle in transaction|15 
+09:43:49|active|1 09:43:49|idle in transaction|15 
+09:43:54|active|1 09:43:54|idle in transaction|15 
+09:43:59|active|1 09:43:59|idle in transaction|15 
+09:44:04|active|1 09:44:04|idle in transaction|15 
+09:44:10|active|1 09:44:10|idle in transaction|15 
+09:44:15|active|1 09:44:15|idle in transaction|15 
+09:44:20|active|1 09:44:20|idle in transaction|15 
+09:44:25|active|1 09:44:25|idle in transaction|15 
+09:44:30|active|1 09:44:30|idle in transaction|15 
+09:44:35|active|1 09:44:35|idle in transaction|15 
+09:44:40|active|1 09:44:40|idle in transaction|15 
+09:44:45|active|1 09:44:45|idle in transaction|15 
+09:44:50|active|1 09:44:50|idle in transaction|15 
+09:44:55|active|1 09:44:55|idle in transaction|15 
+09:45:00|active|1 09:45:00|idle in transaction|15 
+09:45:05|active|1 09:45:05|idle in transaction|15 
+09:45:10|active|1 09:45:10|idle in transaction|15 
+09:45:15|active|1 09:45:15|idle in transaction|15 
+09:45:20|active|1 09:45:20|idle in transaction|15 
+09:45:25|active|1 09:45:25|idle in transaction|15 
+09:45:30|active|1 09:45:30|idle in transaction|15 
+09:45:35|active|1 09:45:35|idle in transaction|15 
+09:45:40|active|1 09:45:40|idle in transaction|15 
+09:45:45|active|1 09:45:45|idle in transaction|15 
+09:45:51|active|1 09:45:51|idle in transaction|15 
+09:45:56|active|1 09:45:56|idle in transaction|15 
+09:46:01|active|1 09:46:01|idle in transaction|15 
+09:46:06|active|1 09:46:06|idle in transaction|15 
+09:46:11|active|1 09:46:11|idle in transaction|15 
+09:46:16|active|1 09:46:16|idle in transaction|15 
+09:46:21|active|1 09:46:21|idle in transaction|15 
+09:46:26|active|1 09:46:26|idle in transaction|15 
+09:46:31|active|1 09:46:31|idle in transaction|15 
+09:46:36|active|1 09:46:36|idle in transaction|15 
+09:46:41|active|1 09:46:41|idle in transaction|15 

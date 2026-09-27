@@ -1,0 +1,3 @@
+[14:56:53] 세션 시작 label=baseline plan="smoke:1 load:5 stress:3 breakpoint:3" cooldown=300s
+[14:56:53] 서버 정상 확인 중...
+[14:57:56] ✗ 서버가 15분 동안 회복되지 않음 — 세션 중단

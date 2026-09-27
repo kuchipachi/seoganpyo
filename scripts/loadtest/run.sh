@@ -49,11 +49,21 @@ mkdir -p "$OUT"
 
 # ── EC2 수집기 배포 후 백그라운드 실행
 scp -q -o LogLevel=ERROR -i "$KEY" "$REPO/scripts/loadtest/collect-server-metrics.sh" "$EC2:~/collect-server-metrics.sh"
-"${SSH[@]}" "chmod +x ~/collect-server-metrics.sh && nohup ~/collect-server-metrics.sh '$RUN_ID' $SECS > /dev/null 2>&1 &"
-sleep 3
+# ssh -n + 원격 stdin/stdout/stderr 를 모두 끊어야 ssh 가 수집기 종료를 기다리지 않고 즉시 돌아온다
+# (끊지 않으면 k6 가 수집 시간만큼 늦게 시작해 서버 지표가 부하 구간과 어긋남)
+ssh -n -o BatchMode=yes -o LogLevel=ERROR -i "$KEY" "$EC2" \
+  "chmod +x ~/collect-server-metrics.sh; nohup ~/collect-server-metrics.sh '$RUN_ID' $SECS < /dev/null > /dev/null 2>&1 &"
+# ⚠️ 'chmod && nohup ... &' 로 쓰면 & 가 묶음 전체에 걸려 그 서브셸이 ssh 출력을 붙잡는다 → ';' 로 분리
+# 수집기가 실제로 시작됐는지 확인 (before.txt 생성)
+for _ in $(seq 1 10); do
+  "${SSH[@]}" "test -f ~/loadtest-logs/$RUN_ID/before.txt" < /dev/null && break
+  sleep 1
+done
+echo "collector_started=$(date -Iseconds)" >> "$OUT/conditions.txt"
 
 # ── k6 실행 (raw 는 JSON 으로 보관 — percentile 은 여기서 다시 계산)
 echo "▶ $RUN_ID"
+echo "k6_started=$(date -Iseconds)" >> "$OUT/conditions.txt"
 k6 run --no-usage-report \
   -e PROFILE="$PROFILE" -e BASE="$BASE" -e RUN_ID="$RUN_ID" -e OUT_DIR="$OUT" \
   --out json="$OUT/raw.json.gz" \
@@ -64,7 +74,8 @@ echo "--- Mac 부하 (종료 시)" >> "$OUT/conditions.txt"; uptime >> "$OUT/con
 
 # ── 서버 지표 회수 (수집기가 끝날 때까지 대기)
 echo "서버 지표 수집 종료 대기..."
-for _ in $(seq 1 60); do
+# k6 가 일찍 끝나도(breakpoint 자동 중단) 수집기는 SECS 까지 돈다 — 회복 관찰 구간까지 받으려면 끝까지 기다린다
+for _ in $(seq 1 $(( SECS / 5 + 24 ))); do
   "${SSH[@]}" "test -f ~/loadtest-logs/$RUN_ID/after.txt" && break
   sleep 5
 done

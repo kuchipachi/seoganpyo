@@ -1,0 +1,26 @@
+rate=60/s dur=240s limit=15 image=seoganpyo-api:dev24 cmd=uvicorn app.main:app --host 0.0.0.0 --port 8000 --limit-concurrency 15
++0s LOAD docker=healthy streak=0 started=2026-09-27T16:58:50 healthz=200 api=200
++5s LOAD docker=healthy streak=0 started=2026-09-27T16:58:50 healthz=503 api=503
++15s LOAD docker=healthy streak=1 started=2026-09-27T16:58:50 healthz=503 api=503
++45s LOAD docker=healthy streak=2 started=2026-09-27T16:58:50 healthz=503 api=503
++76s LOAD docker=unhealthy streak=3 started=2026-09-27T16:58:50 healthz=503 api=503
++81s LOAD docker=starting streak=0 started=2026-09-27T17:05:06 healthz=503 api=503
++101s LOAD docker=starting streak=1 started=2026-09-27T17:05:06 healthz=503 api=503
++131s LOAD docker=starting streak=2 started=2026-09-27T17:05:06 healthz=503 api=503
++162s LOAD docker=unhealthy streak=3 started=2026-09-27T17:05:06 healthz=503 api=503
++172s LOAD docker=starting streak=0 started=2026-09-27T17:06:37 healthz=503 api=503
++192s LOAD docker=starting streak=1 started=2026-09-27T17:06:37 healthz=503 api=503
++223s LOAD docker=starting streak=2 started=2026-09-27T17:06:37 healthz=503 api=503
++243s idle docker=starting streak=2 started=2026-09-27T17:06:37 healthz=200 api=200
++253s idle docker=healthy streak=0 started=2026-09-27T17:06:37 healthz=200 api=200
+--- k6
+    http_req_duration..............: avg=7.83ms  min=0s       med=4.13ms  max=1.24s p(90)=18.12ms p(95)=34.06ms
+    http_req_failed................: 86.04% 12392 out of 14401
+    http_reqs......................: 14401  60.002565/s
+--- autoheal 재시작 (이 실험 구간)
+27-09-2026 17:05:06 Container /repro-api-1 (313d00b9c4b0) found to be unhealthy - Restarting container now with 20s timeout
+27-09-2026 17:06:37 Container /repro-api-1 (313d00b9c4b0) found to be unhealthy - Restarting container now with 20s timeout
+restarts_logged=2
+--- api 응답 코드 분포
+2065 " 200
+12334 " 503

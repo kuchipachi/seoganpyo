@@ -1,0 +1,6 @@
+# T1 방식 B — 앱 미들웨어 한도(헬스체크 제외, 풀-1) · compose.t1.yml 위에 덮어씀
+services:
+  api:
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      MAX_CONCURRENT_REQUESTS: ${MAX_CONC:-14}

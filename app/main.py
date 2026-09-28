@@ -10,6 +10,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from sqlalchemy import text
 from app.api import auth, upload, courses, cart, history, users, admin, admin_chat, admin_security, admin_security_chat, syllabus, posts, contact, professors, portfolio, timetables
 from app.database import engine, Base, SessionLocal
+from app.concurrency import ConcurrencyLimitMiddleware
 from app.models import user, course, professor, activity, post, report, notice, portfolio as portfolio_models, contact as contact_model, admin_message  # noqa: F401 — Base 테이블 등록용
 from app.services import portfolio_migration
 from app.services.special_courses_service import seed_special_courses
@@ -100,6 +101,10 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             response.headers.setdefault("Cache-Control", "no-store")
         return response
 
+
+# 동시 처리 한도 (T1) — 가장 안쪽에 둬서 503 응답에도 보안 헤더·CORS 헤더가 붙게 한다.
+# MAX_CONCURRENT_REQUESTS 미설정(0)이면 꺼짐. 근거는 app/concurrency.py
+app.add_middleware(ConcurrencyLimitMiddleware, limit=int(os.getenv("MAX_CONCURRENT_REQUESTS", "0")))
 
 app.add_middleware(SecurityHeadersMiddleware)
 

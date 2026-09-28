@@ -1,0 +1,17 @@
+rate=60/s dur=60s limit=? image=seoganpyo-api:t1app cmd=uvicorn app.main:app --host 0.0.0.0 --port 8000
++0s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++16s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++41s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++46s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++51s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
++56s LOAD docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=503
++61s idle docker=healthy streak=0 started=2026-09-27T17:12:29 healthz=200 api=200
+--- k6
+    http_req_duration..............: avg=210.8ms  min=697µs    med=256.38ms max=513.02ms p(90)=302.65ms p(95)=316.42ms
+    http_req_failed................: 18.27% 658 out of 3600
+    http_reqs......................: 3600   59.885459/s
+--- autoheal 재시작 (이 실험 구간)
+restarts_logged=0
+--- api 응답 코드 분포
+3002 " 200
+ 665 " 503

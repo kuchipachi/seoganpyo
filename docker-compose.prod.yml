@@ -13,7 +13,7 @@
 # 필요한 .env 값 (docs/env-reference.md):
 #   ECR_REGISTRY=<계정ID>.dkr.ecr.ap-northeast-2.amazonaws.com
 #   IMAGE_TAG=latest
-#   DOMAIN=54.180.181.46.nip.io
+#   DOMAIN=<EC2_IP>.nip.io
 
 services:
     redis:

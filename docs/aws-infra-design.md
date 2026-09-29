@@ -19,12 +19,12 @@
 | RDS 엔드포인트 | `seoganpyo-db.czuy88iog7v8.ap-northeast-2.rds.amazonaws.com:5432` | §3 |
 | 초기 DB | `seoganpyo` / 마스터 `postgres` | §3 |
 | EC2 | `i-0cf5fbf562ec4017b` · `t3.micro` · AL2023 | **§4** |
-| EIP | `54.180.181.46` (`eipalloc-0653b7b300fe910fb`) | §4 |
-| 도메인 | **`54.180.181.46.nip.io`** | §4 |
+| EIP | `<EC2_IP>` (`eipalloc-0653b7b300fe910fb`) | §4 |
+| 도메인 | **`<EC2_IP>.nip.io`** | §4 |
 | 태그 | `Project=seoganpyo` `Env=prod` `Owner=hayeon` | 전 리소스 적용 확인 |
 
 ```
-54.180.181.46.nip.io  ──HTTPS──>  EC2 t3.micro  ──5432──>  RDS PostgreSQL 18
+<EC2_IP>.nip.io  ──HTTPS──>  EC2 t3.micro  ──5432──>  RDS PostgreSQL 18
                                   (SG-web)      (SG-rds)   (퍼블릭 액세스 OFF)
 ```
 
@@ -231,7 +231,7 @@ SG-all: 80, 443, 22, 5432 허용
 | 서브넷 | 퍼블릭 (`vpc-009480d192b44ba23`) | NAT Gateway 회피 (§1) |
 | 보안그룹 | `SG-web` | 80/443 공개, 22 본인 IP만 (§2) |
 | 스토리지 | gp3 30GB | 기본 8GB로는 Docker 이미지 3개가 안 들어감 |
-| EIP | `54.180.181.46` (`eipalloc-0653b7b300fe910fb`) | 재부팅 시 IP 고정 |
+| EIP | `<EC2_IP>` (`eipalloc-0653b7b300fe910fb`) | 재부팅 시 IP 고정 |
 | 키 페어 | `server-key` | |
 
 ### 메모리 — 이 프로젝트의 핵심 제약
@@ -301,7 +301,7 @@ grep swap /etc/fstab      # 중복 등록 여부
 | **`nip.io`** | **0원** | ✅ |
 
 `nip.io`는 `<IP>.nip.io` 형태를 그 IP로 해석해 주는 공개 DNS입니다.
-`54.180.181.46.nip.io` → `54.180.181.46`. **등록 절차가 없습니다.**
+`<EC2_IP>.nip.io` → `<EC2_IP>`. **등록 절차가 없습니다.**
 
 **HTTPS가 되는 이유** — Let's Encrypt가 `nip.io` 도메인에도 인증서를 발급합니다.
 Caddy가 기동 시 ACME 챌린지를 자동 수행하므로 인증서 설정이 따로 필요 없습니다.

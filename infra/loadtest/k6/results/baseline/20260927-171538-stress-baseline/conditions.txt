@@ -1,4 +1,4 @@
-run_id=20260927-171538-stress-baseline profile=stress label=baseline base=https://54.180.181.46.nip.io
+run_id=20260927-171538-stress-baseline profile=stress label=baseline base=https://<EC2_IP>.nip.io
 local_time=2026-09-27T17:15:38+09:00
 git=f511763
 k6=k6 v2.3.0 (commit/devel, go1.27.1, darwin/arm64)

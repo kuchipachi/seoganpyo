@@ -73,7 +73,7 @@ EC2 콘솔 → 보안 그룹 → SG-rds → 인바운드 규칙 → PostgreSQL 5
 ```bash
 while true; do
   printf '%s  http=%s  %s\n' "$(date +%T)" \
-    "$(curl -s -o /dev/null -w '%{http_code}' https://54.180.181.46.nip.io/backend/healthz)" \
+    "$(curl -s -o /dev/null -w '%{http_code}' https://<EC2_IP>.nip.io/backend/healthz)" \
     "$(docker inspect seoganpyo-api --format '{{.State.Health.Status}} restarts={{.RestartCount}}')"
   sleep 5
 done

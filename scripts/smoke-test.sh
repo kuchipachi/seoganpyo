@@ -4,7 +4,7 @@
 # 사용법 (EC2):
 #   ./scripts/smoke-test.sh                       # 검사만
 #   DISCORD_ALERT_WEBHOOK=... ./scripts/smoke-test.sh   # 실패 시 Discord 알림
-#   BASE=https://54.180.181.46.nip.io ./scripts/smoke-test.sh
+#   BASE=https://<EC2_IP>.nip.io ./scripts/smoke-test.sh   # 기본값: 레포 .env 의 DOMAIN
 #
 # 왜 필요한가 (docs/postmortems/2026-09-26-caddy-backend-routing.md):
 #   1차 배포 때 홈 화면 200 과 컨테이너 health 만 보고 성공으로 판단했는데,
@@ -14,7 +14,13 @@
 
 set -uo pipefail
 
-BASE="${BASE:-https://54.180.181.46.nip.io}"
+REPO=$(cd "$(dirname "$0")/.." && pwd)
+# 운영 주소 — 공개 레포라 IP 를 코드에 두지 않는다. BASE 가 없으면 레포 .env 의 DOMAIN 을 쓴다 (EC2 는 .env 에 있음)
+if [ -z "${BASE:-}" ]; then
+  DOMAIN=$(grep -s '^DOMAIN=' "$REPO/.env" | cut -d= -f2-)
+  BASE=${DOMAIN:+https://$DOMAIN}
+fi
+: "${BASE:?BASE 필요 — 예) BASE=https://<EC2_IP>.nip.io  (또는 레포 .env 에 DOMAIN=<EC2_IP>.nip.io)}"
 WEBHOOK="${DISCORD_ALERT_WEBHOOK:-}"
 FAILED=()
 

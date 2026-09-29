@@ -67,7 +67,7 @@
       ⚠️ **무료 플랜 제약 2건**: 템플릿이 **프리 티어 고정**(Multi-AZ 선택 불가 — 오히려 안전),
       **백업 보존 최대 1일** → §2.5 백업 훈련은 **수동 스냅샷** 방식으로 변경
 - [x] 👉 **민지에게 엔드포인트 전달** — DB 접속 정보 + SSH 키
-- [x] 도메인 확정 — **`54.180.181.46.nip.io`** (Route 53 미사용, 비용 0)
+- [x] 도메인 확정 — **`<EC2_IP>.nip.io`** (Route 53 미사용, 비용 0)
 
 > 💡 RDS 생성에 10~15분 걸립니다. 그동안 §12 아키텍처 결정 기록을 시작하세요.
 > 💡 RDS를 만들면 온보딩 크레딧 +$20.
@@ -85,7 +85,7 @@
 
 ### 🟦 하연 — EC2 + Caddy (1.0일)
 
-- [x] EC2 `t3.micro` `i-0cf5fbf562ec4017b` + EIP `54.180.181.46` + 태그
+- [x] EC2 `t3.micro` `i-0cf5fbf562ec4017b` + EIP `<EC2_IP>` + 태그
 - [x] **swap** — AL2023 기본 1.5Gi 사용 (RAM 913Mi + swap 1.5Gi)
 - [x] Docker + Compose v5.5.1 설치 (`docker ps` sudo 없이 동작)
 - [x] **RDS 연결 검증** — EC2 → RDS `psql` 성공, TLSv1.3 ✅ (§aws-infra-design 검증 결과)
@@ -117,7 +117,7 @@
 - [x] **after 측정** → [performance.md](./performance.md) 📊 수치 1호: api 121.5 → 102.3 MB (−15.8%), 빌드 52 → 36s
 - [x] 메모리 예약 하향 (backend 256M / frontend 256M / ocr 192M) + `NODE_OPTIONS=--max-old-space-size=256` — #14 `docker-compose.prod.yml` 에 반영 (🟦 하연)
 - [x] **`docker buildx build --platform linux/amd64 ... --push`** 로 ECR에 3개 push — 태그 `baeac8c`(dev) + `latest`
-  - ECR 크기: api 91.9 MB / ocr 67.4 MB / frontend 64.5 MB · frontend 빌드 인자 `NEXT_PUBLIC_API_URL=https://54.180.181.46.nip.io`, Grafana 비움
+  - ECR 크기: api 91.9 MB / ocr 67.4 MB / frontend 64.5 MB · frontend 빌드 인자 `NEXT_PUBLIC_API_URL=https://<EC2_IP>.nip.io`, Grafana 비움
   - ⚠️ scanOnPush: CRITICAL api·ocr 4건(Debian perl·openssl), frontend 3건(Alpine openssl) — 전부 **베이스 이미지 OS 패키지**, 별도 작업으로 갱신
 - [x] **SSH 터널로 RDS 접속** — `ssh -L 5432:<rds>:5432 ec2-user@<ec2>` ⚠️ 로컬 PostgreSQL 이 5432 를 쓰면 터널 대신 로컬 DB 에 붙음 → 로컬 PG 중지
 - [x] 스키마 생성 (테이블 20개)
@@ -134,7 +134,7 @@
 - [x] 🟦 EC2에 `.env` 배치 (`chmod 600`) — 1차는 평문, 2차 SSM
 - [x] 🟦 **운영 compose·Caddy 추가** — base 가 `build:` 전제라 `pull` 실패 → `docker-compose.prod.yml` + `Caddyfile` 신규 (#14)
 - [x] 🟦 ECR 로그인 → `pull && up -d` — 컨테이너 5개 전부 healthy
-- [x] 🟪 **HTTPS 접속 확인** — https://54.180.181.46.nip.io ✅ Let's Encrypt 자동 발급, TLS 1.3
+- [x] 🟪 **HTTPS 접속 확인** — https://<EC2_IP>.nip.io ✅ Let's Encrypt 자동 발급, TLS 1.3
 - [x] OOM 없음 — 예약 832MiB / 가용 913MiB 로 하향한 덕분 (포스트모템 없음)
 
 > 📌 **1차 배포 완료 (2026-09-24)** — 기동 시간 redis 12s → ocr 12s → api 43s → frontend 74s → caddy
@@ -232,7 +232,7 @@
 
 ## ✅ 1차 완료 기준
 
-- [x] HTTPS로 서비스 접속됨 — https://54.180.181.46.nip.io
+- [x] HTTPS로 서비스 접속됨 — https://<EC2_IP>.nip.io
 - [ ] Grafana 대시보드에 로그·메트릭이 보임 (🟩 D9~D10)
 - [~] 알람이 Discord로 옴 — **CloudWatch ✅** / Grafana 🟩 미구축
 - [~] `docs/performance.md` — 이미지 크기 ✅ · 베이스라인 ✅ / **튜닝 후 수치는 T1~T4 이후**

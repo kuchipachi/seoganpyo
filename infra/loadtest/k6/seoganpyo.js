@@ -5,14 +5,15 @@
 //
 // 사용법:
 //   k6 run -e PROFILE=smoke  infra/loadtest/k6/seoganpyo.js
-//   k6 run -e PROFILE=load   -e BASE=https://54.180.181.46.nip.io infra/loadtest/k6/seoganpyo.js
+//   k6 run -e PROFILE=load   -e BASE=https://<EC2_IP>.nip.io infra/loadtest/k6/seoganpyo.js
 //   PROFILE: smoke | load | stress | breakpoint
 //   (scripts/loadtest/run.sh 가 서버 지표 수집·결과 저장까지 묶어서 실행)
 import http from 'k6/http';
 import { check } from 'k6';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.1.0/index.js';
 
-const BASE = __ENV.BASE || 'https://54.180.181.46.nip.io';
+const BASE = __ENV.BASE;  // 공개 레포라 운영 주소를 코드에 두지 않음 — run.sh 가 넘긴다
+if (!BASE) throw new Error('BASE 필요 — 예) -e BASE=https://<EC2_IP>.nip.io');
 const API = `${BASE}${__ENV.API_PREFIX ?? '/backend'}`;
 const PROFILE = __ENV.PROFILE || 'smoke';
 const RUN_ID = __ENV.RUN_ID || `${PROFILE}-local`;

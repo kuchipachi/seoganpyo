@@ -250,7 +250,16 @@
 
 ## 🟦 하연 — CI/CD (D11~D16) ★ 최난도
 
-- [ ] **D11** SSM Parameter Store — `.env` 전체 이관 (0.5일), EC2 `.env` 평문 제거
+- [x] **D11** SSM Parameter Store — `.env` 이관 완료
+  - `scripts/ssm-put-params.sh` (1회 등록) / `scripts/ssm-fetch-env.sh` (배포 시 조회)
+  - 비밀 10개는 **SecureString**(KMS 암호화), 나머지는 String — 분류는 `env-reference.md` 기준
+  - EC2 인스턴스 역할에 `SeoganpyoSSMReadParams` — **경로 `/seoganpyo/prod/*` 한정**,
+    `kms:Decrypt` 는 `ViaService: ssm` 조건으로 SSM 경유일 때만
+  - `deploy.sh` 가 기동 전에 SSM 에서 받아옴 → **값 변경 시 EC2 에 들어갈 필요 없음**
+  - ⚠️ `.env` 파일 자체는 남는다 — compose 가 `env_file` 로 읽어야 하므로.
+    SSM 의 이점은 **저장소 암호화 + 값 배포 중앙화**이지 EC2 평문 제거가 아니다
+  - 빈 값 5개(`PROMETHEUS_URL`·`DEFECTDOJO_*`·`NEXT_PUBLIC_GRAFANA_URL`)는 등록하지 않음 —
+    compose 가 `${VAR:-}` 로 기본값을 주므로 결과 동일
 - [x] **D11~D13** **GitHub OIDC + IAM 신뢰 정책** — AWS 쪽 설정 완료
   - OIDC 자격 증명 공급자 등록 (`token.actions.githubusercontent.com`)
   - `SeoganpyoGitHubActionsRole` + 신뢰 정책 — `sub` 를 **`dev`·`main` 두 브랜치로 한정**
@@ -259,15 +268,30 @@
   - ⚠️ **SSM Agent 가 등록돼 있지 않았다** — 인스턴스 역할에 `AmazonSSMManagedInstanceCore`
     가 빠져 있었고, 정책 추가 후에도 Agent 가 캐시된 자격증명을 물고 27분 재시도 대기에
     들어갔다. 정책 부착 → **IAM 전파 대기 → Agent 재시작** 순서가 필요
-- [~] **D14~D15** SSM Run Command 배포 — `.github/workflows/deploy.yml` 작성 ✅ / **실행 검증 대기**
+- [x] **D14~D15** SSM Run Command 배포 — `.github/workflows/deploy.yml` **실행 검증 완료** ✅
   - OIDC 인증 → ECR 빌드·push(`latest` + `github.sha`) → SSM 으로 `deploy.sh` → 외부에서 최종 확인
-  - `github.sha` 태그를 같이 다는 이유: **롤백** (ECR 수명주기 3개 보존)
+  - `github.sha` 태그를 같이 다는 이유: **롤백** (ECR 수명주기 3개 보존 → 직전 2개까지)
+  - 마지막 검증을 러너(외부)에서 하는 이유: EC2 내부 스모크로는 Caddy·인증서 경로를 못 본다
+    (포스트모템 1호가 정확히 그 차이에서 발생)
   - 자동 트리거는 주석 처리 — T1~T4 튜닝 중에는 한 번에 하나씩 배포해야 효과 구분 가능
-  - 남은 것: GitHub Secret `AWS_ACCOUNT_ID` 등록, 실행 검증, 성공 시 **22번 포트 닫기**
+- [x] **🔒 보안그룹 22번 포트 폐쇄** — SSH 없이 배포되므로. 서버 접속은 Session Manager
+  - 동적 IP 때문에 보안그룹을 계속 갱신하던 문제도 함께 해소
+- [x] 정리 — 디버그 브랜치 삭제, 불필요한 `AWS_ACCOUNT_ID` Secret 제거
+
+> **막혔던 것 3가지** (설계 문서에 상세)
+>
+> 1. **`sub` 에 org/repo ID 가 삽입된다** — `repo:kuchipachi@<orgID>/seoganpyo@<repoID>:ref:...`
+>    문서 예제는 `repo:org/repo:ref:...` 형식이라 계속 불일치. 신뢰 정책·공급자·`aud` 를
+>    다 확인해도 정상이었고, **워크플로에서 토큰을 직접 출력한 뒤에야** 원인이 드러났다
+> 2. **Secret 에 비밀 아닌 값(계정 ID)을 넣어 디버깅 불가** — 로그에 `***` 로 가려져
+>    값 확인이 안 됐다. 실제 방어선은 `sub` 조건이므로 ARN 을 직접 지정
+> 3. **CI 빌드 컨텍스트가 로컬과 다르다** — `.gitignore` 로 `static/` 이 추적되지 않아
+>    러너에서 `COPY ./static` 실패. 로컬은 폴더가 있어 계속 성공했다
 - [ ] **D15** **비용 분석** (0.5일) — Cost Explorer, 크레딧 고갈 예상일, 만료 후 예상액, 절감 실험 (📊 수치 3호)
 - [ ] **D16** 런북 — 배포 + **롤백**(이전 ECR 태그) (0.25일)
 
 > ⚠️ 2차는 착수하자마자 **OIDC부터** 하세요. 막히면 시간이 필요합니다.
+> → 실제로 `AssumeRoleWithWebIdentity` 로 **3회 실패**했다. 추측보다 토큰을 찍는 게 빨랐다.
 
 ## 🟩 민지 — 스토리지·운영 (D11~D13, +D16)
 

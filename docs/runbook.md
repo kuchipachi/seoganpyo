@@ -352,6 +352,49 @@ rm ~/seoganpyo/.autoheal-guard.state
 > 상태 파일(`.autoheal-guard.state`)이 남아 있으면 중복 대응을 건너뛴다.
 > 복구할 때 **반드시 지워야** 다음 루프를 다시 감지한다.
 
+### 6.4 배포 — 스크립트 2개
+
+```
+맥북                          EC2
+scripts/build-push.sh   →   ~/seoganpyo/deploy.sh
+  (빌드·ECR push)             (pull·기동·검증)
+```
+
+**① 맥북 — 이미지 빌드·push**
+
+```bash
+export AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=... AWS_DEFAULT_REGION=ap-northeast-2
+
+./scripts/build-push.sh              # api 만 (가장 흔함)
+./scripts/build-push.sh frontend     # 프론트
+./scripts/build-push.sh all          # 셋 다
+```
+
+- `--platform linux/amd64` 자동 — Apple Silicon 에서 안 붙이면 EC2 에서 `exec format error`
+- 프론트는 `NEXT_PUBLIC_API_URL=https://<도메인>/backend` 를 빌드 인자로 주입
+- **커밋 안 된 변경이 있으면 물어본다** — 로컬 수정분이 운영에 올라가는 사고 방지
+- AWS 인증이 없으면 설정 방법을 안내하고 중단
+
+**② EC2 — 배포**
+
+```bash
+~/seoganpyo/deploy.sh            # 전체
+~/seoganpyo/deploy.sh backend    # 특정 서비스만
+```
+
+ECR 재인증(토큰 12시간) → pull → 기동 → **Caddy 재시작** → 스모크 테스트.
+
+> Caddy 재시작이 들어간 이유: backend 를 재생성하면 컨테이너 IP 가 바뀌는데
+> Caddy 가 옛 IP 를 캐시해 **502** 가 난다. 실제로 겪은 문제다.
+
+**EC2 에 스크립트 전송** (레포 갱신 후)
+
+```bash
+scp -i server-key.pem scripts/deploy.sh scripts/smoke-test.sh scripts/autoheal-guard.sh \
+  ec2-user@54.180.181.46:~/seoganpyo/scripts/
+ssh -i server-key.pem ec2-user@54.180.181.46 'cp ~/seoganpyo/scripts/deploy.sh ~/seoganpyo/ && chmod +x ~/seoganpyo/*.sh ~/seoganpyo/scripts/*.sh'
+```
+
 ---
 
 ## 7. 배포 체크리스트

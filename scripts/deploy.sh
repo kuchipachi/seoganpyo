@@ -12,11 +12,19 @@
 set -euo pipefail
 cd "$HOME/seoganpyo"
 
-[ -f .env ] || { echo "ERROR: ~/seoganpyo/.env 가 없습니다" >&2; exit 1; }
-source .env
-
 DC="docker compose -f docker-compose.yml -f docker-compose.prod.yml"
 SVC=("$@")
+
+# SSM 에서 최신 환경변수를 받아 .env 를 만든다.
+# 값을 바꿀 때 EC2 에 들어갈 필요 없이 SSM 만 갱신하면 다음 배포에 반영된다.
+# SKIP_SSM=1 로 건너뛸 수 있다 (SSM 장애 시 기존 .env 로 배포).
+if [ "${SKIP_SSM:-0}" != "1" ] && [ -x ./scripts/ssm-fetch-env.sh ]; then
+    echo "[0/6] SSM 환경변수 동기화"
+    ./scripts/ssm-fetch-env.sh
+fi
+
+[ -f .env ] || { echo "ERROR: ~/seoganpyo/.env 가 없습니다" >&2; exit 1; }
+source .env
 
 echo "[1/5] ECR 로그인"
 # 토큰은 12시간마다 만료된다 — 배포할 때마다 새로 받는다

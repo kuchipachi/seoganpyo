@@ -1,0 +1,154 @@
+name: Deploy
+
+# 운영 배포 — OIDC 로 AWS 인증, SSM 으로 EC2 에 명령 (SSH·액세스 키 없음)
+#
+# 당분간 수동 실행만 한다. 자동 배포로 바꾸려면 아래 push 주석을 풀 것 —
+# 다만 T1~T4 튜닝 중에는 "한 번에 하나씩" 배포해야 효과를 구분할 수 있어
+# 의도적으로 수동으로 둔다.
+on:
+  workflow_dispatch:
+    inputs:
+      services:
+        description: "빌드할 이미지 (api / frontend / ocr / all)"
+        required: true
+        default: api
+        type: choice
+        options: [api, frontend, ocr, all]
+  # push:
+  #   branches: [dev]
+  #   paths-ignore: ["**/*.md", "docs/**"]
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false      # 배포 중간에 끊기면 상태가 어긋난다
+
+env:
+  AWS_REGION: ap-northeast-2
+  INSTANCE_ID: i-0cf5fbf562ec4017b
+  DOMAIN: 54.180.181.46.nip.io
+
+permissions:
+  id-token: write                # OIDC 토큰 발급에 필요
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 레포에 AWS 키를 두지 않는다. GitHub 이 발급한 토큰으로 역할을 맡는다.
+      # 신뢰 정책의 sub 조건이 이 레포의 dev·main 브랜치만 허용한다.
+      - name: AWS 인증 (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/SeoganpyoGitHubActionsRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: ECR 로그인
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # ── 이미지 빌드 ──────────────────────────────────────
+      # EC2(1GiB)에서는 빌드가 OOM 나므로 러너에서 만든다.
+      # EC2 가 x86_64 이므로 platform 고정 (러너도 x86_64 라 에뮬레이션 없음)
+      - name: api 빌드·push
+        if: inputs.services == 'api' || inputs.services == 'all'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ steps.ecr.outputs.registry }}/seoganpyo-api:latest
+            ${{ steps.ecr.outputs.registry }}/seoganpyo-api:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: frontend 빌드·push
+        if: inputs.services == 'frontend' || inputs.services == 'all'
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          platforms: linux/amd64
+          push: true
+          # NEXT_PUBLIC_* 는 빌드 타임에 박힌다 — 도메인이 바뀌면 재빌드 필요
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://${{ env.DOMAIN }}/backend
+          tags: |
+            ${{ steps.ecr.outputs.registry }}/seoganpyo-frontend:latest
+            ${{ steps.ecr.outputs.registry }}/seoganpyo-frontend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: ocr 빌드·push
+        if: inputs.services == 'ocr' || inputs.services == 'all'
+        uses: docker/build-push-action@v6
+        with:
+          context: ./ocr-service
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ steps.ecr.outputs.registry }}/seoganpyo-ocr:latest
+            ${{ steps.ecr.outputs.registry }}/seoganpyo-ocr:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ── EC2 배포 ─────────────────────────────────────────
+      # SSH 키 없이 SSM Run Command 로 실행한다 → 보안그룹 22번을 닫을 수 있다.
+      # SSM 은 root 로 실행되므로 ec2-user 로 낮춰 deploy.sh 를 돌린다.
+      - name: SSM 으로 배포
+        id: ssm
+        run: |
+          CMD=$(aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name AWS-RunShellScript \
+            --comment "deploy ${{ github.sha }}" \
+            --timeout-seconds 600 \
+            --parameters 'commands=["sudo -u ec2-user -i bash -lc \"~/seoganpyo/deploy.sh\""]' \
+            --query 'Command.CommandId' --output text)
+          echo "command_id=$CMD" >> "$GITHUB_OUTPUT"
+          echo "CommandId: $CMD"
+
+      - name: 배포 결과 확인
+        run: |
+          CMD='${{ steps.ssm.outputs.command_id }}'
+          # send-command 직후에는 InvocationDoesNotExist 가 날 수 있다
+          sleep 10
+          for i in $(seq 1 60); do
+            STATUS=$(aws ssm get-command-invocation \
+              --command-id "$CMD" --instance-id "$INSTANCE_ID" \
+              --query Status --output text 2>/dev/null || echo Pending)
+            case "$STATUS" in
+              Success) break ;;
+              Failed|Cancelled|TimedOut) break ;;
+            esac
+            sleep 10
+          done
+
+          echo "── 배포 로그 ──"
+          aws ssm get-command-invocation --command-id "$CMD" \
+            --instance-id "$INSTANCE_ID" \
+            --query StandardOutputContent --output text
+
+          if [ "$STATUS" != "Success" ]; then
+            echo "── 오류 ──"
+            aws ssm get-command-invocation --command-id "$CMD" \
+              --instance-id "$INSTANCE_ID" \
+              --query StandardErrorContent --output text
+            echo "::error::배포 실패 (status=$STATUS)"
+            exit 1
+          fi
+
+      # deploy.sh 안에서도 스모크 테스트를 돌지만, 여기서 한 번 더 —
+      # 러너(외부)에서 보는 것이라 Caddy·DNS·인증서까지 실제 사용자 경로를 확인한다
+      - name: 외부에서 최종 확인
+        run: |
+          for p in "/" "/backend/healthz" "/backend/docs"; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "https://${DOMAIN}${p}")
+            printf '  %-20s %s\n' "$p" "$code"
+            [ "$code" = "200" ] || { echo "::error::${p} → ${code}"; exit 1; }
+          done

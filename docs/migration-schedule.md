@@ -190,8 +190,12 @@
 ### 🟦 하연 — T3 · 배포 · 인스턴스 검증
 
 - [x] **T3 DB 헬스체크 + autoheal** — #22 배포, 장애 주입 훈련(DB 네트워크 차단 → 97초 unhealthy → autoheal 17초 개입)
-- [ ] ⚠️ **T3 후속 수정** — 앱 교착은 감지 못 함 (로컬 재현: 교착 중 `/healthz` 200·healthy). 별도 NullPool 로 DB 만 확인해 **앱 안쪽(스레드풀·운영 풀)이 막힌 상태를 우회**한다. 실제 요청과 같은 경로(sync `def` + 운영 풀)로 바꾸면 교착 중 6초 타임아웃 → unhealthy 확인됨
-- [ ] T1·T2 운영 배포 + 스모크 테스트
+- [x] **T3 후속 수정** — #24 배포 완료. 별도 NullPool + `async def` 가 **앱 안쪽(스레드풀·운영 풀)을 우회**해 교착을 못 잡았다.
+      실제 요청과 같은 경로(sync `def` + 운영 풀)로 변경 → 🟩 실측: 교착 시작~복구 **21분 → 약 50초** ([performance.md §4.1](./performance.md))
+- [x] **T1 운영 배포** (`MAX_CONCURRENT_REQUESTS=14`) + 스모크 테스트 ✅
+- [x] **T2 운영 배포** (`selectinload`) + 스모크 테스트 ✅ — 2026-09-29, 측정 전 CPU 크레딧 288(만충)
+- [x] **배포 스크립트 2개** — 맥북 `scripts/build-push.sh` / EC2 `scripts/deploy.sh` (런북 §6.4)
+      ECR 토큰 12시간 만료·`--platform` 누락·Caddy 재시작 누락이 반복돼 스크립트로 고정
 - [x] **포스트모템 2건 완료** — [Caddy 라우팅 누락](./postmortems/2026-09-26-caddy-backend-routing.md), [헬스체크·자동복구 검증](./postmortems/2026-09-27-healthcheck-failover-drill.md)
 
 ### 🟪 페어 — T4 · 최종 측정

@@ -247,10 +247,19 @@
 ## 🟦 하연 — CI/CD (D11~D16) ★ 최난도
 
 - [ ] **D11** SSM Parameter Store — `.env` 전체 이관 (0.5일), EC2 `.env` 평문 제거
-- [ ] **D11~D13** **GitHub OIDC + IAM 신뢰 정책** (2.5일) ← 여기서 막힘
-  - `sub` 조건: `repo:kuchipachi/seoganpyo:ref:refs/heads/main`
-  - 레포에 AWS 키를 두지 않는 구조
-- [ ] **D14~D15** SSM Run Command 배포 (1.5일) — `deploy.yml`, SSH 없이 배포 → 22번 포트 닫기
+- [x] **D11~D13** **GitHub OIDC + IAM 신뢰 정책** — AWS 쪽 설정 완료
+  - OIDC 자격 증명 공급자 등록 (`token.actions.githubusercontent.com`)
+  - `SeoganpyoGitHubActionsRole` + 신뢰 정책 — `sub` 를 **`dev`·`main` 두 브랜치로 한정**
+    (계획 원안은 `main` 만이었으나 팀이 `dev` 에 머지하므로 둘 다 허용)
+  - 권한: `SeoganpyoECRPush`(리포 3개) + `SeoganpyoSSMDeploy`(인스턴스 ID 한정)
+  - ⚠️ **SSM Agent 가 등록돼 있지 않았다** — 인스턴스 역할에 `AmazonSSMManagedInstanceCore`
+    가 빠져 있었고, 정책 추가 후에도 Agent 가 캐시된 자격증명을 물고 27분 재시도 대기에
+    들어갔다. 정책 부착 → **IAM 전파 대기 → Agent 재시작** 순서가 필요
+- [~] **D14~D15** SSM Run Command 배포 — `.github/workflows/deploy.yml` 작성 ✅ / **실행 검증 대기**
+  - OIDC 인증 → ECR 빌드·push(`latest` + `github.sha`) → SSM 으로 `deploy.sh` → 외부에서 최종 확인
+  - `github.sha` 태그를 같이 다는 이유: **롤백** (ECR 수명주기 3개 보존)
+  - 자동 트리거는 주석 처리 — T1~T4 튜닝 중에는 한 번에 하나씩 배포해야 효과 구분 가능
+  - 남은 것: GitHub Secret `AWS_ACCOUNT_ID` 등록, 실행 검증, 성공 시 **22번 포트 닫기**
 - [ ] **D15** **비용 분석** (0.5일) — Cost Explorer, 크레딧 고갈 예상일, 만료 후 예상액, 절감 실험 (📊 수치 3호)
 - [ ] **D16** 런북 — 배포 + **롤백**(이전 ECR 태그) (0.25일)
 

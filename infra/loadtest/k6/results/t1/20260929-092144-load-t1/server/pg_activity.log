@@ -1,0 +1,143 @@
+00:21:47|active|1 00:21:47|idle|3 
+00:21:52|active|1 00:21:52|idle|3 
+00:21:57|active|1 00:21:57|idle|3 
+00:22:02|active|1 00:22:02|idle|3 
+00:22:07|active|1 00:22:07|idle|3 
+00:22:12|active|1 00:22:12|idle|3 
+00:22:17|active|1 00:22:17|idle|3 
+00:22:23|active|1 00:22:23|idle|2 00:22:23|idle in transaction|1 
+00:22:28|active|1 00:22:28|idle|2 00:22:28|idle in transaction|1 
+00:22:33|active|1 00:22:33|idle|3 
+00:22:38|active|1 00:22:38|idle|3 
+00:22:43|active|1 00:22:43|idle|3 
+00:22:48|active|1 00:22:48|idle|3 
+00:22:53|active|1 00:22:53|idle|2 00:22:53|idle in transaction|1 
+00:22:58|active|1 00:22:58|idle|2 00:22:58|idle in transaction|1 
+00:23:03|active|1 00:23:03|idle|3 
+00:23:08|active|1 00:23:08|idle|2 00:23:08|idle in transaction|1 
+00:23:13|active|1 00:23:13|idle|3 
+00:23:18|active|1 00:23:18|idle|3 
+00:23:23|active|1 00:23:23|idle|3 
+00:23:28|active|1 00:23:28|idle|3 
+00:23:33|active|1 00:23:33|idle|2 00:23:33|idle in transaction|1 
+00:23:38|active|1 00:23:38|idle|2 00:23:38|idle in transaction|1 
+00:23:43|active|1 00:23:43|idle|3 
+00:23:48|active|1 00:23:48|idle|3 
+00:23:53|active|1 00:23:53|idle|3 
+00:23:58|active|1 00:23:58|idle|3 
+00:24:04|active|1 00:24:04|idle|3 
+00:24:09|active|1 00:24:09|idle|2 00:24:09|idle in transaction|1 
+00:24:14|active|1 00:24:14|idle|3 
+00:24:19|active|1 00:24:19|idle|3 
+00:24:24|active|1 00:24:24|idle|3 
+00:24:29|active|1 00:24:29|idle|2 00:24:29|idle in transaction|1 
+00:24:34|active|1 00:24:34|idle|3 
+00:24:39|active|1 00:24:39|idle|2 00:24:39|idle in transaction|1 
+00:24:44|active|1 00:24:44|idle|3 
+00:24:49|active|1 00:24:49|idle|2 00:24:49|idle in transaction|1 
+00:24:54|active|1 00:24:54|idle|3 
+00:24:59|active|1 00:24:59|idle|3 
+00:25:04|active|1 00:25:04|idle|3 
+00:25:09|active|1 00:25:09|idle|3 
+00:25:14|active|1 00:25:14|idle|3 
+00:25:19|active|1 00:25:19|idle|3 
+00:25:24|active|1 00:25:24|idle|3 
+00:25:29|active|1 00:25:29|idle|3 
+00:25:34|active|1 00:25:34|idle|3 
+00:25:39|active|1 00:25:39|idle|3 
+00:25:44|active|1 00:25:44|idle|2 00:25:44|idle in transaction|1 
+00:25:50|active|1 00:25:50|idle|3 
+00:25:55|active|2 00:25:55|idle|2 
+00:26:00|active|1 00:26:00|idle|1 00:26:00|idle in transaction|2 
+00:26:05|active|1 00:26:05|idle|2 00:26:05|idle in transaction|1 
+00:26:10|active|1 00:26:10|idle|3 
+00:26:15|active|1 00:26:15|idle|3 
+00:26:20|active|1 00:26:20|idle|3 
+00:26:25|active|1 00:26:25|idle|3 
+00:26:30|active|1 00:26:30|idle|3 
+00:26:35|active|1 00:26:35|idle|3 
+00:26:40|active|1 00:26:40|idle|3 
+00:26:45|active|1 00:26:45|idle|3 
+00:26:50|active|1 00:26:50|idle|3 
+00:26:55|active|1 00:26:55|idle|3 
+00:27:00|active|1 00:27:00|idle|3 
+00:27:05|active|1 00:27:05|idle|3 
+00:27:10|active|1 00:27:10|idle|3 
+00:27:15|active|1 00:27:15|idle|2 00:27:15|idle in transaction|1 
+00:27:21|active|1 00:27:21|idle|3 
+00:27:26|active|1 00:27:26|idle|3 
+00:27:31|active|1 00:27:31|idle|3 
+00:27:36|active|1 00:27:36|idle|3 
+00:27:41|active|1 00:27:41|idle|3 
+00:27:46|active|1 00:27:46|idle|3 
+00:27:51|active|1 00:27:51|idle|3 
+00:27:56|active|1 00:27:56|idle|2 00:27:56|idle in transaction|1 
+00:28:01|active|1 00:28:01|idle|3 
+00:28:06|active|1 00:28:06|idle|3 
+00:28:11|active|1 00:28:11|idle|3 
+00:28:16|active|1 00:28:16|idle|2 00:28:16|idle in transaction|1 
+00:28:21|active|1 00:28:21|idle|3 
+00:28:26|active|1 00:28:26|idle|3 
+00:28:31|active|1 00:28:31|idle|3 
+00:28:36|active|1 00:28:36|idle|2 00:28:36|idle in transaction|1 
+00:28:41|active|1 00:28:41|idle|3 
+00:28:46|active|1 00:28:46|idle|3 
+00:28:51|active|1 00:28:51|idle|3 
+00:28:56|active|1 00:28:56|idle|2 00:28:56|idle in transaction|1 
+00:29:02|active|1 00:29:02|idle in transaction|3 
+00:29:07|active|1 00:29:07|idle|2 00:29:07|idle in transaction|1 
+00:29:12|active|1 00:29:12|idle|2 00:29:12|idle in transaction|1 
+00:29:17|active|1 00:29:17|idle|2 00:29:17|idle in transaction|1 
+00:29:22|active|1 00:29:22|idle|3 
+00:29:27|active|1 00:29:27|idle|3 
+00:29:32|active|2 00:29:32|idle|2 
+00:29:37|active|1 00:29:37|idle|3 
+00:29:42|active|1 00:29:42|idle|3 
+00:29:47|active|1 00:29:47|idle|3 
+00:29:52|active|1 00:29:52|idle|2 00:29:52|idle in transaction|1 
+00:29:57|active|1 00:29:57|idle|3 
+00:30:02|active|1 00:30:02|idle|1 00:30:02|idle in transaction|2 
+00:30:07|active|1 00:30:07|idle|2 00:30:07|idle in transaction|1 
+00:30:12|active|1 00:30:12|idle|2 00:30:12|idle in transaction|1 
+00:30:18|active|1 00:30:18|idle|3 
+00:30:23|active|1 00:30:23|idle|2 00:30:23|idle in transaction|1 
+00:30:28|active|1 00:30:28|idle|3 
+00:30:33|active|1 00:30:33|idle|3 
+00:30:38|active|1 00:30:38|idle|3 
+00:30:43|active|1 00:30:43|idle|1 00:30:43|idle in transaction|2 
+00:30:48|active|1 00:30:48|idle|3 
+00:30:53|active|1 00:30:53|idle|2 00:30:53|idle in transaction|1 
+00:30:58|active|1 00:30:58|idle|2 00:30:58|idle in transaction|1 
+00:31:03|active|1 00:31:03|idle|3 
+00:31:08|active|1 00:31:08|idle|3 
+00:31:13|active|1 00:31:13|idle|2 00:31:13|idle in transaction|1 
+00:31:18|active|1 00:31:18|idle|3 
+00:31:23|active|1 00:31:23|idle|2 00:31:23|idle in transaction|1 
+00:31:28|active|1 00:31:28|idle|3 
+00:31:33|active|1 00:31:33|idle|3 
+00:31:38|active|1 00:31:38|idle|3 
+00:31:43|active|1 00:31:43|idle|3 
+00:31:48|active|1 00:31:48|idle|2 00:31:48|idle in transaction|1 
+00:31:53|active|1 00:31:53|idle|3 
+00:31:58|active|1 00:31:58|idle|3 
+00:32:04|active|1 00:32:04|idle|3 
+00:32:09|active|1 00:32:09|idle|2 00:32:09|idle in transaction|1 
+00:32:14|active|1 00:32:14|idle|2 00:32:14|idle in transaction|1 
+00:32:19|active|2 00:32:19|idle|2 
+00:32:24|active|1 00:32:24|idle|2 00:32:24|idle in transaction|1 
+00:32:29|active|1 00:32:29|idle|3 
+00:32:34|active|1 00:32:34|idle|3 
+00:32:39|active|1 00:32:39|idle|3 
+00:32:44|active|1 00:32:44|idle|3 
+00:32:49|active|1 00:32:49|idle|3 
+00:32:54|active|1 00:32:54|idle|3 
+00:32:59|active|1 00:32:59|idle|3 
+00:33:04|active|1 00:33:04|idle|3 
+00:33:09|active|1 00:33:09|idle|3 
+00:33:14|active|1 00:33:14|idle|3 
+00:33:19|active|1 00:33:19|idle|3 
+00:33:24|active|1 00:33:24|idle|3 
+00:33:29|active|1 00:33:29|idle|3 
+00:33:34|active|1 00:33:34|idle|3 
+00:33:39|active|1 00:33:39|idle|3 
+00:33:45|active|1 00:33:45|idle|3 

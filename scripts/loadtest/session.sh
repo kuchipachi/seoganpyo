@@ -14,8 +14,14 @@ set -uo pipefail
 LABEL=${1:?CONFIG_LABEL 필요}
 PLAN=${2:?"실행 계획 필요 (예: \"load:5 stress:3\")"}
 COOLDOWN=${COOLDOWN:-300}
-BASE=${BASE:-https://54.180.181.46.nip.io}
 REPO=$(cd "$(dirname "$0")/../.." && pwd)
+# 운영 주소 — 공개 레포라 IP 를 코드에 두지 않는다. BASE 가 없으면 레포 .env 의 DOMAIN 을 쓴다 (EC2 는 .env 에 있음)
+if [ -z "${BASE:-}" ]; then
+  DOMAIN=$(grep -s '^DOMAIN=' "$REPO/.env" | cut -d= -f2-)
+  BASE=${DOMAIN:+https://$DOMAIN}
+fi
+: "${BASE:?BASE 필요 — 예) BASE=https://<EC2_IP>.nip.io  (또는 레포 .env 에 DOMAIN=<EC2_IP>.nip.io)}"
+export BASE   # run.sh 에 넘김
 LOG="$REPO/infra/loadtest/k6/results/$LABEL/session.log"
 mkdir -p "$(dirname "$LOG")"
 log() { echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG"; }

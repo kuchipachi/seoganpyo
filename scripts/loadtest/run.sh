@@ -13,11 +13,16 @@ set -uo pipefail
 
 PROFILE=${1:?PROFILE 필요 (smoke|load|stress|breakpoint)}
 LABEL=${2:?CONFIG_LABEL 필요 (예: baseline)}
-BASE=${BASE:-https://54.180.181.46.nip.io}
-EC2=${EC2:-ec2-user@54.180.181.46}
+REPO=$(cd "$(dirname "$0")/../.." && pwd)
+# 운영 주소 — 공개 레포라 IP 를 코드에 두지 않는다. BASE 가 없으면 레포 .env 의 DOMAIN 을 쓴다 (EC2 는 .env 에 있음)
+if [ -z "${BASE:-}" ]; then
+  DOMAIN=$(grep -s '^DOMAIN=' "$REPO/.env" | cut -d= -f2-)
+  BASE=${DOMAIN:+https://$DOMAIN}
+fi
+: "${BASE:?BASE 필요 — 예) BASE=https://<EC2_IP>.nip.io  (또는 레포 .env 에 DOMAIN=<EC2_IP>.nip.io)}"
+EC2=${EC2:-ec2-user@$(echo "$BASE" | sed -E 's#^https?://##; s#\.nip\.io.*$##')}   # nip.io 도메인에서 IP 추출
 KEY=${KEY:-$HOME/.ssh/server-key.pem}
 INSTANCE_ID=${INSTANCE_ID:-i-0cf5fbf562ec4017b}
-REPO=$(cd "$(dirname "$0")/../.." && pwd)
 SSH=(ssh -o BatchMode=yes -o LogLevel=ERROR -i "$KEY" "$EC2")
 
 case $PROFILE in   # k6 시나리오 길이 + 여유 (서버 지표 수집 시간)

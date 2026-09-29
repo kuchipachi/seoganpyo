@@ -28,9 +28,9 @@
 
 | 키 | SSM | 로컬 개발 | EC2 운영 | 비고 |
 | --- | --- | --- | --- | --- |
-| `NEXT_PUBLIC_API_URL` | 📄 | `http://localhost:8080` | `https://54.180.181.46.nip.io/backend` | ⚠️ **프론트 빌드 인자** — 런타임 `.env`가 아니라 `docker buildx build --build-arg`로 넘김. 바뀌면 재빌드 |
-| `BACKEND_URL` | 📄 | `http://localhost:8080` | `https://54.180.181.46.nip.io/backend` | 회원가입 승인 링크 |
-| `ADMIN_USERS_URL` | 📄 | `http://localhost:3000/admin/users` | `https://54.180.181.46.nip.io/admin/users` | 회원가입 승인 페이지 링크 |
+| `NEXT_PUBLIC_API_URL` | 📄 | `http://localhost:8080` | `https://<EC2_IP>.nip.io/backend` | ⚠️ **프론트 빌드 인자** — 런타임 `.env`가 아니라 `docker buildx build --build-arg`로 넘김. 바뀌면 재빌드 |
+| `BACKEND_URL` | 📄 | `http://localhost:8080` | `https://<EC2_IP>.nip.io/backend` | 회원가입 승인 링크 |
+| `ADMIN_USERS_URL` | 📄 | `http://localhost:3000/admin/users` | `https://<EC2_IP>.nip.io/admin/users` | 회원가입 승인 페이지 링크 |
 
 ## 3. 선택 — 없어도 앱은 뜸 (해당 기능만 비활성)
 
@@ -61,7 +61,7 @@ EC2 에서 ECR 이미지로 띄울 때만 필요합니다. 로컬 개발에는 �
 | --- | --- | --- | --- |
 | `ECR_REGISTRY` | 📄 | `<계정ID>.dkr.ecr.ap-northeast-2.amazonaws.com` | 이미지 3개의 공통 접두사 |
 | `IMAGE_TAG` | 📄 | `latest` | 2차에 git SHA 로 전환 → 롤백 지점 |
-| `DOMAIN` | 📄 | `54.180.181.46.nip.io` | Caddy 가 이 이름으로 인증서 발급 |
+| `DOMAIN` | 📄 | `<EC2_IP>.nip.io` | Caddy 가 이 이름으로 인증서 발급 |
 
 > `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d` 로 실행합니다.
 > base 의 `build:` 를 `image:` 로 덮어써 EC2 에서 빌드하지 않습니다 (1GiB 에서 OOM).
@@ -89,8 +89,8 @@ SENDER_EMAIL=...
 SENDER_PASSWORD=...
 MISTRAL_API_KEY=...
 GEMINI_API_KEY=...
-BACKEND_URL=https://54.180.181.46.nip.io/backend
-ADMIN_USERS_URL=https://54.180.181.46.nip.io/admin/users
+BACKEND_URL=https://<EC2_IP>.nip.io/backend
+ADMIN_USERS_URL=https://<EC2_IP>.nip.io/admin/users
 OLLAMA_TIMEOUT=20
 # DISCORD_ALERT_WEBHOOK=...   # D9 관측 구축 시 추가
 ```

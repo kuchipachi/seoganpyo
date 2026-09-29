@@ -1,0 +1,5 @@
+rate=20/s dur=60s image=seoganpyo-api:t1app
+    http_req_duration..............: med=22.06ms p(90)=23.06ms p(95)=24.6ms  p(99)=31.02ms max=58.93ms
+    http_req_failed................: 0.00%  0 out of 1201
+    http_reqs......................: 1201   20.007961/s
+api CPU avg=31% max=31% (samples=18)

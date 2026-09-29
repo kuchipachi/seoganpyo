@@ -43,9 +43,24 @@ RATE=60 DUR=240s AFTER=90 ./run-sustained.sh t1-app-sustained
 
 `run-sustained.sh` 는 과부하 동안·이후 5초마다 Docker 헬스 상태·`/healthz`·API 응답을 기록하고, autoheal 재시작 횟수와 응답 코드 분포를 남깁니다.
 
-## T2 — N+1 제거 전후 지연 비교
+## T2 — N+1 제거 전후 비교
+
+> ⚠️ **먼저 응답 크기를 운영과 맞출 것.** PDF 시드만으로는 `course_details`·`professor_details` 가 비어
+> 강의 목록 응답이 15KB (운영 130KB) → 직렬화 비용이 작아 처리량을 부풀려 잰다.
 
 ```bash
-# 이미지 두 개(수정 전·후)를 같은 도착률로 번갈아 측정
-RATE=20 DUR=60s ./run-latency.sh <라벨>     # 지연 분포 + api CPU 평균
+# 1) 운영 공개 API 를 1회 조회해 details 를 재현 DB 에 복사 (응답 약 130KB 가 되는지 확인)
+curl -s "https://<운영 도메인>/backend/api/v1/courses?year=2026&semester=1" > /tmp/prod.json
+curl -s "http://localhost:18000/api/v1/courses?year=2026&semester=1" > /tmp/local.json
+python3 seed-details-from-prod.py /tmp/prod.json /tmp/local.json | docker exec -i repro-db-1 psql -U postgres -d seoganpyo -q
+
+# 2) 이미지 4개: 수정 전(dev24) · T2(t2) · T1 단독(t1app) · T1+T2(t1t2)
+#    <태그>:<요청/초> 조합을 3라운드 번갈아 측정 → result-t2full-<태그>-r<요청/초>-<라운드>.txt
+./run-t2-compare.sh dev24:20 t2:20 t1app:60 t1t2:60
+
+# 3) 처리 한계 — 도착률을 올려 가며 거절·CPU 포화 지점 확인
+for r in 100 150 200; do RATE=$r DUR=60s ./run-latency.sh t2cap-t1t2-r$r; sleep 20; done
 ```
+
+⚠️ **지연은 같은 도착률끼리만 비교할 것.** 노트북(Docker Desktop)에서는 부하가 낮을 때 CPU 가 절전 상태라
+같은 이미지도 20 요청/초(12.7ms)가 60 요청/초(6.6ms)보다 느리게 나온다. 처리 한계(포화 처리량)는 이 영향을 받지 않는다.

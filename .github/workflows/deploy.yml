@@ -42,7 +42,10 @@ jobs:
       - name: AWS 인증 (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/SeoganpyoGitHubActionsRole
+          # 계정 ID 는 비밀이 아니다(ARN 구성 요소이고 권한 없이는 무의미).
+          # Secret 으로 두면 로그에서 *** 로 가려져 값이 틀려도 확인할 수 없고,
+          # 실패는 'Not authorized' 로만 떠서 원인 파악이 안 된다 — 실제로 그렇게 막혔다.
+          role-to-assume: arn:aws:iam::833823555621:role/SeoganpyoGitHubActionsRole
           aws-region: ${{ env.AWS_REGION }}
 
       - name: ECR 로그인

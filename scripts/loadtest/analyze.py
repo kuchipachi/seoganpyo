@@ -203,6 +203,10 @@ def main() -> None:
         print(f"## {before.name} → {after.name} ({prof})")
         for k in va.keys() & vb.keys():
             a, b = va[k], vb[k]
+            if statistics.median(a) == 0:  # 에러율 0 등 — 변화율 정의 불가, 값만 표시
+                print(f"{k:<12} {statistics.median(a):.4f} → {statistics.median(b):.4f}  "
+                      f"(before 중앙값 0 — 변화율 생략, n={len(a)} vs {len(b)})")
+                continue
             change = (statistics.median(b) / statistics.median(a) - 1) * 100
             lo, hi = bootstrap_change_ci(a, b)
             u, p = mann_whitney_exact(a, b) if len(a) + len(b) <= 16 else (float("nan"), float("nan"))

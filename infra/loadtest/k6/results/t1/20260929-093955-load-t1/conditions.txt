@@ -1,0 +1,15 @@
+run_id=20260929-093955-load-t1 profile=load label=t1 base=https://<EC2_IP>.nip.io
+local_time=2026-09-29T09:39:55+09:00
+git=f8d2627
+k6=k6 v2.3.0 (commit/devel, go1.27.1, darwin/arm64)
+--- RTT (Mac → EC2, TCP connect 10회, ms)
+min=7.2 avg=12.4 max=23.6
+--- CPU 크레딧 (최근 10분)
+287.6818159833333	287.5837072666667
+--- Mac 부하 (생성기가 병목이 아닌지)
+ 9:39  up 25 days, 15:04, 1 user, load averages: 3.11 3.14 3.39
+collector_started=2026-09-29T09:39:58+09:00
+k6_started=2026-09-29T09:39:58+09:00
+k6_exit=0
+--- Mac 부하 (종료 시)
+ 9:50  up 25 days, 15:15, 1 user, load averages: 1.77 2.05 2.57

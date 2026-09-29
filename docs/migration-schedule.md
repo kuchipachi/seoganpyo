@@ -57,8 +57,9 @@
 ### 🟦 하연 — RDS (0.5일)
 
 - [x] 👉 로컬 remote 교체 — `origin`=`kuchipachi/seoganpyo`, 기존 포크는 `old-origin`
-- [ ] **Deny 정책 보강** — `rds:MultiAz`, `rds:DatabaseClass`, `ec2:InstanceType` 조건 (§2.1) → Multi-AZ 생성 시도로 거부 확인
-- [ ] AZ가 다른 퍼블릭 서브넷 2개 → **RDS 서브넷 그룹**
+- [~] **Deny 정책 보강** — 불필요 판정. 무료 플랜이 RDS 템플릿을 **프리 티어로 고정**해
+      Multi-AZ 선택 자체가 불가능하다. ALB/NAT 차단은 이미 적용됨(§2.1)
+- [x] RDS 서브넷 그룹 — Default VPC 기본값 사용 (4 서브넷 / 4 AZ)
 - [x] 보안그룹 **`SG-web`** `sg-095b42d816c449f1b` (80/443 → 0.0.0.0/0, 22 → 본인 IP)
 - [x] 보안그룹 **`SG-rds`** `sg-0523ae10013431731` (5432 ← SG-web **그룹 참조**)
       ⚠️ 최초 **시드니 리전**에 만들어 재생성 — 포스트모템 1호 후보 (§8.4)
@@ -89,7 +90,9 @@
 - [x] **swap** — AL2023 기본 1.5Gi 사용 (RAM 913Mi + swap 1.5Gi)
 - [x] Docker + Compose v5.5.1 설치 (`docker ps` sudo 없이 동작)
 - [x] **RDS 연결 검증** — EC2 → RDS `psql` 성공, TLSv1.3 ✅ (§aws-infra-design 검증 결과)
-- [ ] Caddy 리버스 프록시 — `<ip>.nip.io` 자동 HTTPS 확인
+- [x] Caddy 리버스 프록시 — `<EC2_IP>.nip.io` Let's Encrypt 자동 HTTPS ✅
+      ⚠️ 경로 나열 방식이 `/auth` `/history` `/upload` 를 빠뜨려 로그인 전체가 막혔다
+      → `/backend/*` 단일 prefix 로 통합 (포스트모템 1호)
 - [x] 👉 **민지에게 SSH 접속 정보 전달** (터널용)
 
 > 💡 EC2를 만들면 온보딩 크레딧 +$20.
@@ -170,7 +173,7 @@
 - [x] `docs/postmortems/` 디렉터리 생성 — 1호: [Caddy 백엔드 라우팅 누락](./postmortems/2026-09-26-caddy-backend-routing.md)
 - [~] Discord 알림 → **D9 로 이동**. 1차엔 알람 발신원이 없어 쓸 곳이 없음.
       가입 알림(`DISCORD_SIGNUP_WEBHOOK`)은 **제거** — 관리자 본인이 `/admin/users` 를 직접 확인 (포폴 용도)
-- [ ] 아키텍처 결정 기록 계속
+- [~] 아키텍처 결정 기록 — D10 항목으로 일원화 (아래)
 
 ---
 
@@ -185,7 +188,7 @@
 - [x] **T1 동시 처리 한도** — 앱 미들웨어 `MAX_CONCURRENT_REQUESTS=14` (#27). 운영 측정 ✅ — 과부하 후 중단 21분 → 0분, 한계 이후 처리량 붕괴(51 → 12 RPS) → 약 54 RPS 유지, 평상시 성능 변화 없음
 - [~] **T2 N+1 제거** — `selectinload(Course.details)`, `selectinload(Professor.details)`. 쿼리 수 테스트(64 → 3) ✅ → 로컬 처리 능력 약 44 → 158 RPS ✅ → PR #29 → 운영 측정
 - [x] **포스트모템 1호** — [스레드풀·DB 풀 교착](./postmortems/2026-09-27-db-pool-deadlock.md) (가설 반증 → 수정 → 검증)
-- [ ] 포스트모템 2호
+- [ ] 포스트모템 2호 — 후보: 측정 스크립트 버그(`performance.md` §3.6) 또는 T2·T4 중 트러블
 
 ### 🟦 하연 — T3 · 배포 · 인스턴스 검증
 

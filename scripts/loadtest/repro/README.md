@@ -11,6 +11,12 @@ docker compose -p repro up -d
 # 운영과 같은 데이터 (강의계획서 PDF 37개 필요 — data/syllabi/)
 (cd ../../.. && DB_HOST=localhost DB_PORT=55432 DB_USER=postgres DB_PASSWORD=repro DB_NAME=seoganpyo \
   PYTHONPATH=. python scripts/seed_courses_from_syllabi.py --apply)
+# ⚠️ 시드는 강의 행만 만든다 — details 가 비어 응답이 15KB(운영 130KB)라 처리량을 부풀려 잰다
+#    (docs/postmortems/2026-09-28-light-repro-payload.md). 운영 응답으로 details 를 채우고 크기를 확인할 것
+curl -s "https://<EC2_IP>.nip.io/backend/api/v1/courses?year=2026&semester=1" > /tmp/prod.json
+curl -s "http://localhost:18000/api/v1/courses?year=2026&semester=1" > /tmp/local.json
+python3 seed-details-from-prod.py /tmp/prod.json /tmp/local.json | docker exec -i repro-db-1 psql -U postgres -d seoganpyo -q
+curl -s "http://localhost:18000/api/v1/courses?year=2026&semester=1" | wc -c   # 약 130,000 이어야 함
 
 # 실험 1: 현재 운영 설정 (풀 5+10, 동시 처리 한도 없음) → 교착, 약 16분 뒤 회복
 RATE=60 DUR=60s ./run-overload.sh pool15

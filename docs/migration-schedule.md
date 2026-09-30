@@ -188,7 +188,7 @@
 - [x] **T1 동시 처리 한도** — 앱 미들웨어 `MAX_CONCURRENT_REQUESTS=14` (#27). 운영 측정 ✅ — 과부하 후 중단 21분 → 0분, 한계 이후 처리량 붕괴(51 → 12 RPS) → 약 54 RPS 유지, 평상시 성능 변화 없음
 - [~] **T2 N+1 제거** — `selectinload(Course.details)`, `selectinload(Professor.details)`. 쿼리 수 테스트(64 → 3) ✅ → 로컬 처리 능력 약 44 → 158 RPS ✅ → PR #29 → 운영 측정
 - [x] **포스트모템 1호** — [스레드풀·DB 풀 교착](./postmortems/2026-09-27-db-pool-deadlock.md) (가설 반증 → 수정 → 검증)
-- [ ] 포스트모템 2호 — 후보: 측정 스크립트 버그(`performance.md` §3.6) 또는 T2·T4 중 트러블
+- [x] 포스트모템 2호 — [재현 데이터가 가벼워 처리량을 부풀려 잰 일](./postmortems/2026-09-28-light-repro-payload.md)
 
 ### 🟦 하연 — T3 · 배포 · 인스턴스 검증
 
@@ -243,8 +243,7 @@
 - [ ] Grafana 대시보드에 로그·메트릭이 보임 (🟩 D9~D10)
 - [~] 알람이 Discord로 옴 — **CloudWatch ✅** / Grafana 🟩 미구축
 - [~] `docs/performance.md` — 이미지 크기 ✅ · 베이스라인 ✅ / **튜닝 후 수치는 T1~T4 이후**
-- [ ] `docs/postmortems/`에 4건+ — 현재 **3건**: 🟦 2건(Caddy 라우팅·헬스체크 훈련) / 🟩 **1건**(교착).
-      "측정" 포스트모템 파일은 없음 — 측정 스크립트 버그는 `performance.md` §3.6 에 기록만 있음. 🟩 2호 후보: 측정 스크립트 버그(서버 지표가 부하 구간과 어긋남) 또는 T1~T4 중 트러블
+- [x] `docs/postmortems/`에 4건+ — 🟦 2건(Caddy 라우팅·헬스체크 훈련) / 🟩 2건(교착·재현 데이터 측정 결함)
 - [x] 아키텍처 결정 기록 — [`docs/adr.md`](./adr.md)
 
 ---

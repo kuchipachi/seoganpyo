@@ -1,0 +1,10 @@
+2026-09-30T02:56:35+00:00
+               total        used        free      shared  buff/cache   available
+Mem:             913         504         132           0         276         260
+Swap:           1567         125        1442
+/seoganpyo-api status=running oomkilled=false restarts=0
+/seoganpyo-autoheal status=running oomkilled=false restarts=0
+/seoganpyo-caddy status=running oomkilled=false restarts=0
+/seoganpyo-frontend status=running oomkilled=false restarts=0
+/seoganpyo-redis status=running oomkilled=false restarts=0
+/seoganpyo-ocr status=running oomkilled=false restarts=0

@@ -387,13 +387,26 @@ ECR 재인증(토큰 12시간) → pull → 기동 → **Caddy 재시작** → �
 > Caddy 재시작이 들어간 이유: backend 를 재생성하면 컨테이너 IP 가 바뀌는데
 > Caddy 가 옛 IP 를 캐시해 **502** 가 난다. 실제로 겪은 문제다.
 
-**EC2 에 스크립트 전송** (레포 갱신 후)
+**EC2 에 스크립트 반영** (레포 갱신 후)
+
+22번이 닫혀 있어 `scp` 를 쓸 수 없다. EC2 가 직접 레포를 당겨온다.
 
 ```bash
-scp -i server-key.pem scripts/deploy.sh scripts/smoke-test.sh scripts/autoheal-guard.sh \
-  ec2-user@54.180.181.46:~/seoganpyo/scripts/
-ssh -i server-key.pem ec2-user@54.180.181.46 'cp ~/seoganpyo/scripts/deploy.sh ~/seoganpyo/ && chmod +x ~/seoganpyo/*.sh ~/seoganpyo/scripts/*.sh'
+# Session Manager 로 접속해서
+aws ssm start-session --target <INSTANCE_ID> --region ap-northeast-2
+
+# EC2 안에서
+cd ~/seoganpyo && git pull
+cp scripts/deploy.sh ~/seoganpyo/ && chmod +x ~/seoganpyo/*.sh scripts/*.sh
 ```
+
+> 접속 없이 한 번에 하려면 Run Command 를 쓴다 — 배포 워크플로가 쓰는 것과 같은 경로.
+>
+> ```bash
+> aws ssm send-command --instance-ids <INSTANCE_ID> --region ap-northeast-2 \
+>   --document-name AWS-RunShellScript \
+>   --parameters 'commands=["cd /home/ec2-user/seoganpyo && git pull && cp scripts/deploy.sh . && chmod +x *.sh scripts/*.sh"]'
+> ```
 
 ---
 

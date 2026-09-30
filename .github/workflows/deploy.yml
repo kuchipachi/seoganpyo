@@ -25,7 +25,11 @@ concurrency:
 env:
   AWS_REGION: ap-northeast-2
   INSTANCE_ID: i-0cf5fbf562ec4017b
-  DOMAIN: 54.180.181.46.nip.io
+  # EIP 를 재할당하면 도메인(nip.io)도 바뀐다. 코드에 박아두면 고칠 곳을
+  # 빠뜨리기 쉬워 — 특히 프론트는 빌드 타임에 주소가 이미지에 박힌다 —
+  # Variables 에 두고 한 곳만 고치게 한다. Secret 이 아닌 이유는 배포 주소가
+  # 공개 정보이고, 가려지면 실패했을 때 값을 확인할 수 없기 때문이다.
+  DOMAIN: ${{ vars.DOMAIN }}
 
 permissions:
   id-token: write                # OIDC 토큰 발급에 필요
@@ -36,6 +40,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # DOMAIN 이 비면 프론트가 https:///backend 로 빌드돼 배포는 성공하는데
+      # 화면만 안 뜬다. 조용히 깨지는 것보다 여기서 멈추는 게 낫다.
+      - name: 변수 확인
+        run: |
+          if [ -z "${DOMAIN}" ]; then
+            echo "::error::Variables 에 DOMAIN 이 없습니다. Settings → Secrets and variables → Actions → Variables 에 DOMAIN=<EIP>.nip.io 추가"
+            exit 1
+          fi
+          echo "DOMAIN=${DOMAIN}"
 
       # 레포에 AWS 키를 두지 않는다. GitHub 이 발급한 토큰으로 역할을 맡는다.
       # 신뢰 정책의 sub 조건이 이 레포의 dev·main 브랜치만 허용한다.

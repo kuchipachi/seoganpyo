@@ -16,7 +16,13 @@ cd "$(dirname "$0")/.."
 
 REGION=${REGION:-ap-northeast-2}
 TAG=${TAG:-latest}
-DOMAIN=${DOMAIN:-54.180.181.46.nip.io}
+
+# 운영 주소 — 공개 레포라 IP 를 코드에 두지 않는다 (smoke-test.sh 와 같은 방식).
+# EIP 재할당 시 고칠 곳을 줄이려는 목적도 있다.
+# frontend 를 빌드할 때만 필요하므로 여기서 죽이지 않고 아래에서 확인한다.
+if [ -z "${DOMAIN:-}" ]; then
+    DOMAIN=$(grep -s '^DOMAIN=' .env | cut -d= -f2-)
+fi
 
 # ── AWS 인증 확인 ─────────────────────────────────────
 # 토큰 만료·키 미설정으로 막히는 일이 잦아 먼저 확인하고 안내한다
@@ -71,6 +77,8 @@ for t in "${TARGETS[@]}"; do
         frontend)
             ctx="./frontend"
             # NEXT_PUBLIC_* 는 빌드 타임에 이미지에 박힌다 — 도메인이 바뀌면 재빌드 필요.
+            # 비어 있으면 https:///backend 로 박혀 배포는 되는데 화면만 안 뜬다.
+            : "${DOMAIN:?DOMAIN 필요 — 예) DOMAIN=<EIP>.nip.io ./scripts/build-push.sh frontend  (또는 .env 에 DOMAIN=)}"
             # /backend 는 Caddy 가 백엔드로 보내는 prefix (infra/caddy/Caddyfile)
             args=(--build-arg "NEXT_PUBLIC_API_URL=https://${DOMAIN}/backend")
             ;;
@@ -91,5 +99,7 @@ for t in "${TARGETS[@]}"; do
 done
 
 echo
-echo "완료. EC2 에서 배포하세요:"
-echo "  ssh -i server-key.pem ec2-user@${DOMAIN%%.nip.io} '~/seoganpyo/deploy.sh'"
+echo "완료. 배포하세요:"
+echo "  GitHub Actions 의 Deploy 워크플로 실행 (권장)"
+echo "  또는 Session Manager 접속 후:  ~/seoganpyo/deploy.sh"
+echo "    aws ssm start-session --target <INSTANCE_ID> --region ${REGION}"

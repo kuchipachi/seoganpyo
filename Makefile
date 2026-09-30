@@ -3,7 +3,7 @@ COMPOSE_DEV     = docker-compose.dev.yml
 COMPOSE_OBS     = docker-compose.observability.yml
 
 DC_DEV      = docker compose -f $(COMPOSE) -f $(COMPOSE_DEV)
-DC_PROD     = docker compose -f $(COMPOSE)
+DC_PROD     = docker compose -f $(COMPOSE) -f docker-compose.prod.yml
 DC_OBS      = docker compose -f $(COMPOSE) -f $(COMPOSE_DEV) -f $(COMPOSE_OBS)
 
 # ── 로컬 개발 ─────────────────────────────────────────
@@ -24,11 +24,17 @@ ps:
 e2e-seed:
 	$(DC_DEV) exec -T -e PYTHONPATH=/app backend python scripts/e2e_seed_user.py
 
-# ── 프로덕션 배포 ──────────────────────────────────────
+# ── 프로덕션 배포 (AWS EC2) ────────────────────────────
+# 로컬에서 `make prod` 로 직접 배포하지 않는다. 다음 중 하나를 쓴다:
+#   ① GitHub Actions  — gh workflow run deploy.yml -f services=api  (권장)
+#   ② 맥북에서 빌드    — ./scripts/build-push.sh → EC2 에서 ~/seoganpyo/deploy.sh
+# EC2(913MiB)에서는 이미지 빌드가 OOM 나므로 --build 를 쓰지 않는다.
 prod:
-	bash scripts/pre-deploy.sh
-	$(DC_PROD) up --build -d
-	bash scripts/post-deploy.sh
+	@echo "로컬 빌드 배포는 사용하지 않습니다."
+	@echo "  ① gh workflow run deploy.yml -f services=api"
+	@echo "  ② ./scripts/build-push.sh  →  EC2 에서 ~/seoganpyo/deploy.sh"
+	@echo "자세한 내용: docs/runbook.md §6.4"
+	@exit 1
 
 prod-down:
 	$(DC_PROD) down

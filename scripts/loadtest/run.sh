@@ -9,6 +9,16 @@
 #   CONFIG_LABEL: 튜닝 설정 이름 (before/after 비교 단위)
 #
 # 결과: infra/loadtest/k6/results/<CONFIG_LABEL>/<RUN_ID>/  (근거 데이터로 커밋 — results/README.md)
+#
+# 서버 접속: 22번 포트는 닫혀 있다 (SSM Run Command 배포, D14~D15). 서버 지표 수집은 Session Manager 경유 SSH.
+#   1) Session Manager 플러그인 설치 (brew install --cask session-manager-plugin, 또는 AWS 배포 zip 을 ~/.local/bin 에)
+#   2) ~/.ssh/config:
+#        Host seoganpyo
+#          HostName <인스턴스 ID>
+#          User ec2-user
+#          IdentityFile ~/.ssh/server-key.pem
+#          ProxyCommand sh -c "PATH=$HOME/.local/bin:$PATH aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters portNumber=%p"
+#   3) BASE=https://<EC2_IP>.nip.io EC2=ec2-user@seoganpyo scripts/loadtest/session.sh <LABEL> "load:3 breakpoint:1"
 set -uo pipefail
 
 PROFILE=${1:?PROFILE 필요 (smoke|load|stress|breakpoint)}

@@ -124,7 +124,7 @@ uvicorn `--limit-concurrency` 는 처리 중인 요청이 아니라 **연결 수
 | # | 조치 | 목적 | 상태 |
 | --- | --- | --- | --- |
 | 1 | **동시 처리 한도** — 앱 미들웨어(`MAX_CONCURRENT_REQUESTS` = 풀 − 1, 헬스체크 제외). uvicorn 플래그는 연결 수를 세고 헬스체크까지 거절해 기각 | 교착 원천 차단, 과부하 시 즉시 503 (load shedding) | ✅ T1 운영 적용 (#27) — 과부하 후 중단 21분 → 0분, [performance.md §4.2](../performance.md) |
-| 2 | 강의 목록 **N+1 제거** (`selectinload(Course.details)`, `selectinload(Professor.details)`) | 쿼리 64 → 약 3, 요청당 CPU·연결 점유 시간 감소 → 처리량 증가 | 튜닝 2순위 |
+| 2 | 강의 목록 **N+1 제거** (`selectinload(Course.details)`, `selectinload(Professor.details)`) | 쿼리 64 → 약 3, 요청당 CPU·연결 점유 시간 감소 → 처리량 증가 | ✅ T2 운영 적용 (#29) — 처리 능력 33 → 68 RPS, [performance.md §4.3](../performance.md) |
 | 3 | **헬스체크에 DB 확인** 추가 | 같은 장애 시 `unhealthy` → 자동 재시작 | 예정 |
 | 4 | 풀 대기 시간 단축 (`DB_POOL_TIMEOUT` 30 → 수 초) | 보조 — 교착이 생겨도 빨리 풀리게 | 검토 |
 | 5 | 5xx 비율 알림 (Grafana Alerting, D10) | 사람이 즉시 인지 | 예정 |

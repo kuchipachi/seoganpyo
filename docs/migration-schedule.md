@@ -57,8 +57,9 @@
 ### 🟦 하연 — RDS (0.5일)
 
 - [x] 👉 로컬 remote 교체 — `origin`=`kuchipachi/seoganpyo`, 기존 포크는 `old-origin`
-- [ ] **Deny 정책 보강** — `rds:MultiAz`, `rds:DatabaseClass`, `ec2:InstanceType` 조건 (§2.1) → Multi-AZ 생성 시도로 거부 확인
-- [ ] AZ가 다른 퍼블릭 서브넷 2개 → **RDS 서브넷 그룹**
+- [~] **Deny 정책 보강** — 불필요 판정. 무료 플랜이 RDS 템플릿을 **프리 티어로 고정**해
+      Multi-AZ 선택 자체가 불가능하다. ALB/NAT 차단은 이미 적용됨(§2.1)
+- [x] RDS 서브넷 그룹 — Default VPC 기본값 사용 (4 서브넷 / 4 AZ)
 - [x] 보안그룹 **`SG-web`** `sg-095b42d816c449f1b` (80/443 → 0.0.0.0/0, 22 → 본인 IP)
 - [x] 보안그룹 **`SG-rds`** `sg-0523ae10013431731` (5432 ← SG-web **그룹 참조**)
       ⚠️ 최초 **시드니 리전**에 만들어 재생성 — 포스트모템 1호 후보 (§8.4)
@@ -89,7 +90,9 @@
 - [x] **swap** — AL2023 기본 1.5Gi 사용 (RAM 913Mi + swap 1.5Gi)
 - [x] Docker + Compose v5.5.1 설치 (`docker ps` sudo 없이 동작)
 - [x] **RDS 연결 검증** — EC2 → RDS `psql` 성공, TLSv1.3 ✅ (§aws-infra-design 검증 결과)
-- [ ] Caddy 리버스 프록시 — `<ip>.nip.io` 자동 HTTPS 확인
+- [x] Caddy 리버스 프록시 — `<EC2_IP>.nip.io` Let's Encrypt 자동 HTTPS ✅
+      ⚠️ 경로 나열 방식이 `/auth` `/history` `/upload` 를 빠뜨려 로그인 전체가 막혔다
+      → `/backend/*` 단일 prefix 로 통합 (포스트모템 1호)
 - [x] 👉 **민지에게 SSH 접속 정보 전달** (터널용)
 
 > 💡 EC2를 만들면 온보딩 크레딧 +$20.
@@ -170,7 +173,7 @@
 - [x] `docs/postmortems/` 디렉터리 생성 — 1호: [Caddy 백엔드 라우팅 누락](./postmortems/2026-09-26-caddy-backend-routing.md)
 - [~] Discord 알림 → **D9 로 이동**. 1차엔 알람 발신원이 없어 쓸 곳이 없음.
       가입 알림(`DISCORD_SIGNUP_WEBHOOK`)은 **제거** — 관리자 본인이 `/admin/users` 를 직접 확인 (포폴 용도)
-- [ ] 아키텍처 결정 기록 계속
+- [~] 아키텍처 결정 기록 — D10 항목으로 일원화 (아래)
 
 ---
 
@@ -183,9 +186,9 @@
 ### 🟩 민지 — T1 · T2 (코드 + 측정)
 
 - [x] **T1 동시 처리 한도** — 앱 미들웨어 `MAX_CONCURRENT_REQUESTS=14` (#27). 운영 측정 ✅ — 과부하 후 중단 21분 → 0분, 한계 이후 처리량 붕괴(51 → 12 RPS) → 약 54 RPS 유지, 평상시 성능 변화 없음
-- [~] **T2 N+1 제거** — `selectinload(Course.details)`, `selectinload(Professor.details)`. 쿼리 수 테스트(64 → 3) ✅ → 로컬 처리 능력 약 44 → 158 RPS ✅ → PR #29 → 운영 측정
+- [x] **T2 N+1 제거** — `selectinload` 로 SQL 64 → 3 (#29). 운영 측정 ✅ — 기준 만족 처리량 33 → 68 RPS, 최대 성공 처리량 54 → 100 RPS, 평상시 API p95 283 → 134ms
 - [x] **포스트모템 1호** — [스레드풀·DB 풀 교착](./postmortems/2026-09-27-db-pool-deadlock.md) (가설 반증 → 수정 → 검증)
-- [ ] 포스트모템 2호
+- [x] 포스트모템 2호 — [재현 데이터가 가벼워 처리량을 부풀려 잰 일](./postmortems/2026-09-28-light-repro-payload.md)
 
 ### 🟦 하연 — T3 · 배포 · 인스턴스 검증
 
@@ -230,7 +233,7 @@
       ⚠️ **T3 재현(DB 차단)으로는 검증 불가.** DB 를 끊어도 EC2 는 정상이고 RDS 연결 수는
       오히려 줄어 CloudWatch 알람 4개 중 아무것도 울리지 않는다.
       컨테이너 헬스체크 장애는 CloudWatch 관할이 아니다 → Grafana 5xx 룰(🟩 D10)·guard 담당
-- [ ] **D10** 아키텍처 결정 기록 커밋 (`docs/adr.md`), 1차 완료 기준 점검
+- [x] **D10** 아키텍처 결정 기록 — [`docs/adr.md`](./adr.md) (결정 17건: 비용 5 · 보안 8 · 운영 4)
 
 ---
 
@@ -240,9 +243,8 @@
 - [ ] Grafana 대시보드에 로그·메트릭이 보임 (🟩 D9~D10)
 - [~] 알람이 Discord로 옴 — **CloudWatch ✅** / Grafana 🟩 미구축
 - [~] `docs/performance.md` — 이미지 크기 ✅ · 베이스라인 ✅ / **튜닝 후 수치는 T1~T4 이후**
-- [ ] `docs/postmortems/`에 4건+ — 현재 **3건**: 🟦 2건(Caddy 라우팅·헬스체크 훈련) / 🟩 **1건**(교착).
-      "측정" 포스트모템 파일은 없음 — 측정 스크립트 버그는 `performance.md` §3.6 에 기록만 있음. 🟩 2호 후보: 측정 스크립트 버그(서버 지표가 부하 구간과 어긋남) 또는 T1~T4 중 트러블
-- [ ] 아키텍처 결정 기록 (`docs/adr.md`)
+- [x] `docs/postmortems/`에 4건+ — 🟦 2건(Caddy 라우팅·헬스체크 훈련) / 🟩 2건(교착·재현 데이터 측정 결함)
+- [x] 아키텍처 결정 기록 — [`docs/adr.md`](./adr.md)
 
 ---
 
@@ -287,7 +289,11 @@
 >    값 확인이 안 됐다. 실제 방어선은 `sub` 조건이므로 ARN 을 직접 지정
 > 3. **CI 빌드 컨텍스트가 로컬과 다르다** — `.gitignore` 로 `static/` 이 추적되지 않아
 >    러너에서 `COPY ./static` 실패. 로컬은 폴더가 있어 계속 성공했다
-- [ ] **D15** **비용 분석** (0.5일) — Cost Explorer, 크레딧 고갈 예상일, 만료 후 예상액, 절감 실험 (📊 수치 3호)
+- [~] **D15** **비용 분석** — **T4 전 스냅샷 완료** ([performance.md §5](./performance.md))
+      일 평균 $0.874 · 월 환산 $26.22 · 잔액 약 $113 → 이 속도면 약 4.3개월 (6개월 기한보다 짧음)
+      비중: **RDS 56.4%** / EC2 25.5% / 퍼블릭 IPv4 9.8% / EBS 8.1%
+      ⚠️ `RECORD_TYPE` 에서 `Credit` 를 제외해야 실사용량이 보인다 (안 빼면 상쇄돼 0·음수)
+      남은 것: **T4 후 재측정** → 처리량 vs 비용 트레이드오프, 절감 실험(RDS 중지), 만료 후 예상액
 - [ ] **D16** 런북 — 배포 + **롤백**(이전 ECR 태그) (0.25일)
 
 > ⚠️ 2차는 착수하자마자 **OIDC부터** 하세요. 막히면 시간이 필요합니다.

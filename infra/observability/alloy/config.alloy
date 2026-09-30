@@ -1,0 +1,84 @@
+// Grafana Cloud 로 로그·메트릭 전송 (D9) — 운영 EC2 에서 Alloy 컨테이너 하나로
+//
+// 로컬 관측 스택(Promtail + Prometheus + Loki + Grafana, 4개·약 400MB)은 EC2 1GB 에 올릴 수 없어
+// 수집기(Alloy, 약 100MB)만 두고 저장·시각화는 Grafana Cloud 무료 티어에 맡긴다.
+//
+// 라벨은 로컬 설정(promtail-config.yml, prometheus.yml)과 **같게** 맞췄다 —
+// 기존 대시보드 JSON(seoganpyo-overview/metrics)의 쿼리를 그대로 쓰기 위해.
+//
+// 필요한 환경변수 (SSM /seoganpyo/prod/* → .env, docs/env-reference.md)
+//   GRAFANA_CLOUD_PROM_URL   .../api/prom/push
+//   GRAFANA_CLOUD_PROM_USER  Prometheus 인스턴스 ID (숫자)
+//   GRAFANA_CLOUD_LOKI_URL   .../loki/api/v1/push
+//   GRAFANA_CLOUD_LOKI_USER  Loki 인스턴스 ID (숫자)
+//   GRAFANA_CLOUD_TOKEN      Access Policy 토큰 (metrics:write, logs:write) 🔒
+
+// ── 로그: 모든 컨테이너 stdout/stderr ─────────────────────────────
+discovery.docker "containers" {
+	host             = "unix:///var/run/docker.sock"
+	refresh_interval = "5s"
+}
+
+discovery.relabel "containers" {
+	targets = []
+
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "container"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_log_stream"]
+		target_label  = "stream"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+		target_label  = "compose_service"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_com_docker_compose_project"]
+		target_label  = "compose_project"
+	}
+}
+
+loki.source.docker "containers" {
+	host          = "unix:///var/run/docker.sock"
+	targets       = discovery.docker.containers.targets
+	relabel_rules = discovery.relabel.containers.rules
+	forward_to    = [loki.write.cloud.receiver]
+}
+
+loki.write "cloud" {
+	endpoint {
+		url = sys.env("GRAFANA_CLOUD_LOKI_URL")
+
+		basic_auth {
+			username = sys.env("GRAFANA_CLOUD_LOKI_USER")
+			password = sys.env("GRAFANA_CLOUD_TOKEN")
+		}
+	}
+}
+
+// ── 메트릭: 백엔드 /metrics (prometheus-fastapi-instrumentator) ────
+// /metrics 는 Caddy 가 외부에서 막는다(404) — compose 내부망으로만 수집
+prometheus.scrape "api" {
+	targets         = [{"__address__" = "backend:8000"}]
+	metrics_path    = "/metrics"
+	job_name        = "seoganpyo-api"
+	scrape_interval = "15s"
+	forward_to      = [prometheus.remote_write.cloud.receiver]
+}
+
+prometheus.remote_write "cloud" {
+	endpoint {
+		url = sys.env("GRAFANA_CLOUD_PROM_URL")
+
+		basic_auth {
+			username = sys.env("GRAFANA_CLOUD_PROM_USER")
+			password = sys.env("GRAFANA_CLOUD_TOKEN")
+		}
+	}
+}

@@ -62,6 +62,12 @@ EC2 에서 ECR 이미지로 띄울 때만 필요합니다. 로컬 개발에는 �
 | `ECR_REGISTRY` | 📄 | `<계정ID>.dkr.ecr.ap-northeast-2.amazonaws.com` | 이미지 3개의 공통 접두사 |
 | `IMAGE_TAG` | 📄 | `latest` | 2차에 git SHA 로 전환 → 롤백 지점 |
 | `DOMAIN` | 📄 | `<EC2_IP>.nip.io` | Caddy 가 이 이름으로 인증서 발급 |
+| `COMPOSE_PROFILES` | 📄 | `obs` | **Alloy(Grafana Cloud 전송) 켜기.** 없으면 Alloy 가 뜨지 않음 — 아래 값을 먼저 넣은 뒤 등록 |
+| `GRAFANA_CLOUD_PROM_URL` | 📄 | `https://prometheus-prod-XX-....grafana.net/api/prom/push` | Grafana Cloud → Prometheus → Details |
+| `GRAFANA_CLOUD_PROM_USER` | 📄 | `1234567` (숫자) | Prometheus 인스턴스 ID |
+| `GRAFANA_CLOUD_LOKI_URL` | 📄 | `https://logs-prod-XXX.grafana.net/loki/api/v1/push` | Grafana Cloud → Loki → Details |
+| `GRAFANA_CLOUD_LOKI_USER` | 📄 | `987654` (숫자) | Loki 인스턴스 ID |
+| `GRAFANA_CLOUD_TOKEN` | 🔒 | `glc_...` | Access Policy 토큰 — 권한 `metrics:write`, `logs:write` **만** |
 
 > `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d` 로 실행합니다.
 > base 의 `build:` 를 `image:` 로 덮어써 EC2 에서 빌드하지 않습니다 (1GiB 에서 OOM).

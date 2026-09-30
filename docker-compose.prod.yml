@@ -152,9 +152,55 @@ services:
                 reservations:
                     memory: 16M
 
+    # 로그·메트릭 → Grafana Cloud (D9). 설정: infra/observability/alloy/config.alloy
+    #
+    # 옵트인 — .env 에 COMPOSE_PROFILES=obs 가 있을 때만 뜬다 (SSM 에 등록).
+    # Grafana Cloud 값 없이 뜨면 재시작만 반복하므로, 값을 넣은 뒤에 켠다.
+    #
+    # 메모리: T2 breakpoint(최대 부하) 중에도 컨테이너 합계 약 260MB · 가용 300MB+ 를 실측한 뒤 추가.
+    # GOMEMLIMIT 로 Go GC 가 한도 전에 회수하게 한다.
+    #
+    # ⚠️ docker.sock 은 :ro 여도 Docker API 전체에 접근할 수 있다 (root 와 같음).
+    #    autoheal 과 같은 위험 수준 — 공식 이미지·버전 고정으로 관리.
+    alloy:
+        image: grafana/alloy:v1.20.1
+        container_name: seoganpyo-alloy
+        restart: unless-stopped
+        profiles: ["obs"]
+        command:
+            - run
+            - --storage.path=/var/lib/alloy/data
+            - --server.http.listen-addr=127.0.0.1:12345   # UI 는 컨테이너 안에서만
+            - /etc/alloy/config.alloy
+        volumes:
+            - ./infra/observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - alloy_data:/var/lib/alloy/data   # 전송 실패 시 WAL 보관 — 재시작해도 이어서 보냄
+        environment:
+            - GRAFANA_CLOUD_PROM_URL=${GRAFANA_CLOUD_PROM_URL:-}
+            - GRAFANA_CLOUD_PROM_USER=${GRAFANA_CLOUD_PROM_USER:-}
+            - GRAFANA_CLOUD_LOKI_URL=${GRAFANA_CLOUD_LOKI_URL:-}
+            - GRAFANA_CLOUD_LOKI_USER=${GRAFANA_CLOUD_LOKI_USER:-}
+            - GRAFANA_CLOUD_TOKEN=${GRAFANA_CLOUD_TOKEN:-}
+            - GOMEMLIMIT=128MiB
+        logging:
+            driver: json-file
+            options:
+                max-size: "10m"
+                max-file: "3"
+        deploy:
+            resources:
+                limits:
+                    memory: 160M
+                reservations:
+                    memory: 96M
+        depends_on:
+            - backend
+
 volumes:
     # 업로드 이미지·강의계획서 PDF — 1차는 EC2 로컬 볼륨(재생성 시 휘발, 2차 S3 이전)
     app_data:
     app_static:
     caddy_data:
     caddy_config:
+    alloy_data:

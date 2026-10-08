@@ -1,0 +1,110 @@
+[
+  {
+    "uid": "sgp-api-5xx-ratio",
+    "title": "API 5xx 비율 5% 초과",
+    "ruleGroup": "seoganpyo-api",
+    "condition": "C",
+    "for": "5m",
+    "noDataState": "OK",
+    "execErrState": "Error",
+    "labels": { "team": "seoganpyo", "severity": "critical" },
+    "annotations": {
+      "summary": "최근 5분 API 응답의 5xx 비율이 5% 를 넘었습니다",
+      "description": "T1 한도 초과 거절(503 SERVER_BUSY)도 5xx 로 잡힙니다 — 과부하 또는 서버 오류. 로그: {container=\"seoganpyo-api\"} |~ \"(?i)error|동시 처리 한도\". 부하 테스트 중이면 정상 반응."
+    },
+    "data": [
+      {
+        "refId": "A",
+        "relativeTimeRange": { "from": 600, "to": 0 },
+        "datasourceUid": "grafanacloud-prom",
+        "model": {
+          "refId": "A",
+          "instant": true,
+          "expr": "sum(rate(http_requests_total{job=\"seoganpyo-api\", status=\"5xx\"}[5m])) / sum(rate(http_requests_total{job=\"seoganpyo-api\"}[5m]))"
+        }
+      },
+      { "refId": "B", "datasourceUid": "__expr__", "model": { "refId": "B", "type": "reduce", "expression": "A", "reducer": "last", "settings": { "mode": "dropNN" } } },
+      { "refId": "C", "datasourceUid": "__expr__", "model": { "refId": "C", "type": "threshold", "expression": "B", "conditions": [ { "evaluator": { "type": "gt", "params": [0.05] } } ] } }
+    ]
+  },
+  {
+    "uid": "sgp-api-p95-slow",
+    "title": "API 응답 p95 1초 초과",
+    "ruleGroup": "seoganpyo-api",
+    "condition": "C",
+    "for": "10m",
+    "noDataState": "OK",
+    "execErrState": "Error",
+    "labels": { "team": "seoganpyo", "severity": "warning" },
+    "annotations": {
+      "summary": "최근 5분 API 응답 시간 p95 가 1초를 넘은 상태가 10분째입니다",
+      "description": "평상시 p95 약 0.13초 (performance.md §4.3). 교착 전조일 수 있음 — DB 연결·CPU 확인. 대시보드: 서간표 API 메트릭 → 엔드포인트별 응답 시간 P95."
+    },
+    "data": [
+      {
+        "refId": "A",
+        "relativeTimeRange": { "from": 600, "to": 0 },
+        "datasourceUid": "grafanacloud-prom",
+        "model": {
+          "refId": "A",
+          "instant": true,
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"seoganpyo-api\"}[5m])))"
+        }
+      },
+      { "refId": "B", "datasourceUid": "__expr__", "model": { "refId": "B", "type": "reduce", "expression": "A", "reducer": "last", "settings": { "mode": "dropNN" } } },
+      { "refId": "C", "datasourceUid": "__expr__", "model": { "refId": "C", "type": "threshold", "expression": "B", "conditions": [ { "evaluator": { "type": "gt", "params": [1] } } ] } }
+    ]
+  },
+  {
+    "uid": "sgp-api-down",
+    "title": "API 메트릭 수집 실패 (API 또는 수집기 다운)",
+    "ruleGroup": "seoganpyo-api",
+    "condition": "C",
+    "for": "3m",
+    "noDataState": "Alerting",
+    "execErrState": "Error",
+    "labels": { "team": "seoganpyo", "severity": "critical" },
+    "annotations": {
+      "summary": "백엔드 /metrics 를 3분째 읽지 못했습니다",
+      "description": "up=0 이면 백엔드가 응답하지 않음, 데이터 없음이면 Alloy·EC2 자체가 멈춤. EC2 상태는 CloudWatch 알람(🟦)과 함께 확인."
+    },
+    "data": [
+      {
+        "refId": "A",
+        "relativeTimeRange": { "from": 300, "to": 0 },
+        "datasourceUid": "grafanacloud-prom",
+        "model": { "refId": "A", "instant": true, "expr": "max(up{job=\"seoganpyo-api\"})" }
+      },
+      { "refId": "B", "datasourceUid": "__expr__", "model": { "refId": "B", "type": "reduce", "expression": "A", "reducer": "last" } },
+      { "refId": "C", "datasourceUid": "__expr__", "model": { "refId": "C", "type": "threshold", "expression": "B", "conditions": [ { "evaluator": { "type": "lt", "params": [1] } } ] } }
+    ]
+  },
+  {
+    "uid": "sgp-autoheal-restart",
+    "title": "컨테이너 자동 재시작 (autoheal)",
+    "ruleGroup": "seoganpyo-containers",
+    "condition": "C",
+    "for": "0s",
+    "noDataState": "OK",
+    "execErrState": "Error",
+    "labels": { "team": "seoganpyo", "severity": "critical" },
+    "annotations": {
+      "summary": "헬스체크 실패로 autoheal 이 컨테이너를 재시작했습니다",
+      "description": "자동 복구는 됐지만 원인이 남아 있음 — 9/27 교착 같은 상황일 수 있음. 로그: {container=\"seoganpyo-autoheal\"} 와 해당 컨테이너의 재시작 직전 로그."
+    },
+    "data": [
+      {
+        "refId": "A",
+        "relativeTimeRange": { "from": 300, "to": 0 },
+        "datasourceUid": "grafanacloud-logs",
+        "model": {
+          "refId": "A",
+          "queryType": "instant",
+          "expr": "sum(count_over_time({container=\"seoganpyo-autoheal\"} |= \"Restarting\" [5m]))"
+        }
+      },
+      { "refId": "B", "datasourceUid": "__expr__", "model": { "refId": "B", "type": "reduce", "expression": "A", "reducer": "last", "settings": { "mode": "dropNN" } } },
+      { "refId": "C", "datasourceUid": "__expr__", "model": { "refId": "C", "type": "threshold", "expression": "B", "conditions": [ { "evaluator": { "type": "gt", "params": [0] } } ] } }
+    ]
+  }
+]

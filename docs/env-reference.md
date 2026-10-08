@@ -72,6 +72,14 @@ EC2 에서 ECR 이미지로 띄울 때만 필요합니다. 로컬 개발에는 �
 > `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d` 로 실행합니다.
 > base 의 `build:` 를 `image:` 로 덮어써 EC2 에서 빌드하지 않습니다 (1GiB 에서 OOM).
 
+## 3.6 운영 도구 전용 — `.env` 에 들어가지 않음
+
+SSM 경로가 `/seoganpyo/ops/` 라 `ssm-fetch-env.sh`(`/seoganpyo/prod/`)가 받아오지 않습니다. 서버에는 없고 맥북에서 스크립트가 직접 읽습니다.
+
+| 키 | SSM | 용도 | 비고 |
+| --- | --- | --- | --- |
+| `/seoganpyo/ops/GRAFANA_SA_TOKEN` | 🔒 | `scripts/grafana_cloud_sync.py` — 대시보드·알림 룰 반영 | Grafana 서비스 계정 `seoganpyo-automation` (Editor). 서버의 `GRAFANA_CLOUD_TOKEN`(쓰기 전용)과 **분리** — 서버 토큰이 새어도 설정은 못 바꿈 |
+
 ## 4. 설정하지 않는 것
 
 | 키 | 이유 |

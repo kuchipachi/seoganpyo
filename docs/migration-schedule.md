@@ -216,9 +216,9 @@
 
 - [x] **D9** Grafana Cloud 계정 → **Alloy** 컨테이너 추가 (#42, 옵트인 `COMPOSE_PROFILES=obs`) — 최대 부하 중 가용 300MB+ 실측 후 추가. 운영 1주 실측 **71MB**(한도 160M), 재시작 0
 - [x] **D9** Docker 로그 + `backend:8000/metrics` → remote write — 1주간 메트릭 약 443만 샘플·로그 약 21.7만 줄, **실패 0** (10/08 확인). 값은 SSM `GRAFANA_CLOUD_*`
-- [ ] **D10** 대시보드 JSON 2개 임포트 → **datasource uid 교체** (`loki`/`prometheus` → Cloud uid)
+- [x] **D10** 대시보드 JSON 2개 임포트 → **datasource uid 교체** (`grafanacloud-logs`/`-prom`) — `scripts/grafana_cloud_sync.py` 로 레포 → Cloud 반영
 - [ ] **D10** iframe 섹션 복구 (Public dashboard URL) + 프론트 재빌드·push
-- [ ] **D10** Grafana Alerting 룰 — 5xx 급증, p95, 컨테이너 재시작
+- [x] **D10** Grafana Alerting 룰 4개 — 5xx 비율, p95, API 다운, autoheal 재시작 → Discord (테스트 알림 확인)
 
 ### 🟦 하연 — CloudWatch + Discord (0.5일)
 
@@ -240,8 +240,8 @@
 ## ✅ 1차 완료 기준
 
 - [x] HTTPS로 서비스 접속됨 — https://<EC2_IP>.nip.io
-- [ ] Grafana 대시보드에 로그·메트릭이 보임 (🟩 D9~D10)
-- [~] 알람이 Discord로 옴 — **CloudWatch ✅** / Grafana 🟩 미구축
+- [x] Grafana 대시보드에 로그·메트릭이 보임 (🟩 D9~D10) — Grafana Cloud `서간표` 폴더
+- [x] 알람이 Discord로 옴 — **CloudWatch ✅** (인프라) / **Grafana ✅** (앱: 5xx·p95·다운·재시작)
 - [~] `docs/performance.md` — 이미지 크기 ✅ · 베이스라인 ✅ / **튜닝 후 수치는 T1~T4 이후**
 - [x] `docs/postmortems/`에 4건+ — 🟦 2건(Caddy 라우팅·헬스체크 훈련) / 🟩 2건(교착·재현 데이터 측정 결함)
 - [x] 아키텍처 결정 기록 — [`docs/adr.md`](./adr.md)

@@ -30,5 +30,7 @@ python3 scripts/grafana_cloud_sync.py --test-notify  # 반영 + Discord 테스�
 | API 메트릭 수집 실패 | `up` < 1, 3분 지속 | critical | **알림** — Alloy·EC2 가 멈춰도 잡힘 |
 | 컨테이너 자동 재시작 | autoheal 로그 `Restarting` 5분 내 1건 이상 | critical | 정상 |
 
+5xx 비율·p95 는 **사용자 요청만** 본다 — `/metrics`(Alloy 수집)·`/healthz`·`/`(헬스체크)는 뺀다. 사용자가 없을 때 내부 요청만으로 p95 가 계산돼 오탐이 날 수 있어서다 (10/08 기준 24시간 백엔드 요청이 전부 내부 요청이었음).
+
 ⚠️ T1 동시 처리 한도의 503 거절도 5xx 로 잡힙니다 — **부하 테스트 중에는 5xx 알림이 오는 게 정상**입니다.
 인프라 알림(EC2 상태 검사·CPU 크레딧 등)은 CloudWatch → Discord (🟦 하연) 가 따로 담당합니다.

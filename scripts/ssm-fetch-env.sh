@@ -52,4 +52,10 @@ mv "$TMP" "$OUT"
 trap - EXIT
 chmod 600 "$OUT"
 
+# root 로 실행돼도(SSM Run Command 기본값·sudo) .env 주인은 폴더 주인(ec2-user)으로 맞춘다.
+# 2026-10-08: root 소유 .env(600) 를 ec2-user 로 도는 deploy.sh 가 못 읽어 배포가 실패했음.
+if [ "$(id -u)" -eq 0 ]; then
+    chown "$(stat -c '%u:%g' "$(dirname "$OUT")")" "$OUT" "${OUT}.bak" 2>/dev/null || true
+fi
+
 echo "  ${COUNT}개 → ${OUT}"

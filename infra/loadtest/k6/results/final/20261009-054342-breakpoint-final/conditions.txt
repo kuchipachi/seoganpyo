@@ -1,0 +1,15 @@
+run_id=20261009-054342-breakpoint-final profile=breakpoint label=final base=https://<EC2_IP>.nip.io
+local_time=2026-10-09T05:43:42+09:00
+git=7aa5165
+k6=k6 v2.3.0 (commit/devel, go1.27.1, darwin/arm64)
+--- RTT (Mac → EC2, TCP connect 10회, ms)
+min=6.7 avg=8.8 max=13.7
+--- CPU 크레딧 (최근 10분)
+263.1464887166667	262.89060348333334
+--- Mac 부하 (생성기가 병목이 아닌지)
+ 5:43  up 7 days, 13:58, 1 user, load averages: 1.30 1.50 1.75
+collector_started=2026-10-09T05:43:46+09:00
+k6_started=2026-10-09T05:43:46+09:00
+k6_exit=99
+--- Mac 부하 (종료 시)
+ 6:00  up 7 days, 14:15, 1 user, load averages: 2.03 1.92 1.83

@@ -206,7 +206,7 @@
 - [x] **T4 uvicorn 워커 2개** — 측정 완료 (10/09) → **기각** ([performance.md §4.4](./performance.md)). 최대 처리량 100 → 79 RPS, 기준 만족 68 → 0 RPS. 원인: 메모리 +120MB 로 페이지 캐시가 줄어 디스크 읽기 39배 + swap 스래싱. 운영은 워커 1개로 복귀 (`UVICORN_WORKERS=1`)
       (동시 한도 14 는 프로세스 지역이라 변경 불필요 · DB 연결 15 → 30 예상)
   - 남은 것: 🟩 워커 2개 배포 → 부하 측정 / 🟦 자원 검증(R1~R7)·중단 기준 감시 → 페어 판정
-- [ ] **최종 측정** — 베이스라인과 같은 조건 (load 5 · stress 3 · breakpoint 3) → Mann-Whitney U + 부트스트랩 CI 로 전후 비교
+- [x] **최종 측정** (10/09) — 베이스라인과 같은 조건 (load 5 · stress 3 · breakpoint 3). 처리 능력 33 → **68 RPS**(3회 67.7·68.8·68.5), 평상시 API p95 283 → **113ms (−60%, p=0.008)**, 붕괴·중단 없음 ([performance.md §6](./performance.md))
 
 > 📊 **수치 2호**: "기준 만족 최대 처리량 33 → N RPS, 과부하 후 복구 21분 → 0초, 강의 목록 p95 X → Y ms"
 
@@ -244,7 +244,7 @@
 - [x] HTTPS로 서비스 접속됨 — https://<EC2_IP>.nip.io
 - [x] Grafana 대시보드에 로그·메트릭이 보임 (🟩 D9~D10) — Grafana Cloud `서간표` 폴더
 - [x] 알람이 Discord로 옴 — **CloudWatch ✅** (인프라) / **Grafana ✅** (앱: 5xx·p95·다운·재시작)
-- [~] `docs/performance.md` — 이미지 크기 ✅ · 베이스라인 ✅ · 튜닝 T1~T4 ✅ (T4 기각) / **최종 측정 남음**
+- [x] `docs/performance.md` — 이미지 크기 ✅ · 베이스라인 ✅ · 튜닝 T1~T4 ✅ (T4 기각) · **최종 측정 ✅** (§6, 맨 위 요약표)
 - [x] `docs/postmortems/`에 4건+ — 🟦 2건(Caddy 라우팅·헬스체크 훈련) / 🟩 2건(교착·재현 데이터 측정 결함)
 - [x] 아키텍처 결정 기록 — [`docs/adr.md`](./adr.md)
 

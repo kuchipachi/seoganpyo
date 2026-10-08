@@ -40,8 +40,8 @@
 | `OLLAMA_MODEL` | 📄 | `exaone3.5:7.8b` | 기본값 그대로 | — |
 | `OLLAMA_TIMEOUT` | 📄 | `300` | **`20`** | EC2엔 Ollama가 없음 → 짧게 잡아 빠르게 503 |
 | `DISCORD_ALERT_WEBHOOK` | 🔒 | (없음) | 운영 알람 채널 웹훅 (D9 관측 구축 시) | 알람만 안 감 |
-| `NEXT_PUBLIC_GRAFANA_URL` | 📄 | `http://localhost:3001` | Grafana Cloud Public dashboard URL | 관리자 모니터링 iframe — **프론트 빌드 인자** |
-| `PROMETHEUS_URL` | 📄 | `http://prometheus:9090` | 1차엔 비움 → 관측 구성 후 Cloud URL | 관리자 챗 메트릭 도구 실패 (§8.1) |
+| `NEXT_PUBLIC_GRAFANA_URL` | GitHub Variable `GRAFANA_URL` | `http://localhost:3001` | `https://indigochickpea1864.grafana.net` | 관리자 모니터링의 Grafana 바로가기 링크 — **프론트 빌드 인자**. 차트는 아래 `PROMETHEUS_URL` 로 백엔드가 그림 |
+| `PROMETHEUS_URL` | 📄 | `http://prometheus:9090` | `https://prometheus-prod-49-prod-ap-northeast-0.grafana.net/api/prom` | 관리자 모니터링 차트(`/admin/metrics`) + 관리자 챗 `query_prometheus`. 비우면 둘 다 꺼짐. 인증은 아래 `GRAFANA_CLOUD_PROM_USER` + `GRAFANA_CLOUD_READ_TOKEN` |
 | `LOG_LEVEL` | 📄 | `INFO` | `INFO` | — |
 | `DB_POOL_SIZE` / `DB_MAX_OVERFLOW` | 📄 | `5` / `10` | 부하 측정 후 결정 (RDS `max_connections` = 79) | SQLAlchemy 기본값과 동일 |
 | `DB_POOL_TIMEOUT` / `DB_POOL_RECYCLE` | 📄 | `30` / `1800` (초) | 기본값 | — |
@@ -68,6 +68,7 @@ EC2 에서 ECR 이미지로 띄울 때만 필요합니다. 로컬 개발에는 �
 | `GRAFANA_CLOUD_LOKI_URL` | 📄 | `https://logs-prod-XXX.grafana.net/loki/api/v1/push` | Grafana Cloud → Loki → Details |
 | `GRAFANA_CLOUD_LOKI_USER` | 📄 | `987654` (숫자) | Loki 인스턴스 ID |
 | `GRAFANA_CLOUD_TOKEN` | 🔒 | `glc_...` | Access Policy 토큰 — 권한 `metrics:write`, `logs:write` **만** |
+| `GRAFANA_CLOUD_READ_TOKEN` | 🔒 | `glc_...` | **읽기 전용** Access Policy (`metrics:read` 만) — 백엔드가 차트용 메트릭 조회. 쓰기 토큰(Alloy)과 분리 |
 
 > `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d` 로 실행합니다.
 > base 의 `build:` 를 `image:` 로 덮어써 EC2 에서 빌드하지 않습니다 (1GiB 에서 OOM).

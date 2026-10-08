@@ -1,4 +1,4 @@
-import { Course, CartItem, Token, User, HistoryItem, SyllabusSummary, Post, PostDetail, Comment, Professor } from "@/types"
+import { Course, CartItem, Token, User, HistoryItem, SyllabusSummary, Post, PostDetail, Comment, Professor, AdminMetrics, MetricsRange } from "@/types"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
 
@@ -439,6 +439,10 @@ export interface AdminPostComment {
 }
 
 export const adminApi = {
+  // 모니터링 차트 — 백엔드가 Grafana Cloud Prometheus 에서 가져온 사용자 요청 메트릭 (30초 캐시)
+  getMetrics: (range: MetricsRange = "1h") =>
+    adminRequest<AdminMetrics>(`/admin/metrics?range=${range}`),
+
   // 신고 관리
   getReportCounts: () =>
     adminRequest<{ total: number; 욕설: number; 스팸: number; 기타: number }>("/admin/reports/counts"),

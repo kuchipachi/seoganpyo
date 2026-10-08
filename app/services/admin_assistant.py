@@ -26,11 +26,13 @@ from app.models.activity import History
 from app.models.course import Course
 from app.models.portfolio import PortfolioEvaluation
 from app.models.user import User
+from app.services import prometheus_client
 
 # ─── 인프라 엔드포인트 ─────────────────────────────────────────────
 # PROMETHEUS_URL 을 빈 값으로 두면(운영 EC2 — 관측 스택 없음) query_prometheus 도구를 챗에 노출하지 않는다.
 # 환경변수 자체가 없으면 호스트 실행(MCP 서버 등)을 위해 localhost 기본값 유지.
-PROMETHEUS_URL = os.getenv("PROMETHEUS_URL", "http://localhost:9090").strip()
+# 운영은 Grafana Cloud Prometheus — 인증은 prometheus_client.auth() 가 환경변수로 처리 (D13)
+PROMETHEUS_URL = os.getenv("PROMETHEUS_URL", "http://localhost:9090").strip().rstrip("/")
 DOCKER_SOCKET = "/var/run/docker.sock"
 
 
@@ -342,7 +344,7 @@ def query_prometheus(
     start = end - minutes * 60
 
     try:
-        with httpx.Client(timeout=10.0) as client:
+        with httpx.Client(timeout=10.0, auth=prometheus_client.auth()) as client:
             res = client.get(
                 f"{PROMETHEUS_URL}/api/v1/query_range",
                 params={

@@ -93,8 +93,10 @@ jobs:
           platforms: linux/amd64
           push: true
           # NEXT_PUBLIC_* 는 빌드 타임에 박힌다 — 도메인이 바뀌면 재빌드 필요
+          # Grafana 링크는 GitHub Variable — 비어 있으면 관리자 페이지에서 링크만 숨김
           build-args: |
             NEXT_PUBLIC_API_URL=https://${{ env.DOMAIN }}/backend
+            NEXT_PUBLIC_GRAFANA_URL=${{ vars.GRAFANA_URL }}
           tags: |
             ${{ steps.ecr.outputs.registry }}/seoganpyo-frontend:latest
             ${{ steps.ecr.outputs.registry }}/seoganpyo-frontend:${{ github.sha }}

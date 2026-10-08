@@ -117,3 +117,22 @@ export interface Comment {
 export interface PostDetail extends Post {
   comments: Comment[]
 }
+
+// 관리자 모니터링 — 사용자 요청 기준 API 메트릭 (GET /admin/metrics, Grafana Cloud Prometheus)
+export type MetricsRange = "1h" | "24h" | "7d"
+
+export interface MetricPoint {
+  t: number           // epoch 초
+  v: number | null    // 데이터 없음이면 null
+}
+
+export interface AdminMetrics {
+  range: MetricsRange
+  step_seconds: number
+  rps: MetricPoint[]
+  p95_ms: MetricPoint[]
+  errors_5xx_rps: MetricPoint[]
+  total_requests: number | null
+  total_5xx: number | null
+  api_up: boolean | null
+}

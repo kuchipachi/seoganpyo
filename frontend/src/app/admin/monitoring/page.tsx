@@ -4,15 +4,18 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2, CheckCircle, XCircle, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ApiMetricsCharts } from "@/components/features/api-metrics-charts"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
-// 빌드 시 NEXT_PUBLIC_GRAFANA_URL 이 비어 있으면(관측 스택 미연결) Grafana 섹션을 숨긴다.
+// Grafana Cloud (D10) — 차트는 백엔드(/admin/metrics)가 Prometheus 에서 가져와 직접 그린다.
+// Grafana 대시보드는 iframe 으로 넣을 수 없어(frame-ancestors 'none') 로그·알림 룰은 링크로 연결 (로그인 필요).
+// NEXT_PUBLIC_GRAFANA_URL 은 빌드 인자 — 비어 있으면 링크만 숨긴다.
 const GRAFANA_URL = process.env.NEXT_PUBLIC_GRAFANA_URL || ""
 
-const DASHBOARDS = [
-  { id: "seoganpyo-overview", label: "로그" },
-  { id: "seoganpyo-metrics", label: "메트릭" },
-  { id: "jmeter-loadtest", label: "부하 테스트" },
+const GRAFANA_LINKS = [
+  { uid: "seoganpyo-metrics", label: "메트릭 대시보드" },
+  { uid: "seoganpyo-overview", label: "로그 대시보드" },
+  { uid: "", label: "알림 룰", path: "/alerting/list" },
 ]
 
 function getAdminToken() {
@@ -33,7 +36,6 @@ export default function AdminMonitoringPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [lastChecked, setLastChecked] = useState<Date | null>(null)
   const [error, setError] = useState("")
-  const [activeDashboard, setActiveDashboard] = useState(DASHBOARDS[0].id)
 
   const token = getAdminToken()
 
@@ -129,53 +131,31 @@ export default function AdminMonitoringPage() {
 
       </div>
 
-      {/* Grafana 대시보드 탭 — 관측 스택 미연결 시 안내만 표시 */}
-      {!GRAFANA_URL ? (
-        <p className="mt-8 text-xs text-muted-foreground">
-          상세 모니터링(Grafana)이 연결되지 않았습니다. 빌드 시 NEXT_PUBLIC_GRAFANA_URL 을 설정하면 대시보드가 표시됩니다.
-        </p>
-      ) : (
+      {/* API 메트릭 차트 (사용자 요청 기준) + Grafana Cloud 바로가기 */}
       <div className="mt-8">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-xs font-medium text-muted-foreground">상세 모니터링 (Grafana)</p>
-          <div className="flex rounded-md border border-border overflow-hidden text-xs">
-            {DASHBOARDS.map((d) => (
-              <button
-                key={d.id}
-                onClick={() => setActiveDashboard(d.id)}
-                className={`px-3 py-1.5 transition-colors ${
-                  activeDashboard === d.id
-                    ? "bg-foreground text-background font-medium"
-                    : "bg-card text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {d.label}
-              </button>
-            ))}
-          </div>
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <p className="text-xs font-medium text-muted-foreground">API 메트릭 (사용자 요청 기준)</p>
+          {GRAFANA_URL && (
+            <div className="flex flex-wrap gap-2 text-xs">
+              {GRAFANA_LINKS.map((l) => (
+                <a
+                  key={l.label}
+                  href={`${GRAFANA_URL}${l.path ?? `/d/${l.uid}`}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-md border border-border bg-card px-3 py-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {l.label} ↗
+                </a>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="rounded-lg border border-border overflow-hidden bg-card">
-          <iframe
-            key={activeDashboard}
-            src={`${GRAFANA_URL}/d/${activeDashboard}/?orgId=1&kiosk=tv&theme=light&refresh=30s`}
-            title="서간표 모니터링"
-            className="w-full"
-            style={{ height: 900, border: 0 }}
-          />
-        </div>
+        <ApiMetricsCharts />
         <p className="mt-2 text-xs text-muted-foreground">
-          Grafana 직접 접속:{" "}
-          <a
-            href={GRAFANA_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-foreground"
-          >
-            {GRAFANA_URL}
-          </a>
+          헬스체크·메트릭 수집 요청은 제외합니다. 로그·알림 룰은 Grafana Cloud 에 로그인해서 확인하세요.
         </p>
       </div>
-      )}
     </div>
   )
 }

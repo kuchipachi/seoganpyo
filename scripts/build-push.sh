@@ -80,7 +80,8 @@ for t in "${TARGETS[@]}"; do
             # 비어 있으면 https:///backend 로 박혀 배포는 되는데 화면만 안 뜬다.
             : "${DOMAIN:?DOMAIN 필요 — 예) DOMAIN=<EIP>.nip.io ./scripts/build-push.sh frontend  (또는 .env 에 DOMAIN=)}"
             # /backend 는 Caddy 가 백엔드로 보내는 prefix (infra/caddy/Caddyfile)
-            args=(--build-arg "NEXT_PUBLIC_API_URL=https://${DOMAIN}/backend")
+            args=(--build-arg "NEXT_PUBLIC_API_URL=https://${DOMAIN}/backend"
+                  --build-arg "NEXT_PUBLIC_GRAFANA_URL=${GRAFANA_URL:-}")
             ;;
         ocr)
             ctx="./ocr-service" ; args=()

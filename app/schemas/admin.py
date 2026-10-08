@@ -99,3 +99,20 @@ class PendingUserItem(BaseModel):
 class ApproveUserResponse(BaseModel):
     student_id: int
     is_approved: bool
+
+
+class MetricPoint(BaseModel):
+    t: int                    # epoch 초
+    v: Optional[float] = None  # 데이터 없음(NaN)이면 None
+
+
+class AdminMetricsResponse(BaseModel):
+    """관리자 모니터링 — 사용자 요청 기준 API 메트릭 (/metrics·헬스체크 제외)"""
+    range: str
+    step_seconds: int
+    rps: list[MetricPoint]
+    p95_ms: list[MetricPoint]
+    errors_5xx_rps: list[MetricPoint]
+    total_requests: Optional[float] = None
+    total_5xx: Optional[float] = None
+    api_up: Optional[bool] = None

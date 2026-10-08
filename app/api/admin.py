@@ -24,9 +24,11 @@ from app.schemas.admin import (
     ContactCountsResponse, ContactItem, MessageResponse,
     UserListItem, CanPostResponse, CanCommentResponse, UserInfoResponse,
     AdminMessageCreate, PendingUserItem, ApproveUserResponse,
+    AdminMetricsResponse,
 )
 from app.models.admin_message import AdminMessage
-from app.services import user_service, report_service
+from app.services import user_service, report_service, metrics_service
+from app.services.prometheus_client import PROMETHEUS_URL, PrometheusError
 from app.services.user_service import delete_user
 from app.services.crawl_service import crawl_and_upsert
 from app.services.syllabus_service import process_pdf_for_batch
@@ -88,6 +90,24 @@ def health_check(admin: User = Depends(get_current_admin), db: Session = Depends
             "pending_reports": report_count,
         },
     }
+
+
+@router.get("/metrics", response_model=AdminMetricsResponse)
+def api_metrics(
+    range: Literal["1h", "24h", "7d"] = "1h",
+    admin: User = Depends(get_current_admin),
+):
+    """관리자 모니터링 차트 — Grafana Cloud Prometheus 에서 사용자 요청 기준 RPS·p95·5xx 를 가져온다.
+
+    /metrics(Prometheus 노출용)와 이름이 겹치지 않게 /admin 아래에 둔다.
+    """
+    if not PROMETHEUS_URL:
+        raise HTTPException(status_code=503, detail="메트릭 저장소(Prometheus)가 연결되지 않았습니다.")
+    try:
+        return metrics_service.get_api_metrics(range)
+    except PrometheusError as e:
+        logger.warning("관리자 메트릭 조회 실패: %s", e)
+        raise HTTPException(status_code=502, detail="메트릭 저장소 조회에 실패했습니다.")
 
 
 # ── 사용자 관리 ───────────────────────────────────────

@@ -20,7 +20,7 @@
         "model": {
           "refId": "A",
           "instant": true,
-          "expr": "sum(rate(http_requests_total{job=\"seoganpyo-api\", status=\"5xx\"}[5m])) / sum(rate(http_requests_total{job=\"seoganpyo-api\"}[5m]))"
+          "expr": "sum(rate(http_requests_total{job=\"seoganpyo-api\", handler!~\"/metrics|/healthz|/health|/\", status=\"5xx\"}[5m])) / sum(rate(http_requests_total{job=\"seoganpyo-api\", handler!~\"/metrics|/healthz|/health|/\"}[5m]))"
         }
       },
       { "refId": "B", "datasourceUid": "__expr__", "model": { "refId": "B", "type": "reduce", "expression": "A", "reducer": "last", "settings": { "mode": "dropNN" } } },
@@ -48,7 +48,7 @@
         "model": {
           "refId": "A",
           "instant": true,
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"seoganpyo-api\"}[5m])))"
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"seoganpyo-api\", handler!~\"/metrics|/healthz|/health|/\"}[5m])))"
         }
       },
       { "refId": "B", "datasourceUid": "__expr__", "model": { "refId": "B", "type": "reduce", "expression": "A", "reducer": "last", "settings": { "mode": "dropNN" } } },

@@ -1,0 +1,14 @@
+# 워커 1개 (배포 전, 부하 없음)
+Mem:             913         462          79           0         370         301
+Swap:           1567         162        1405
+seoganpyo-frontend 44.55MiB / 384MiB 0.00%
+seoganpyo-api 60.02MiB / 512MiB 0.12%
+seoganpyo-ocr 24.96MiB / 384MiB 0.14%
+seoganpyo-alloy 72.74MiB / 160MiB 0.40%
+# 워커 2개 (배포 직후, 부하 없음)
+Mem:             913         548          69           0         295         214
+Swap:           1567         185        1382
+seoganpyo-api 180.5MiB / 512MiB 0.46%
+seoganpyo-frontend 37.98MiB / 384MiB 0.00%
+seoganpyo-ocr 18.62MiB / 384MiB 0.15%
+seoganpyo-alloy 60.35MiB / 160MiB 0.41%

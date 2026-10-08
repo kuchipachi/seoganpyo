@@ -1,0 +1,13 @@
+2026-10-08T15:59:57+00:00
+ 15:59:57 up 15 days,  9:22,  0 users,  load average: 0.06, 0.17, 0.17
+               total        used        free      shared  buff/cache   available
+Mem:             913         576          64           0         272         188
+Swap:           1567         228        1339
+60
+/seoganpyo-api image=833823555621.dkr.ecr.ap-northeast-2.amazonaws.com/seoganpyo-api:latest id=sha256:2f2ad5e20ce26e4ab31672314e95aa4b3e50937ecf49a7bb2e18008bb1c9ca99 mem=536870912 swap=1073741824 reserve=268435456 restarts=0
+/seoganpyo-frontend image=833823555621.dkr.ecr.ap-northeast-2.amazonaws.com/seoganpyo-frontend:latest id=sha256:e40aa4387cc9decd626e7b08d136593eb0b60d37cd7cb03d6251ad09d078a949 mem=402653184 swap=805306368 reserve=268435456 restarts=0
+/seoganpyo-caddy image=caddy:2-alpine id=sha256:f77f856a30f0004200b36b322d61da17fade31e24875699d77fb968399b9eb77 mem=134217728 swap=268435456 reserve=67108864 restarts=0
+/seoganpyo-ocr image=833823555621.dkr.ecr.ap-northeast-2.amazonaws.com/seoganpyo-ocr:latest id=sha256:3e1ac0bedb3d88f13dc864daa001ecbade25771556eb945027c34101309ee227 mem=402653184 swap=805306368 reserve=201326592 restarts=0
+/seoganpyo-alloy image=grafana/alloy:v1.20.1 id=sha256:3c90607c975ecc9a69fe754a6e5105820f149007eb7a974a7ae6659faf76e952 mem=167772160 swap=335544320 reserve=100663296 restarts=0
+/seoganpyo-autoheal image=willfarrell/autoheal:1.2.0 id=sha256:487a6b982637737434edc432eb386d7d1d4f15a437275ada6261da640511c722 mem=33554432 swap=67108864 reserve=16777216 restarts=0
+/seoganpyo-redis image=redis:alpine id=sha256:15f5a4aad4c3ba34b9874ddbc7f755b469dbd7b8a9e88c12690c52ef6c72465c mem=134217728 swap=268435456 reserve=67108864 restarts=0

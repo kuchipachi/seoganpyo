@@ -1,0 +1,184 @@
+19:49:49|active|1 19:49:49|idle|5 
+19:49:54|active|1 19:49:54|idle|5 
+19:49:59|active|1 19:49:59|idle|5 
+19:50:05|active|1 19:50:05|idle|5 
+19:50:10|active|1 19:50:10|idle|5 
+19:50:15|active|1 19:50:15|idle|5 
+19:50:20|active|1 19:50:20|idle|5 
+19:50:25|active|1 19:50:25|idle|5 
+19:50:30|active|1 19:50:30|idle|5 
+19:50:35|active|1 19:50:35|idle|4 19:50:35|idle in transaction|1 
+19:50:40|active|1 19:50:40|idle|5 
+19:50:45|active|1 19:50:45|idle|5 
+19:50:50|active|1 19:50:50|idle|5 
+19:50:55|active|1 19:50:55|idle|5 
+19:51:00|active|1 19:51:00|idle|4 19:51:00|idle in transaction|1 
+19:51:05|active|1 19:51:05|idle|5 
+19:51:10|active|1 19:51:10|idle|5 
+19:51:15|active|1 19:51:15|idle|5 
+19:51:20|active|1 19:51:20|idle|5 
+19:51:25|active|1 19:51:25|idle|5 
+19:51:30|active|1 19:51:30|idle|5 
+19:51:35|active|1 19:51:35|idle|5 
+19:51:40|active|1 19:51:40|idle|5 
+19:51:45|active|1 19:51:45|idle|5 
+19:51:51|active|1 19:51:51|idle|5 
+19:51:56|active|1 19:51:56|idle|5 
+19:52:01|active|1 19:52:01|idle|4 19:52:01|idle in transaction|1 
+19:52:06|active|1 19:52:06|idle|5 
+19:52:11|active|1 19:52:11|idle|5 
+19:52:16|active|1 19:52:16|idle|5 
+19:52:21|active|1 19:52:21|idle|5 
+19:52:26|active|1 19:52:26|idle|5 
+19:52:31|active|1 19:52:31|idle|5 
+19:52:36|active|1 19:52:36|idle|5 
+19:52:41|active|1 19:52:41|idle|5 
+19:52:46|active|1 19:52:46|idle|5 
+19:52:51|active|1 19:52:51|idle|5 
+19:52:56|active|1 19:52:56|idle|5 
+19:53:01|active|1 19:53:01|idle|5 
+19:53:06|active|1 19:53:06|idle|5 
+19:53:11|active|1 19:53:11|idle|5 
+19:53:16|active|1 19:53:16|idle|5 
+19:53:21|active|1 19:53:21|idle|5 
+19:53:27|active|1 19:53:27|idle|5 
+19:53:32|active|1 19:53:32|idle|5 
+19:53:37|active|1 19:53:37|idle|5 
+19:53:42|active|1 19:53:42|idle|5 
+19:53:47|active|1 19:53:47|idle|5 
+19:53:52|active|1 19:53:52|idle|5 
+19:53:57|active|1 19:53:57|idle|5 
+19:54:02|active|1 19:54:02|idle|4 19:54:02|idle in transaction|1 
+19:54:07|active|1 19:54:07|idle|5 
+19:54:12|active|1 19:54:12|idle|5 
+19:54:17|active|1 19:54:17|idle|5 
+19:54:22|active|1 19:54:22|idle|5 
+19:54:27|active|1 19:54:27|idle|5 
+19:54:32|active|1 19:54:32|idle|5 
+19:54:37|active|1 19:54:37|idle|5 
+19:54:42|active|1 19:54:42|idle|4 19:54:42|idle in transaction|1 
+19:54:47|active|1 19:54:47|idle|5 
+19:54:53|active|1 19:54:53|idle|5 
+19:54:58|active|1 19:54:58|idle|5 
+19:55:03|active|1 19:55:03|idle|5 
+19:55:08|active|1 19:55:08|idle|5 
+19:55:13|active|1 19:55:13|idle|5 
+19:55:18|active|1 19:55:18|idle|5 
+19:55:23|active|1 19:55:23|idle|4 19:55:23|idle in transaction|1 
+19:55:28|active|1 19:55:28|idle|5 
+19:55:33|active|1 19:55:33|idle|5 
+19:55:38|active|1 19:55:38|idle|5 
+19:55:43|active|1 19:55:43|idle|5 
+19:55:48|active|1 19:55:48|idle|5 
+19:55:53|active|1 19:55:53|idle|5 
+19:55:58|active|1 19:55:58|idle|5 
+19:56:03|active|1 19:56:03|idle|5 
+19:56:08|active|1 19:56:08|idle|5 
+19:56:13|active|1 19:56:13|idle|5 
+19:56:18|active|1 19:56:18|idle|4 19:56:18|idle in transaction|1 
+19:56:23|active|1 19:56:23|idle|5 
+19:56:28|active|1 19:56:28|idle|4 19:56:28|idle in transaction|1 
+19:56:34|active|1 19:56:34|idle|4 19:56:34|idle in transaction|1 
+19:56:39|active|1 19:56:39|idle|5 
+19:56:44|active|1 19:56:44|idle|5 
+19:56:49|active|1 19:56:49|idle|4 19:56:49|idle in transaction|1 
+19:56:54|active|1 19:56:54|idle|4 19:56:54|idle in transaction|1 
+19:56:59|active|1 19:56:59|idle|5 
+19:57:04|active|1 19:57:04|idle|5 
+19:57:09|active|1 19:57:09|idle|5 
+19:57:14|active|1 19:57:14|idle|5 
+19:57:19|active|1 19:57:19|idle|5 
+19:57:24|active|1 19:57:24|idle|5 
+19:57:29|active|1 19:57:29|idle|5 
+19:57:34|active|1 19:57:34|idle|5 
+19:57:39|active|1 19:57:39|idle|5 
+19:57:44|active|1 19:57:44|idle|5 
+19:57:49|active|1 19:57:49|idle|5 
+19:57:54|active|1 19:57:54|idle|5 
+19:57:59|active|1 19:57:59|idle|5 
+19:58:04|active|1 19:58:04|idle|5 
+19:58:09|active|1 19:58:09|idle|5 
+19:58:15|active|1 19:58:15|idle|4 19:58:15|idle in transaction|1 
+19:58:20|active|1 19:58:20|idle|4 19:58:20|idle in transaction|1 
+19:58:25|active|1 19:58:25|idle|5 
+19:58:30|active|1 19:58:30|idle|5 
+19:58:35|active|1 19:58:35|idle|4 19:58:35|idle in transaction|1 
+19:58:40|active|1 19:58:40|idle|5 
+19:58:45|active|1 19:58:45|idle|5 
+19:58:50|active|1 19:58:50|idle|5 
+19:58:55|active|1 19:58:55|idle|5 
+19:59:00|active|1 19:59:00|idle|5 
+19:59:05|active|1 19:59:05|idle|5 
+19:59:10|active|1 19:59:10|idle|5 
+19:59:15|active|1 19:59:15|idle|5 
+19:59:20|active|1 19:59:20|idle|5 
+19:59:25|active|2 19:59:25|idle|4 
+19:59:30|active|1 19:59:30|idle|4 19:59:30|idle in transaction|1 
+19:59:35|active|1 19:59:35|idle|4 19:59:35|idle in transaction|1 
+19:59:40|active|1 19:59:40|idle|5 
+19:59:45|active|1 19:59:45|idle|4 19:59:45|idle in transaction|1 
+19:59:51|active|1 19:59:51|idle|5 
+19:59:56|active|1 19:59:56|idle|4 19:59:56|idle in transaction|1 
+20:00:01|active|1 20:00:01|idle|4 20:00:01|idle in transaction|1 
+20:00:06|active|2 20:00:06|idle|4 
+20:00:11|active|1 20:00:11|idle|5 
+20:00:16|active|1 20:00:16|idle|4 20:00:16|idle in transaction|1 
+20:00:21|active|1 20:00:21|idle|5 
+20:00:26|active|1 20:00:26|idle|4 20:00:26|idle in transaction|1 
+20:00:31|active|1 20:00:31|idle|4 20:00:31|idle in transaction|1 
+20:00:36|active|1 20:00:36|idle|5 
+20:00:41|active|1 20:00:41|idle|5 
+20:00:46|active|1 20:00:46|idle|4 20:00:46|idle in transaction|1 
+20:00:51|active|1 20:00:51|idle|5 
+20:00:56|active|1 20:00:56|idle|3 20:00:56|idle in transaction|2 
+20:01:02|active|1 20:01:02|idle|2 20:01:02|idle in transaction|5 
+20:01:07|active|1 20:01:07|idle|5 
+20:01:12|active|1 20:01:12|idle|4 20:01:12|idle in transaction|1 
+20:01:17|active|1 20:01:17|idle|5 
+20:01:22|active|1 20:01:22|idle|4 20:01:22|idle in transaction|1 
+20:01:27|active|1 20:01:27|idle|5 
+20:01:32|active|1 20:01:32|idle|5 
+20:01:37|active|1 20:01:37|idle|5 
+20:01:42|active|1 20:01:42|idle|5 
+20:01:47|active|1 20:01:47|idle|5 
+20:01:52|active|1 20:01:52|idle|4 20:01:52|idle in transaction|1 
+20:01:57|active|1 20:01:57|idle|4 20:01:57|idle in transaction|1 
+20:02:02|active|1 20:02:02|idle|5 
+20:02:07|active|1 20:02:07|idle|3 20:02:07|idle in transaction|2 
+20:02:12|active|1 20:02:12|idle|4 20:02:12|idle in transaction|1 
+20:02:17|active|1 20:02:17|idle|5 
+20:02:22|active|1 20:02:22|idle|4 20:02:22|idle in transaction|1 
+20:02:27|active|1 20:02:27|idle|5 
+20:02:33|active|1 20:02:33|idle|4 20:02:33|idle in transaction|1 
+20:02:38|active|1 20:02:38|idle|4 20:02:38|idle in transaction|1 
+20:02:43|active|1 20:02:43|idle|5 
+20:02:48|active|1 20:02:48|idle|3 20:02:48|idle in transaction|2 
+20:02:53|active|1 20:02:53|idle|4 20:02:53|idle in transaction|1 
+20:02:58|active|1 20:02:58|idle|4 20:02:58|idle in transaction|1 
+20:03:03|active|1 20:03:03|idle|4 20:03:03|idle in transaction|1 
+20:03:08|active|1 20:03:08|idle|5 
+20:03:13|active|1 20:03:13|idle|5 
+20:03:18|active|1 20:03:18|idle|4 20:03:18|idle in transaction|1 
+20:03:23|active|1 20:03:23|idle|3 20:03:23|idle in transaction|2 
+20:03:28|active|1 20:03:28|idle|5 
+20:03:33|active|2 20:03:33|idle|4 
+20:03:38|active|1 20:03:38|idle|5 
+20:03:43|active|1 20:03:43|idle|5 
+20:03:48|active|1 20:03:48|idle|5 
+20:03:53|active|1 20:03:53|idle|4 20:03:53|idle in transaction|1 
+20:03:58|active|1 20:03:58|idle|5 
+20:04:03|active|1 20:04:03|idle|4 20:04:03|idle in transaction|1 
+20:04:09|active|1 20:04:09|idle|5 
+20:04:14|active|1 20:04:14|idle|5 
+20:04:19|active|1 20:04:19|idle|5 
+20:04:24|active|1 20:04:24|idle|4 20:04:24|idle in transaction|1 
+20:04:29|active|1 20:04:29|idle|4 20:04:29|idle in transaction|1 
+20:04:34|active|1 20:04:34|idle|3 20:04:34|idle in transaction|2 
+20:04:39|active|1 20:04:39|idle|4 20:04:39|idle in transaction|1 
+20:04:44|active|1 20:04:44|idle|5 
+20:04:49|active|1 20:04:49|idle|5 
+20:04:54|active|1 20:04:54|idle|5 
+20:04:59|active|1 20:04:59|idle|5 
+20:05:04|active|1 20:05:04|idle|5 
+20:05:09|active|1 20:05:09|idle|5 
+20:05:14|active|1 20:05:14|idle|5 

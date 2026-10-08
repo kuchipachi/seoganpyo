@@ -60,16 +60,26 @@ services:
                 "--proxy-headers",
                 "--forwarded-allow-ips",
                 "*",
+                # T4 — 워커 수 (기본 1). SSM UVICORN_WORKERS 로 바꾸고 재배포. 되돌리기도 같은 방법
+                # 워커마다 DB 풀(5+10)·T1 한도(14)·메모리를 따로 가진다 — docs/performance.md §4.4
+                "--workers",
+                "${UVICORN_WORKERS:-1}",
             ]
         volumes:
             - app_data:/app/data
             - app_static:/app/static
+        # 워커가 2개 이상이면 프로세스마다 요청 수를 따로 세서, /metrics 를 긁을 때마다
+        # 둘 중 한 워커의 값만 나간다 → 그래프·알림이 들쭉날쭉. 멀티프로세스 모드로 합쳐서 내보낸다.
+        # tmpfs 라 컨테이너가 새로 뜰 때마다 비워진다 (지난 실행의 카운터가 섞이지 않게)
+        tmpfs:
+            - /tmp/prometheus-multiproc
         environment:
             # 동시 처리 한도 (T1) = DB 풀(5 + overflow 10) - 1.
             # 처리 중 요청이 모두 DB 연결을 받을 수 있어 교착이 생기지 않고, 넘치는 요청은 즉시 503.
             # 1 을 남기는 이유: /healthz 는 한도에서 제외되지만 운영 풀을 쓰므로 여유 연결이 필요.
             # 풀 크기를 바꾸면 이 값도 같이 바꿀 것 — 근거는 app/concurrency.py, docs/performance.md §4.2
             - MAX_CONCURRENT_REQUESTS=14
+            - PROMETHEUS_MULTIPROC_DIR=/tmp/prometheus-multiproc
         labels:
             # autoheal 이 이 라벨이 붙은 컨테이너만 재시작한다
             - autoheal=true

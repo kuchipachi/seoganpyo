@@ -217,7 +217,7 @@
 - [x] **D9** Grafana Cloud 계정 → **Alloy** 컨테이너 추가 (#42, 옵트인 `COMPOSE_PROFILES=obs`) — 최대 부하 중 가용 300MB+ 실측 후 추가. 운영 1주 실측 **71MB**(한도 160M), 재시작 0
 - [x] **D9** Docker 로그 + `backend:8000/metrics` → remote write — 1주간 메트릭 약 443만 샘플·로그 약 21.7만 줄, **실패 0** (10/08 확인). 값은 SSM `GRAFANA_CLOUD_*`
 - [x] **D10** 대시보드 JSON 2개 임포트 → **datasource uid 교체** (`grafanacloud-logs`/`-prom`) — `scripts/grafana_cloud_sync.py` 로 레포 → Cloud 반영
-- [ ] **D10** iframe 섹션 복구 (Public dashboard URL) + 프론트 재빌드·push
+- [x] **D10** ~~iframe 섹션 복구 (Public dashboard URL)~~ → **관리자 페이지에 차트 직접 그리기** (#47) — Grafana Cloud 가 `frame-ancestors 'none'` 으로 iframe 을 막고 무료 티어에선 `allow_embedding` 변경 불가(403). 백엔드 `/admin/metrics` 가 Prometheus 조회(읽기 전용 토큰) → 공개 대시보드 불필요. 관리자 챗 `query_prometheus` 도 함께 복구
 - [x] **D10** Grafana Alerting 룰 4개 — 5xx 비율, p95, API 다운, autoheal 재시작 → Discord (테스트 알림 확인)
 
 ### 🟦 하연 — CloudWatch + Discord (0.5일)
@@ -303,7 +303,7 @@
 
 - [ ] **D11~D12** `feat/storage-s3` (1.5일) — `storage_service.py` 추상화, `boto3`를 `requirements.txt`에 추가, 최소 권한 IAM 정책 초안 → 👉 하연 검토
 - [ ] **D12** **RDS 백업·복구 훈련** (0.5일) — 스냅샷 → 복원 → 검증 → **복원 인스턴스 즉시 삭제** ⚠️ 크레딧 2배 차감
-- [ ] **D13** 관측 토큰 인증 (0.5일) — `query_prometheus` → Cloud Prometheus
+- [x] **D13** 관측 토큰 인증 (0.5일) — `query_prometheus` → Cloud Prometheus (#47, 읽기 전용 토큰 `GRAFANA_CLOUD_READ_TOKEN`)
 - [ ] **D13 (선택)** RDS 자동 중지 — EventBridge + Lambda (0.5일, 온보딩 크레딧 +$20)
 - [ ] **D14~D15** 여유 → 하연 OIDC·배포 테스트 지원, 비용 실험 측정 보조
 - [ ] **D16** 런북 — 장애 확인 순서 + 접속 정보 (0.25일)

@@ -35,6 +35,13 @@ function formatTime(t: number, range: MetricsRange) {
     : d.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })
 }
 
+// 세로축 숫자 — 작은 값(0.0105 req/s 등)이 축 칸에서 잘리지 않게 유효숫자 2자리로 줄인다
+function formatAxis(v: number) {
+  if (v === 0) return "0"
+  if (Math.abs(v) >= 100) return Math.round(v).toString()
+  return Number(v.toPrecision(2)).toString()
+}
+
 function hasValue(points: MetricPoint[]) {
   return points.some((p) => p.v !== null && p.v > 0)
 }
@@ -121,7 +128,7 @@ export function ApiMetricsCharts() {
                       axisLine={false}
                       minTickGap={32}
                     />
-                    <YAxis width={40} tickLine={false} axisLine={false} />
+                    <YAxis width={48} tickLine={false} axisLine={false} tickFormatter={formatAxis} />
                     <ChartTooltip
                       content={
                         <ChartTooltipContent

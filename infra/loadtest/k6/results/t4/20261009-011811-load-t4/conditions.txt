@@ -1,0 +1,15 @@
+run_id=20261009-011811-load-t4 profile=load label=t4 base=https://<EC2_IP>.nip.io
+local_time=2026-10-09T01:18:11+09:00
+git=932c5c4
+k6=k6 v2.3.0 (commit/devel, go1.27.1, darwin/arm64)
+--- RTT (Mac → EC2, TCP connect 10회, ms)
+min=8.4 avg=21.7 max=42.1
+--- CPU 크레딧 (최근 10분)
+287.8688156	288.0
+--- Mac 부하 (생성기가 병목이 아닌지)
+ 1:18  up 7 days,  9:33, 1 user, load averages: 3.84 3.03 2.60
+collector_started=2026-10-09T01:18:16+09:00
+k6_started=2026-10-09T01:18:16+09:00
+k6_exit=0
+--- Mac 부하 (종료 시)
+ 1:29  up 7 days,  9:44, 1 user, load averages: 1.77 2.18 2.51

@@ -46,6 +46,7 @@
 | `DB_POOL_SIZE` / `DB_MAX_OVERFLOW` | 📄 | `5` / `10` | 부하 측정 후 결정 (RDS `max_connections` = 79) | SQLAlchemy 기본값과 동일 |
 | `DB_POOL_TIMEOUT` / `DB_POOL_RECYCLE` | 📄 | `30` / `1800` (초) | 기본값 | — |
 | `MAX_CONCURRENT_REQUESTS` | 📄 | `0` (끔) | **`14`** (= 풀 5+10 − 1, `docker-compose.prod.yml` 에 명시) | 동시 처리 한도 없음 → 과부하 시 교착 가능 (T1) |
+| `CORS_ALLOW_ORIGINS` | 📄 | `http://localhost:3000,http://localhost:8080` | **`https://<EC2_IP>.nip.io`** | 브라우저 CORS 허용 출처(쉼표 구분). 미설정 시 로컬만 허용 → 운영 프론트가 API 를 못 부름 |
 | `GEMINI_MODEL` | 📄 | `gemini-2.5-flash` | 기본값 | — |
 | `GEMINI_FALLBACK_MODEL` | 📄 | `gemini-2.5-flash-lite` | 기본값 | — |
 | `ADMIN_CHAT_MODEL` / `ADMIN_CHAT_FALLBACK_MODEL` | 📄 | 코드 기본값 | 기본값 | — |

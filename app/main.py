@@ -108,9 +108,15 @@ app.add_middleware(ConcurrencyLimitMiddleware, limit=int(os.getenv("MAX_CONCURRE
 
 app.add_middleware(SecurityHeadersMiddleware)
 
+# CORS — allow_origins="*" + allow_credentials=True 는 요청 Origin 을 그대로 반영해
+# 어떤 사이트에서도 인증 요청을 보낼 수 있다 (OWASP CORS Misconfiguration).
+# 허용할 출처를 CORS_ALLOW_ORIGINS(쉼표 구분) 로 명시한다. 기본값은 로컬 개발 주소.
+# 운영은 .env/SSM 에 프론트 도메인(https://<도메인>)을 넣는다.
+_cors_env = os.getenv("CORS_ALLOW_ORIGINS", "http://localhost:3000,http://localhost:8080")
+_allow_origins = [o.strip() for o in _cors_env.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

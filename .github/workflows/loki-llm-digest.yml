@@ -83,8 +83,18 @@ jobs:
                     | sort | uniq -c | sort -rn > by-container.txt
 
                   # 로그 라인 텍스트로 (컨테이너 정보 포함)
+                  #
+                  # 외부 LLM 으로 나가기 전에 개인정보를 가린다. 스택 트레이스·쿼리 로그에
+                  # 가입 이메일이나 학번이 섞여 들어올 수 있고, Gemini 무료 티어는 보낸
+                  # 데이터가 모델 학습에 쓰일 수 있다. 아티팩트(errors.txt)도 같이 마스킹된다 —
+                  # 레포 읽기 권한만 있으면 내려받을 수 있으므로.
+                  # 패턴 유지가 목적이라 도메인·앞 2자리는 남긴다 (같은 사용자 반복을 LLM 이 묶을 수 있게).
                   jq -r '.data.result[] | .stream.container as $c | .values[] | "[\($c)] \(.[1])"' loki-result.json \
-                    | head -150 > errors.txt
+                    | head -150 \
+                    | sed -E \
+                        -e 's/[A-Za-z0-9._%+-]+@([A-Za-z0-9.-]+\.[A-Za-z]{2,})/<EMAIL>@\1/g' \
+                        -e 's/(^|[^0-9])([0-9]{2})[0-9]{6,8}([^0-9]|$)/\1\2<STUDENT_ID>\3/g' \
+                    > errors.txt
 
                   echo "--- 컨테이너별 분포 ---"
                   cat by-container.txt
@@ -260,8 +270,11 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: digest-${{ github.run_number }}
+                  # loki-result.json / gemini-request.json 은 올리지 않는다 — 마스킹 전
+                  # 원본이라 이메일·학번이 그대로 들어있다. 아티팩트는 레포 읽기 권한만
+                  # 있으면 내려받을 수 있어, 마스킹해 놓고 원본을 같이 올리면 의미가 없다.
+                  # 분석이 이상할 때 대조는 마스킹된 errors.txt 로 한다.
                   path: |
-                      loki-result.json
                       errors.txt
                       analysis.json
                       gemini-response.json

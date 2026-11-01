@@ -1,7 +1,17 @@
-import smtplib
+import html
 import os
+import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+
+
+# 사용자가 정한 값(이름·이메일·문의 제목·내용)은 그대로 HTML·헤더에 넣지 않는다 — XSS·헤더 주입 방지
+def _h(value) -> str:
+    return html.escape(str(value), quote=True)
+
+
+def _header(value) -> str:
+    return " ".join(str(value).splitlines())
 
 def send_verification_email(target_email: str, auth_code: str):
     sender_email = os.getenv("SENDER_EMAIL")
@@ -67,7 +77,7 @@ def send_approval_request_email(name: str, email: str, student_id: int, approval
     admin_email = "gibunijjaejo@gmail.com"
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"[서간표] 회원가입 승인 요청 - {name} ({email})"
+    msg["Subject"] = _header(f"[서간표] 회원가입 승인 요청 - {name} ({email})")
     msg["From"] = f"서간표 <{smtp_email}>"
     msg["To"] = admin_email
 
@@ -83,19 +93,19 @@ def send_approval_request_email(name: str, email: str, student_id: int, approval
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
                     <tr>
                         <td style="padding: 8px 0; font-size: 13px; color: #888; width: 80px;">이름</td>
-                        <td style="padding: 8px 0; font-size: 13px; color: #333;">{name}</td>
+                        <td style="padding: 8px 0; font-size: 13px; color: #333;">{_h(name)}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; font-size: 13px; color: #888;">이메일</td>
-                        <td style="padding: 8px 0; font-size: 13px; color: #333;">{email}</td>
+                        <td style="padding: 8px 0; font-size: 13px; color: #333;">{_h(email)}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; font-size: 13px; color: #888;">학번</td>
-                        <td style="padding: 8px 0; font-size: 13px; color: #333;">{student_id}</td>
+                        <td style="padding: 8px 0; font-size: 13px; color: #333;">{_h(student_id)}</td>
                     </tr>
                 </table>
                 <div style="text-align: center; margin-top: 30px;">
-                    <a href="{approval_url}" style="display: inline-block; background-color: #B1000E; color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 16px; font-weight: bold;">
+                    <a href="{_h(approval_url)}" style="display: inline-block; background-color: #B1000E; color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 16px; font-weight: bold;">
                         회원가입 승인하기
                     </a>
                 </div>
@@ -128,7 +138,7 @@ def send_contact_email(subject: str, content: str, sender_name: str, sender_emai
     admin_email = "gibunijjaejo@gmail.com"
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"[서간표 문의] {subject}"
+    msg["Subject"] = _header(f"[서간표 문의] {subject}")
     msg["From"] = f"서간표 <{smtp_email}>"
     msg["To"] = admin_email
 
@@ -143,14 +153,14 @@ def send_contact_email(subject: str, content: str, sender_name: str, sender_emai
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
                     <tr>
                         <td style="padding: 8px 0; font-size: 13px; color: #888; width: 80px;">보낸 사람</td>
-                        <td style="padding: 8px 0; font-size: 13px; color: #333;">{sender_name} ({sender_email_addr})</td>
+                        <td style="padding: 8px 0; font-size: 13px; color: #333;">{_h(sender_name)} ({_h(sender_email_addr)})</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; font-size: 13px; color: #888;">제목</td>
-                        <td style="padding: 8px 0; font-size: 13px; font-weight: bold; color: #333;">{subject}</td>
+                        <td style="padding: 8px 0; font-size: 13px; font-weight: bold; color: #333;">{_h(subject)}</td>
                     </tr>
                 </table>
-                <div style="background-color: #f9f9f9; border-left: 3px solid #B1000E; border-radius: 4px; padding: 20px; font-size: 14px; color: #333; white-space: pre-wrap;">{content}</div>
+                <div style="background-color: #f9f9f9; border-left: 3px solid #B1000E; border-radius: 4px; padding: 20px; font-size: 14px; color: #333; white-space: pre-wrap;">{_h(content)}</div>
             </div>
             <div style="background-color: #f4f4f4; padding: 20px; text-align: center; font-size: 12px; color: #888;">
                 <p style="margin: 0;">© 2026 서간표(Seoganpyo) Team. All rights reserved.</p>

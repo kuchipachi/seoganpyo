@@ -1,3 +1,4 @@
+import html
 import os
 import uuid
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
@@ -104,7 +105,7 @@ def approve_user(token: str, db: Session = Depends(get_db)):
     <body style="font-family:'Malgun Gothic',sans-serif;text-align:center;padding:60px;color:#333;">
         <h1 style="color:#B1000E;">서간표</h1>
         <h2>회원가입 승인 완료</h2>
-        <p><strong>{user.name}</strong> ({user.email}) 님의 가입이 승인되었습니다.</p>
+        <p><strong>{html.escape(user.name)}</strong> ({html.escape(user.email)}) 님의 가입이 승인되었습니다.</p>
         <p style="color:#666;">이제 해당 사용자가 서간표에 로그인할 수 있습니다.</p>
     </body>
     </html>

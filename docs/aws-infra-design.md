@@ -107,13 +107,15 @@ Internet ─> IGW ─> [퍼블릭 서브넷]
 
 스테이트풀이라는 점이 중요합니다. `SG-rds`에 아웃바운드 규칙을 따로 안 넣어도, EC2가 보낸 쿼리에 대한 **응답은 자동으로 돌아갑니다.**
 
-### `SG-web` — 3줄
+### `SG-web` — 2줄
 
 | 유형 | 포트 | 소스 | 왜 |
 | --- | --- | --- | --- |
 | HTTP | 80 | `0.0.0.0/0` | 누구나 접속. Caddy가 HTTPS로 리다이렉트 |
 | HTTPS | 443 | `0.0.0.0/0` | 실제 서비스 트래픽 |
-| SSH | 22 | `<관리자 IP>/32` | **본인 IP만** — 서버 관리용 |
+
+**SSH 22번은 없습니다.** 접속·배포 모두 SSM Session Manager 를 쓰기 때문에
+열어둘 이유가 없습니다 (아래 "SSH 를 닫은 뒤" 참고).
 
 **"모든 트래픽 + 내 IP"로 하면 안 되는 이유**
 
@@ -126,19 +128,23 @@ Internet ─> IGW ─> [퍼블릭 서브넷]
 
 > 🔒 **이 레포는 Public 입니다.** 관리자 IP·계정 ID·암호 등 식별 가능한 값은
 > 문서에 적지 않습니다. 실제 값은 AWS 콘솔이나 팀 내부 채널에서 확인하세요.
->
-> 현재 허용된 IP 확인:
+
+**SSH 를 닫은 뒤** (2차, SSM Session Manager 도입)
+
+22번을 관리자 IP 로 열어두던 구성은 없앴습니다. 당시 문제는 두 가지였습니다 —
+관리자 IP 가 가정용 동적 IP 라 공유기 재부팅·망 이동마다 규칙을 갱신해야 했고,
+접속 키를 누가 복사해 갔는지 알 방법이 없었습니다.
+
+Session Manager 로 바꾸면서 둘 다 사라졌습니다. 인증은 IAM 권한으로 하고,
+접속 기록은 CloudTrail 에 남습니다. 키 페어가 필요 없으니 **유출될 키 자체가
+없습니다.** 배포도 SSM Run Command 로 하므로 CI 에도 SSH 키를 두지 않습니다.
+
+> 현재 인바운드 규칙 확인 (22번이 없어야 정상):
 > ```bash
 > aws ec2 describe-security-group-rules \
 >   --filters "Name=group-id,Values=sg-095b42d816c449f1b" \
->   --query 'SecurityGroupRules[?FromPort==`22`].CidrIpv4' --output text
+>   --query 'SecurityGroupRules[?!IsEgress].{Port:FromPort,Cidr:CidrIpv4}' --output table
 > ```
->
-> ⚠️ 관리자 IP 는 **가정용 동적 IP**입니다. 공유기 재부팅·망 이동 시 바뀌고,
-> 그러면 SSH가 막힙니다. 카페·학교에서 작업하면 매번 규칙을 갱신해야 합니다.
->
-> → 2차에 **SSM Session Manager**를 도입하면 22번 포트를 아예 닫을 수 있습니다.
-> 계획서 §7의 "SSH 없는 배포"와 같은 방향입니다.
 
 ### `SG-rds` — 1줄, 그런데 핵심
 
@@ -229,10 +235,10 @@ SG-all: 80, 443, 22, 5432 허용
 | 타입 | **`t3.micro`** (2 vCPU / 1 GiB) | 크레딧 절약. IAM Deny 정책이 다른 타입 차단 |
 | AMI | `ami-03137ee2d0c5af1fe` (Amazon Linux 2023) | `dnf` 기반, Docker 공식 패키지 제공 |
 | 서브넷 | 퍼블릭 (`vpc-009480d192b44ba23`) | NAT Gateway 회피 (§1) |
-| 보안그룹 | `SG-web` | 80/443 공개, 22 본인 IP만 (§2) |
+| 보안그룹 | `SG-web` | 80/443 만 공개 — SSH 없음 (§2) |
 | 스토리지 | gp3 30GB | 기본 8GB로는 Docker 이미지 3개가 안 들어감 |
 | EIP | `<EC2_IP>` (`eipalloc-0653b7b300fe910fb`) | 재부팅 시 IP 고정 |
-| 키 페어 | `server-key` | |
+| 키 페어 | `server-key` | 생성 시 발급분. SSM 전환 후 **사용하지 않음** |
 
 ### 메모리 — 이 프로젝트의 핵심 제약
 
@@ -322,12 +328,17 @@ Caddy가 기동 시 ACME 챌린지를 자동 수행하므로 인증서 설정이
 퍼블릭 액세스가 꺼져 있으니 로컬에서 직접 못 붙습니다. **EC2를 경유**합니다.
 
 ```
-로컬 PC ──SSH(22)──> EC2 ──5432──> RDS
-         (SG-web)          (SG-rds)
+로컬 PC ──SSM 포트 포워딩──> EC2 ──5432──> RDS
+         (인바운드 포트 불필요)      (SG-rds)
 ```
 
+22번을 닫았으므로 SSH 터널(`ssh -L`)은 쓸 수 없습니다. SSM 포트 포워딩으로
+같은 일을 합니다 — 인바운드 포트를 열지 않고 로컬 포트를 RDS 로 잇습니다.
+
 ```bash
-ssh -L 5432:seoganpyo-db.czuy88iog7v8.ap-northeast-2.rds.amazonaws.com:5432 ec2-user@<ec2-public-ip>
+aws ssm start-session --target <INSTANCE_ID> --region ap-northeast-2 \
+  --document-name AWS-StartPortForwardingSessionToRemoteHost \
+  --parameters '{"host":["seoganpyo-db.czuy88iog7v8.ap-northeast-2.rds.amazonaws.com"],"portNumber":["5432"],"localPortNumber":["5432"]}'
 # 다른 터미널에서
 psql -h localhost -p 5432 -U postgres -d seoganpyo
 ```
@@ -378,7 +389,7 @@ seoganpyo=>
 | 1 | RDS 퍼블릭 액세스 OFF | 인터넷에서 DB 직접 도달 |
 | 2 | `SG-rds` 그룹 참조 | VPC 내 다른 인스턴스의 DB 접근 |
 | 3 | `SG-web` 포트 3개만 | Redis·백엔드 포트 외부 노출 |
-| 4 | SSH 소스 IP 제한 | 서버 로그인 시도 |
+| 4 | SSH 포트 폐쇄 (SSM 전용) | 서버 로그인 시도·키 유출 |
 | 5 | IAM `SeoganpyoDenyCostly` | ALB·NAT·Multi-AZ 실수 생성 |
 | 6 | Budgets 알람 $1 | 위 방어가 뚫렸을 때 탐지 |
 
@@ -426,7 +437,7 @@ aws configure set region ap-northeast-2
 
 | 항목 | 현재 | 2차 |
 | --- | --- | --- |
-| SSH 접근 | 22번 포트 + 동적 IP 규칙 | **SSM Session Manager** — 포트 닫기 (§7) |
+| SSH 접근 | 22번 포트 + 동적 IP 규칙 | ✅ **SSM Session Manager** — 22번 폐쇄 완료 |
 | DB 자격증명 | EC2 `.env` 평문 (`chmod 600`) | **SSM Parameter Store** SecureString (§2.4) |
 | 배포 | 수동 `docker compose` | GitHub OIDC → ECR → SSM Run Command (§7) |
 | 백업 | 자동 1일 | 수동 스냅샷 + 복원 훈련 (§2.5) |

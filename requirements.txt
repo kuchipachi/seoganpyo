@@ -37,4 +37,5 @@ pypdf>=4.0.0
 beautifulsoup4==4.12.3
 pytest>=8.0.0
 pytest-cov>=5.0.0
+fakeredis>=2.21.0  # 테스트 전용 — OTP 무차별 대입 테스트의 인메모리 Redis
 prometheus-fastapi-instrumentator>=6.1.0

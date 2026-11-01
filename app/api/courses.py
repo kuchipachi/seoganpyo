@@ -22,8 +22,8 @@ def get_courses(
         description="major=CSE 전공, liberal=교양 (course_code prefix 기준)",
     ),
     is_english: Optional[bool] = Query(None),
-    limit: Optional[int] = Query(None),
-    offset: int = Query(0),
+    limit: Optional[int] = Query(None, ge=0, le=1000, description="최대 1000"),
+    offset: int = Query(0, ge=0),
 ):
     # CourseResponse 는 course.details · professor.details 까지 직렬화한다.
     # 미리 불러오지 않으면 응답 변환 중 강의·교수마다 지연 로딩 쿼리가 나가(N+1)

@@ -63,3 +63,20 @@ class TestCourseDetail:
     def test_get_nonexistent_course(self, client):
         res = client.get("/api/v1/courses/99999")
         assert res.status_code == 404
+
+
+class TestCourseListParamBounds:
+    """음수·과대 페이지 파라미터가 DB 까지 가 500 이 되지 않는다 (Schemathesis 발견, 2026-11)"""
+
+    def test_negative_limit_is_422(self, client):
+        assert client.get("/api/v1/courses?limit=-5").status_code == 422
+
+    def test_negative_offset_is_422(self, client):
+        assert client.get("/api/v1/courses?offset=-1").status_code == 422
+
+    def test_oversized_limit_is_422(self, client):
+        assert client.get("/api/v1/courses?limit=100000").status_code == 422
+
+    def test_zero_and_normal_limit_ok(self, client):
+        assert client.get("/api/v1/courses?limit=0").status_code == 200
+        assert client.get("/api/v1/courses?limit=10&offset=0").status_code == 200

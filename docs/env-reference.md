@@ -47,6 +47,7 @@
 | `DB_POOL_TIMEOUT` / `DB_POOL_RECYCLE` | 📄 | `30` / `1800` (초) | 기본값 | — |
 | `MAX_CONCURRENT_REQUESTS` | 📄 | `0` (끔) | **`14`** (= 풀 5+10 − 1, `docker-compose.prod.yml` 에 명시) | 동시 처리 한도 없음 → 과부하 시 교착 가능 (T1) |
 | `CORS_ALLOW_ORIGINS` | 📄 | `http://localhost:3000,http://localhost:8080` | **`https://<EC2_IP>.nip.io`** | 브라우저 CORS 허용 출처(쉼표 구분). 미설정 시 로컬만 허용 → 운영 프론트가 API 를 못 부름 |
+| `ENABLE_API_DOCS` | 📄 | `1` (켬) | **`0`** (끔) | Swagger `/docs`·`/redoc`·`/openapi.json` 노출. 운영은 꺼서 엔드포인트 지도 비공개 (security-assessment #6) |
 | `GEMINI_MODEL` | 📄 | `gemini-2.5-flash` | 기본값 | — |
 | `GEMINI_FALLBACK_MODEL` | 📄 | `gemini-2.5-flash-lite` | 기본값 | — |
 | `ADMIN_CHAT_MODEL` / `ADMIN_CHAT_FALLBACK_MODEL` | 📄 | 코드 기본값 | 기본값 | — |

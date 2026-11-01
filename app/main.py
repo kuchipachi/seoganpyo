@@ -44,7 +44,15 @@ try:
 finally:
     _pf_db.close()
 
-app = FastAPI(title="서간표 통합 서버")
+# API 문서·명세는 공격자에게 전체 엔드포인트 지도를 준다 (docs/security-assessment.md #6).
+# 운영에서는 끈다. 로컬 개발은 ENABLE_API_DOCS=1 로 켠다 (기본 켜짐 — 운영 .env/SSM 에서 0).
+_docs_on = os.getenv("ENABLE_API_DOCS", "1") == "1"
+app = FastAPI(
+    title="서간표 통합 서버",
+    docs_url="/docs" if _docs_on else None,
+    redoc_url="/redoc" if _docs_on else None,
+    openapi_url="/openapi.json" if _docs_on else None,
+)
 
 Instrumentator().instrument(app).expose(app)
 

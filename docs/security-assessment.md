@@ -12,7 +12,7 @@
 | 3 | CORS 가 **임의 출처를 반영** (`*` + credentials) | **MAJOR** | API8 설정 | ✅ #59 |
 | 4 | 승인 화면·관리자 메일에 사용자 입력이 **이스케이프 없이** 삽입 (XSS·헤더 주입) | MAJOR | API8 / A03 | ✅ #55 |
 | 5 | 강의 목록 `limit=-5` 등으로 **500** (입력 검증 누락) | MINOR | API8 | ✅ #57 |
-| 6 | API 문서·명세 공개 (`/docs`, `/openapi.json`) | MINOR | 정보 노출 | 📋 아래 |
+| 6 | API 문서·명세 공개 (`/docs`, `/openapi.json`) | MINOR | 정보 노출 | ✅ #61 (운영 차단) |
 | 7 | 권한 매트릭스 전수 점검 — #54 외 **추가 구멍 없음** | — | — | ✅ #56 |
 
 CRITICAL·MAJOR 5건은 수정·머지 완료. 재발 방지 테스트를 함께 넣어 CI 가 지킨다.
@@ -42,14 +42,13 @@ CRITICAL·MAJOR 5건은 수정·머지 완료. 재발 방지 테스트를 함께
 
 > Schemathesis 가 보고한 500 중 나머지 6종은 **로컬 환경 탓**(재현 DB 에 Redis 없음으로 인증 흐름 500, 퍼징이 테스트 계정 삭제 후 발생한 FK 위반)으로 운영 버그가 아님을 재현해 확인.
 
-### 6. API 문서·명세 공개 (MINOR, 미조치 — 판단 필요)
-운영 `/backend/docs`·`/backend/openapi.json`·`/redoc` 가 인증 없이 열려 공격자에게 전체 엔드포인트 지도를 제공. 끄는 것도 가능하나(운영에서 `docs_url=None`), 시연·개발 편의와 트레이드오프라 팀 판단으로 남김. 끈다면 별도 PR.
+### 6. API 문서·명세 공개 (MINOR, #61)
+운영 `/backend/docs`·`/backend/openapi.json`·`/redoc` 가 인증 없이 열려 공격자에게 전체 엔드포인트 지도를 제공. 조치: `ENABLE_API_DOCS` 로 토글, 운영은 `0`(차단), 로컬 개발은 기본 켜짐.
 
 ## 남은 것 (후속)
 
 - **OWASP ZAP** 능동 스캔(로컬) — 주입·XSS 자동 점검. 이번엔 수동·Schemathesis 로 대체, 정식 스캔은 후속
 - 로그인·관리자 로그인 속도 제한 — OTP 와 달리 즉시 위험은 낮으나 무차별 대입 방어로 검토
-- #6 문서 공개 여부 결정
 - `security-scan.yml`(Trivy)·`sonarcloud.yml` 자동 트리거 재활성화 여부
 
 ## 재발 방지 (CI 가 지키는 것)
